@@ -1,0 +1,7 @@
+[
+  {
+    "directory": "/home/mackerel38/kyopro",
+    "command": "g++ -std=gnu++23 -O2 -pipe -march=native -I /home/mackerel38/kyopro/library main.cpp",
+    "file": "main.cpp"
+  }
+]
