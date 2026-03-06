@@ -1,8 +1,0 @@
-*.gch
-*.out
-*.env
-*.json
-.cache
-.git
-.gitignore
-library/.verify-helper
