@@ -6,12 +6,12 @@ data:
     path: main.cpp
     title: main.cpp
   _extendedVerifiedWith:
-  - icon: ':heavy_check_mark:'
+  - icon: ':x:'
     path: verify/library_checker_unionfind.test.cpp
     title: verify/library_checker_unionfind.test.cpp
-  _isVerificationFailed: false
+  _isVerificationFailed: true
   _pathExtension: hpp
-  _verificationStatusIcon: ':heavy_check_mark:'
+  _verificationStatusIcon: ':x:'
   attributes:
     links: []
   bundledCode: "#line 2 \"utility/template.hpp\"\n#ifdef poe\n#define debug(x) cerr\
@@ -292,7 +292,7 @@ data:
   requiredBy:
   - main.cpp
   timestamp: '2026-03-02 19:15:13+09:00'
-  verificationStatus: LIBRARY_ALL_AC
+  verificationStatus: LIBRARY_ALL_WA
   verifiedWith:
   - verify/library_checker_unionfind.test.cpp
 documentation_of: utility/template.hpp

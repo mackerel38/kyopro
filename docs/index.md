@@ -8,18 +8,18 @@ data:
       title: main.cpp
   - name: structure
     pages:
-    - icon: ':heavy_check_mark:'
+    - icon: ':warning:'
       path: structure/unionfind.hpp
       title: structure/unionfind.hpp
   - name: utility
     pages:
-    - icon: ':heavy_check_mark:'
+    - icon: ':x:'
       path: utility/template.hpp
       title: utility/template.hpp
   verificationCategories:
   - name: verify
     pages:
-    - icon: ':heavy_check_mark:'
+    - icon: ':x:'
       path: verify/library_checker_unionfind.test.cpp
       title: verify/library_checker_unionfind.test.cpp
 layout: toppage
