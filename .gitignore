@@ -1,1 +1,8 @@
 *.gch
+.cache
+.git
+.gitignore
+a.out
+compile.env
+compile_commands.json
+library/.verify-helper

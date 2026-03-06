@@ -7,11 +7,11 @@ struct unionfind {
 
     unionfind(int n) : data(n, -1) {}
 
-    int find(int k) { return data[k]<0 ? k : data[k] = find(data[k]); }
-    int operator[](int k) { return find(k); }
+    int root(int k) { return data[k]<0 ? k : data[k] = root(data[k]); }
+    int operator[](int k) { return root(k); }
 
     int merge(int x, int y) {
-        if ((x = find(x)) == (y = find(y))) return false;
+        if ((x = root(x)) == (y = root(y))) return false;
         if (data[x] < data[y]) swap(x, y);
         data[y] += data[x];
         data[x] = y;
@@ -19,7 +19,7 @@ struct unionfind {
     }
     template<class F>
     int merge(int x, int y, const F& f) {
-        if ((x = find(x)) == (y = find(y))) return false;
+        if ((x = root(x)) == (y = root(y))) return false;
         if (data[y] < data[x]) swap(x, y);
         data[x] += data[y];
         data[y] = x;
@@ -27,10 +27,16 @@ struct unionfind {
         return true;
     }
 
-    int size(int k) { return -data[find(k)]; }
+    int size(int k) { return -data[root(k)]; }
 
-    bool same(int x, int y) { return find(x) == find(y); }
+    bool same(int x, int y) { return root(x) == root(y); }
+
+    vector<vector<int>> groups() {
+        vector<vector<int>> mem(data.size());
+        for (int i=0; i<ssize(mem); ++i) mem[root(i)].emplace_back(i);
+        vector<vector<int>> re;
+        for (int i=0; i<ssize(mem); ++i) if (!mem[i].empty()) re.emplace_back(mem[i]);
+        return re;
+    }
 };
-
-
 
