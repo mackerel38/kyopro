@@ -1,18 +1,26 @@
 ---
 data:
   _extendedDependsOn:
+  - icon: ':x:'
+    path: structure/segtree.hpp
+    title: structure/segtree.hpp
   - icon: ':question:'
     path: utility/template.hpp
     title: utility/template.hpp
   _extendedRequiredBy: []
   _extendedVerifiedWith: []
-  _isVerificationFailed: false
+  _isVerificationFailed: true
   _pathExtension: cpp
-  _verificationStatusIcon: ':warning:'
+  _verificationStatusIcon: ':x:'
   attributes:
-    links: []
-  bundledCode: "#line 2 \"utility/template.hpp\"\n#ifdef poe\n#define debug(x) cerr\
-    \ << #x << \": \" << x << '\\n'\n#else\n#define debug(x)\n#endif\n\n#include <bits/stdc++.h>\n\
+    '*NOT_SPECIAL_COMMENTS*': ''
+    PROBLEM: https://judge.yosupo.jp/problem/point_add_range_sum
+    links:
+    - https://judge.yosupo.jp/problem/point_add_range_sum
+  bundledCode: "#line 1 \"verify/library_checker_point_add_range_sum.test.cpp\"\n\
+    #define PROBLEM \"https://judge.yosupo.jp/problem/point_add_range_sum\"\n#line\
+    \ 2 \"utility/template.hpp\"\n#ifdef poe\n#define debug(x) cerr << #x << \": \"\
+    \ << x << '\\n'\n#else\n#define debug(x)\n#endif\n\n#include <bits/stdc++.h>\n\
     using namespace std;\n\nusing uint = unsigned int;\nusing ll = long long;\nusing\
     \ ull = unsigned long long;\nusing i128 = __int128;\nusing u128 = unsigned __int128;\n\
     using ld = long double;\nusing str = string;\nusing vi = vector<int>;\nusing vvi\
@@ -146,22 +154,73 @@ data:
     constexpr long double eps = 1e-9;\nconst long double PI = acos(-1);\nconstexpr\
     \ long long mod = 998244353;\nconstexpr long long MOD = 1000000007;\n\ninline\
     \ void IO() {\n    ios::sync_with_stdio(false);\n    std::cin.tie(nullptr);\n\
-    }\n\nvoid solve();\n\n#line 2 \"main.cpp\"\n\nint main() {\n    IO();\n    int\
-    \ T = 1;\n    // cin >> T;\n    while (T--) solve();\n}\n\nvoid solve() {\n}\n"
-  code: "#include \"template\"\n\nint main() {\n    IO();\n    int T = 1;\n    //\
-    \ cin >> T;\n    while (T--) solve();\n}\n\nvoid solve() {\n}\n"
+    }\n\nvoid solve();\n\n#line 3 \"structure/segtree.hpp\"\nusing namespace std;\n\
+    template <class T, auto op, auto e>\nstruct segtree {\n    int _n, size;\n   \
+    \ vector<T> data;\n\n    segtree() = default;\n    segtree(int n) : _n(n) { build(vector<T>(n,\
+    \ e())); }\n    segtree(const vector<T>& v) : _n(ssize(v)) { build(v); }\n   \
+    \ void build(const vector<T>& v) {\n        size = __bit_ceil((unsigned int)_n);\n\
+    \        data.assign(2*size, e());\n        for (int i=0; i<_n; ++i) data[size+i]\
+    \ = v[i];\n        for (int i=size-1; 0<i; --i) update(i);\n    }\n    \n    void\
+    \ update(int x) { data[x] = op(data[2*x], data[2*x+1]); }\n\n    void set(int\
+    \ x, T y) {\n        assert(0<=x && x<_n);\n        x += size;\n        data[x]\
+    \ = y;\n        for (x>>=1; 0<x; x>>=1) update(x);\n    }\n    void add(int x,\
+    \ T y) { set(x, op(get(x), y)); }\n\n    T get(int x) const {\n        assert(0<=x\
+    \ && x<_n);\n        return data[size+x];\n    }\n    T operator[](int x) const\
+    \ { return get(x); }\n    T allprod() const { return data[1]; }\n    vector<T>\
+    \ values() const {\n        vector<T> re;\n        re.assign(data.begin()+size,\
+    \ data.begin()+size+_n);\n        return re;\n    }\n\n    T prod(int x, int y)\
+    \ const {\n        assert(0<=x && x<=y && y<=_n);\n        x += size;\n      \
+    \  y += size;\n        T l = e(), r = e();\n        while (x < y) {\n        \
+    \    if (x & 1) l = op(l, data[x++]);\n            if (y & 1) r = op(data[--y],\
+    \ r);\n            x >>= 1;\n            y >>= 1;\n        }\n        return op(l,\
+    \ r);\n    }\n\n    template<class F>\n    int max_right(int x, const F& f) const\
+    \ {\n        assert(0<=x && x<=_n);\n        assert(f(e()));\n        if (x ==\
+    \ _n) return _n;\n        x += size;\n        T l = e();\n        do {\n     \
+    \       while ((x&1) == 0) x >>= 1;\n            if (!f(op(l, data[x]))) {\n \
+    \               while (x < size) {\n                    x = x * 2;\n         \
+    \           if (f(op(l, data[x]))) { \n                        l = op(l, data[x]);\n\
+    \                        x++;\n                    }\n                }\n    \
+    \            return x - size;\n            }\n            l = op(l, data[x]);\n\
+    \            x++;\n        } while ((x & -x) != x);\n        return _n;\n    }\n\
+    \    template<class F>\n    int min_left(int x, const F& f) {\n        assert(0<=x\
+    \ && x<_n);\n        asserr(f(e()));\n        if (x == 0) return 0;\n        x\
+    \ += size;\n        T r = e();\n        do {\n            x--;\n            while\
+    \ (1<x && (x&1)) x >>= 1;\n            if (!f(op(data[x], r))) {\n           \
+    \     while (x < size) {\n                    x = x * 2 + 1;\n               \
+    \     if (f(op(data[x], r))) {\n                        r = op(data[x], r);\n\
+    \                        x--;\n                    }\n                }\n    \
+    \            return x + 1 - size;\n            }\n            r = op(data[x],\
+    \ r);\n        } while ((x & -x) != x);\n        return 0;\n    }\n};\n#line 4\
+    \ \"verify/library_checker_point_add_range_sum.test.cpp\"\n\nint main() {\n  \
+    \  IO();\n    int T = 1;\n    // cin >> T;\n    while (T--) solve();\n}\n\nvoid\
+    \ solve() {\n    int n, q; cin >> n >> q;\n    vll a(n); cin >> a;\n    segtree<ll,\
+    \ [](ll x, ll y)->ll{ return x+y; }, []()->ll{ return 0LL; }> seg(a);\n    rep(q)\
+    \ {\n        int t; cin >> t;\n        if (t == 0) {\n            int p, x; cin\
+    \ >> p >> x;\n            seg.add(p, x);\n        } else {\n            int l,\
+    \ r; cin >> l >> r;\n            cout << seg.prod(l, r) << nl;\n        }\n  \
+    \  }\n}\n"
+  code: "#define PROBLEM \"https://judge.yosupo.jp/problem/point_add_range_sum\"\n\
+    #include \"template\"\n#include \"segtree\"\n\nint main() {\n    IO();\n    int\
+    \ T = 1;\n    // cin >> T;\n    while (T--) solve();\n}\n\nvoid solve() {\n  \
+    \  int n, q; cin >> n >> q;\n    vll a(n); cin >> a;\n    segtree<ll, [](ll x,\
+    \ ll y)->ll{ return x+y; }, []()->ll{ return 0LL; }> seg(a);\n    rep(q) {\n \
+    \       int t; cin >> t;\n        if (t == 0) {\n            int p, x; cin >>\
+    \ p >> x;\n            seg.add(p, x);\n        } else {\n            int l, r;\
+    \ cin >> l >> r;\n            cout << seg.prod(l, r) << nl;\n        }\n    }\n\
+    }\n"
   dependsOn:
   - utility/template.hpp
-  isVerificationFile: false
-  path: main.cpp
+  - structure/segtree.hpp
+  isVerificationFile: true
+  path: verify/library_checker_point_add_range_sum.test.cpp
   requiredBy: []
-  timestamp: '2026-03-04 02:44:48+09:00'
-  verificationStatus: LIBRARY_NO_TESTS
+  timestamp: '2026-03-06 22:16:53+09:00'
+  verificationStatus: TEST_WRONG_ANSWER
   verifiedWith: []
-documentation_of: main.cpp
+documentation_of: verify/library_checker_point_add_range_sum.test.cpp
 layout: document
 redirect_from:
-- /library/main.cpp
-- /library/main.cpp.html
-title: main.cpp
+- /verify/verify/library_checker_point_add_range_sum.test.cpp
+- /verify/verify/library_checker_point_add_range_sum.test.cpp.html
+title: verify/library_checker_point_add_range_sum.test.cpp
 ---
