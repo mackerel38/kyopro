@@ -1,17 +1,17 @@
 ---
 data:
   _extendedDependsOn:
-  - icon: ':x:'
+  - icon: ':heavy_check_mark:'
     path: structure/segtree.hpp
     title: structure/segtree.hpp
-  - icon: ':question:'
+  - icon: ':heavy_check_mark:'
     path: utility/template.hpp
     title: utility/template.hpp
   _extendedRequiredBy: []
   _extendedVerifiedWith: []
-  _isVerificationFailed: true
+  _isVerificationFailed: false
   _pathExtension: cpp
-  _verificationStatusIcon: ':x:'
+  _verificationStatusIcon: ':heavy_check_mark:'
   attributes:
     '*NOT_SPECIAL_COMMENTS*': ''
     PROBLEM: https://judge.yosupo.jp/problem/point_add_range_sum
@@ -214,8 +214,8 @@ data:
   isVerificationFile: true
   path: verify/library_checker_point_add_range_sum.test.cpp
   requiredBy: []
-  timestamp: '2026-03-06 22:16:53+09:00'
-  verificationStatus: TEST_WRONG_ANSWER
+  timestamp: '2026-03-07 14:24:38+09:00'
+  verificationStatus: TEST_ACCEPTED
   verifiedWith: []
 documentation_of: verify/library_checker_point_add_range_sum.test.cpp
 layout: document

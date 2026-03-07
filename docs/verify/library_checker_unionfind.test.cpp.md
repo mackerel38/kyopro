@@ -4,7 +4,7 @@ data:
   - icon: ':heavy_check_mark:'
     path: structure/unionfind.hpp
     title: structure/unionfind.hpp
-  - icon: ':question:'
+  - icon: ':heavy_check_mark:'
     path: utility/template.hpp
     title: utility/template.hpp
   _extendedRequiredBy: []
@@ -157,10 +157,10 @@ data:
     }\n\nvoid solve();\n\n#line 3 \"structure/unionfind.hpp\"\nusing namespace std;\n\
     \nstruct unionfind {\n    vector<int> data;\n\n    unionfind(int n) : data(n,\
     \ -1) {}\n\n    int root(int k) { return data[k]<0 ? k : data[k] = root(data[k]);\
-    \ }\n    int operator[](int k) { return root(k); }\n\n    int merge(int x, int\
+    \ }\n    int operator[](int k) { return root(k); }\n\n    bool merge(int x, int\
     \ y) {\n        if ((x = root(x)) == (y = root(y))) return false;\n        if\
     \ (data[x] < data[y]) swap(x, y);\n        data[y] += data[x];\n        data[x]\
-    \ = y;\n        return true;\n    }\n    template<class F>\n    int merge(int\
+    \ = y;\n        return true;\n    }\n    template<class F>\n    bool merge(int\
     \ x, int y, const F& f) {\n        if ((x = root(x)) == (y = root(y))) return\
     \ false;\n        if (data[y] < data[x]) swap(x, y);\n        data[x] += data[y];\n\
     \        data[y] = x;\n        f(x, y);\n        return true;\n    }\n\n    int\
@@ -168,12 +168,13 @@ data:
     \ root(x) == root(y); }\n\n    vector<vector<int>> groups() {\n        vector<vector<int>>\
     \ mem(data.size());\n        for (int i=0; i<ssize(mem); ++i) mem[root(i)].emplace_back(i);\n\
     \        vector<vector<int>> re;\n        for (int i=0; i<ssize(mem); ++i) if\
-    \ (!mem[i].empty()) re.emplace_back(mem[i]);\n        return re;\n    }\n};\n\n\
-    #line 4 \"verify/library_checker_unionfind.test.cpp\"\n\nint main() {\n    IO();\n\
-    \    int T = 1;\n    // cin >> T;\n    while (T--) solve();\n}\n\nvoid solve()\
-    \ {\n    int n, q; cin >> n >> q;\n    unionfind uf(n);\n    rep(q) {\n      \
-    \  int t, u, v; cin >> t >> u >> v;\n        if (t == 0) uf.merge(u, v);\n   \
-    \     else cout << uf.same(u, v) << nl;\n    }\n}\n"
+    \ (!mem[i].empty()) re.emplace_back(mem[i]);\n        return re;\n    }\n\n  \
+    \  int components() const {\n        int cnt = 0;\n        for (auto& i : data)\
+    \ if (i < 0) cnt++;\n        return cnt;\n    }\n};\n\n#line 4 \"verify/library_checker_unionfind.test.cpp\"\
+    \n\nint main() {\n    IO();\n    int T = 1;\n    // cin >> T;\n    while (T--)\
+    \ solve();\n}\n\nvoid solve() {\n    int n, q; cin >> n >> q;\n    unionfind uf(n);\n\
+    \    rep(q) {\n        int t, u, v; cin >> t >> u >> v;\n        if (t == 0) uf.merge(u,\
+    \ v);\n        else cout << uf.same(u, v) << nl;\n    }\n}\n"
   code: "#define PROBLEM \"https://judge.yosupo.jp/problem/unionfind\"\n#include \"\
     template\"\n#include \"unionfind\"\n\nint main() {\n    IO();\n    int T = 1;\n\
     \    // cin >> T;\n    while (T--) solve();\n}\n\nvoid solve() {\n    int n, q;\
@@ -186,7 +187,7 @@ data:
   isVerificationFile: true
   path: verify/library_checker_unionfind.test.cpp
   requiredBy: []
-  timestamp: '2026-03-06 20:12:39+09:00'
+  timestamp: '2026-03-07 14:24:46+09:00'
   verificationStatus: TEST_ACCEPTED
   verifiedWith: []
 documentation_of: verify/library_checker_unionfind.test.cpp

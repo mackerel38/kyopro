@@ -2,17 +2,25 @@
 data:
   _extendedDependsOn:
   - icon: ':heavy_check_mark:'
+    path: structure/BIT.hpp
+    title: structure/BIT.hpp
+  - icon: ':heavy_check_mark:'
     path: utility/template.hpp
     title: utility/template.hpp
   _extendedRequiredBy: []
   _extendedVerifiedWith: []
   _isVerificationFailed: false
   _pathExtension: cpp
-  _verificationStatusIcon: ':warning:'
+  _verificationStatusIcon: ':heavy_check_mark:'
   attributes:
-    links: []
-  bundledCode: "#line 2 \"utility/template.hpp\"\n#ifdef poe\n#define debug(x) cerr\
-    \ << #x << \": \" << x << '\\n'\n#else\n#define debug(x)\n#endif\n\n#include <bits/stdc++.h>\n\
+    '*NOT_SPECIAL_COMMENTS*': ''
+    PROBLEM: https://judge.yosupo.jp/problem/point_add_range_sum
+    links:
+    - https://judge.yosupo.jp/problem/point_add_range_sum
+  bundledCode: "#line 1 \"verify/library_checker_point_add_range_sum_1.test.cpp\"\n\
+    #define PROBLEM \"https://judge.yosupo.jp/problem/point_add_range_sum\"\n#line\
+    \ 2 \"utility/template.hpp\"\n#ifdef poe\n#define debug(x) cerr << #x << \": \"\
+    \ << x << '\\n'\n#else\n#define debug(x)\n#endif\n\n#include <bits/stdc++.h>\n\
     using namespace std;\n\nusing uint = unsigned int;\nusing ll = long long;\nusing\
     \ ull = unsigned long long;\nusing i128 = __int128;\nusing u128 = unsigned __int128;\n\
     using ld = long double;\nusing str = string;\nusing vi = vector<int>;\nusing vvi\
@@ -146,22 +154,47 @@ data:
     constexpr long double eps = 1e-9;\nconst long double PI = acos(-1);\nconstexpr\
     \ long long mod = 998244353;\nconstexpr long long MOD = 1000000007;\n\ninline\
     \ void IO() {\n    ios::sync_with_stdio(false);\n    std::cin.tie(nullptr);\n\
-    }\n\nvoid solve();\n\n#line 2 \"main.cpp\"\n\nint main() {\n    IO();\n    int\
-    \ T = 1;\n    // cin >> T;\n    while (T--) solve();\n}\n\nvoid solve() {\n}\n"
-  code: "#include \"template\"\n\nint main() {\n    IO();\n    int T = 1;\n    //\
-    \ cin >> T;\n    while (T--) solve();\n}\n\nvoid solve() {\n}\n"
+    }\n\nvoid solve();\n\n#line 3 \"structure/BIT.hpp\"\nusing namespace std;\n\n\
+    template <class T>\nstruct BIT {\n    int _n;\n    vector<T> data;\n\n    BIT()\
+    \ = default;\n    BIT(int n) : _n(n), data(_n, T{}) {}\n    BIT(const vector<T>&\
+    \ v) : _n(ssize(v)), data(v) {\n        for (int i=1; i<=_n; ++i) {\n        \
+    \    int I = i + (i & -i);\n            if (I <= _n) data[I-1] += data[i-1];\n\
+    \        }\n    }\n\n    void add(int x, T y) {\n        assert(0<=x && x<_n);\n\
+    \        x++;\n        while (x <= _n) {\n            data[x-1] += y;\n      \
+    \      x += x & -x;\n        }\n    }\n    void set(int x, T y) { add(x, y-get(x));\
+    \ }\n\n    void get(int x) const { return sum(x+1) - sum(x); }\n    void operator[](int\
+    \ x) const { return get(x); }\n\n    T sum(int x) const {\n        assert(0<=x\
+    \ && x<=_n);\n        T s = T{};\n        while (0 < x) {\n            s += data[x-1];\n\
+    \            x -= x & -x;\n        }\n        return s;\n    }\n    T sum(int\
+    \ x, int y) const {\n        assert(x <= y);\n        return sum(y) - sum(x);\n\
+    \    }\n};\n#line 4 \"verify/library_checker_point_add_range_sum_1.test.cpp\"\n\
+    \nint main() {\n    IO();\n    int T = 1;\n    // cin >> T;\n    while (T--) solve();\n\
+    }\n\nvoid solve() {\n    int n, q; cin >> n >> q;\n    vll a(n); cin >> a;\n \
+    \   BIT<ll> seg(a);\n    rep(q) {\n        int t; cin >> t;\n        if (t ==\
+    \ 0) {\n            int p, x; cin >> p >> x;\n            seg.add(p, x);\n   \
+    \     } else {\n            int l, r; cin >> l >> r;\n            cout << seg.sum(l,\
+    \ r) << nl;\n        }\n    }\n}\n"
+  code: "#define PROBLEM \"https://judge.yosupo.jp/problem/point_add_range_sum\"\n\
+    #include \"template\"\n#include \"BIT\"\n\nint main() {\n    IO();\n    int T\
+    \ = 1;\n    // cin >> T;\n    while (T--) solve();\n}\n\nvoid solve() {\n    int\
+    \ n, q; cin >> n >> q;\n    vll a(n); cin >> a;\n    BIT<ll> seg(a);\n    rep(q)\
+    \ {\n        int t; cin >> t;\n        if (t == 0) {\n            int p, x; cin\
+    \ >> p >> x;\n            seg.add(p, x);\n        } else {\n            int l,\
+    \ r; cin >> l >> r;\n            cout << seg.sum(l, r) << nl;\n        }\n   \
+    \ }\n}\n"
   dependsOn:
   - utility/template.hpp
-  isVerificationFile: false
-  path: main.cpp
+  - structure/BIT.hpp
+  isVerificationFile: true
+  path: verify/library_checker_point_add_range_sum_1.test.cpp
   requiredBy: []
-  timestamp: '2026-03-04 02:44:48+09:00'
-  verificationStatus: LIBRARY_NO_TESTS
+  timestamp: '2026-03-07 14:47:14+09:00'
+  verificationStatus: TEST_ACCEPTED
   verifiedWith: []
-documentation_of: main.cpp
+documentation_of: verify/library_checker_point_add_range_sum_1.test.cpp
 layout: document
 redirect_from:
-- /library/main.cpp
-- /library/main.cpp.html
-title: main.cpp
+- /verify/verify/library_checker_point_add_range_sum_1.test.cpp
+- /verify/verify/library_checker_point_add_range_sum_1.test.cpp.html
+title: verify/library_checker_point_add_range_sum_1.test.cpp
 ---
