@@ -12,7 +12,7 @@ int main() {
 void solve() {
     int n, q; cin >> n >> q;
     vll a(n); cin >> a;
-    segtree<ll,[](ll x,ll y){return x+y;},[](){return 0LL;}> seg(a);
+    segtree<ll, [](ll x,ll y){return x+y;}, [](){return 0LL;}> seg(a);
     rep(q) {
         int t; cin >> t;
         if (t == 0) {
