@@ -10,7 +10,7 @@ struct unionfind {
     int root(int k) { return data[k]<0 ? k : data[k] = root(data[k]); }
     int operator[](int k) { return root(k); }
 
-    int merge(int x, int y) {
+    bool merge(int x, int y) {
         if ((x = root(x)) == (y = root(y))) return false;
         if (data[x] < data[y]) swap(x, y);
         data[y] += data[x];
@@ -18,7 +18,7 @@ struct unionfind {
         return true;
     }
     template<class F>
-    int merge(int x, int y, const F& f) {
+    bool merge(int x, int y, const F& f) {
         if ((x = root(x)) == (y = root(y))) return false;
         if (data[y] < data[x]) swap(x, y);
         data[x] += data[y];
@@ -37,6 +37,12 @@ struct unionfind {
         vector<vector<int>> re;
         for (int i=0; i<ssize(mem); ++i) if (!mem[i].empty()) re.emplace_back(mem[i]);
         return re;
+    }
+
+    int components() const {
+        int cnt = 0;
+        for (auto& i : data) if (i < 0) cnt++;
+        return cnt;
     }
 };
 
