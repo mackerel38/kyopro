@@ -158,34 +158,35 @@ data:
     \ long long mod = 998244353;\nconstexpr long long MOD = 1000000007;\n\ninline\
     \ void IO() {\n    ios::sync_with_stdio(false);\n    std::cin.tie(nullptr);\n\
     }\n\nvoid solve();\n\n#line 3 \"structure/weighted_unionfind.hpp\"\nusing namespace\
-    \ std;\n\n// Weighted Union Find  (potentials on an abelian group)\n//\n// weight(x)\
-    \ is defined relative to root:  pot[root] = 0, pot[x] = d(root -> x)\n// weight(x,\
-    \ y) := pot[y] - pot[x]  = d(x -> y)\n//\n// merge(x, y, w):  set  weight(x, y)\
-    \ = w  (= pot[y] - pot[x])\n//   returns true if successful (no contradiction),\
-    \ false if already connected\n// same(x, y):  returns true if x and y are in the\
-    \ same component\n// diff(x, y):  returns pot[y] - pot[x]  (UB if !same(x,y))\n\
-    //\n// T: value type with operator+ and operator-  (e.g. long long)\n\ntemplate\
-    \ <class T = long long>\nstruct weighted_unionfind {\n    vector<int> par;\n \
-    \   vector<T>   pot;  // pot[x] = d(par[x] -> x)   (pot[root] = 0)\n    vector<int>\
-    \ rank_;\n\n    weighted_unionfind() = default;\n    weighted_unionfind(int n)\
-    \ : par(n), pot(n, T{}), rank_(n, 0) {\n        iota(par.begin(), par.end(), 0);\n\
-    \    }\n\n    // returns {root, potential of x relative to root}\n    pair<int,\
+    \ std;\n\n// Weighted Union Find with potential  (abelian group on T)\n// Reference:\
+    \ Nyaan's Library\n//\n// Semantics:\n//   potential(x)      : value of x relative\
+    \ to its component root (pot[root] = 0)\n//   diff(x, y)        : potential(y)\
+    \ - potential(x)  (= w(x->y))\n//   merge(x, y, w)    : declare diff(x, y) = w\n\
+    //                       returns true  if merged successfully (x and y were in\
+    \ different components)\n//                       returns false if x and y were\
+    \ already in the same component\n//                         (in this case the\
+    \ constraint is checked: true iff consistent)\n//   same(x, y)        : true iff\
+    \ x and y are in the same component\n\ntemplate <class T = long long>\nstruct\
+    \ weighted_unionfind {\n    vector<int> par, sz;\n    vector<T>   pot;  // pot[x]\
+    \ = d(par[x] -> x); pot[root] = 0 after find\n\n    weighted_unionfind() = default;\n\
+    \    weighted_unionfind(int n) : par(n), sz(n, 1), pot(n, T{}) {\n        iota(par.begin(),\
+    \ par.end(), 0);\n    }\n\n    // Returns {root, potential of x relative to root}.\n\
+    \    // Applies path compression: pot[x] becomes d(root -> x).\n    pair<int,\
     \ T> find(int x) {\n        if (par[x] == x) return {x, T{}};\n        auto [r,\
-    \ p] = find(par[x]);\n        par[x] = r;\n        pot[x] += p;\n        return\
-    \ {r, pot[x]};\n    }\n\n    bool same(int x, int y) { return find(x).first ==\
-    \ find(y).first; }\n\n    // potential of x relative to component root\n    T\
-    \ potential(int x) { return find(x).second; }\n\n    // d(x -> y) = pot[y] - pot[x]\n\
-    \    T diff(int x, int y) { return potential(y) - potential(x); }\n\n    // set\
-    \ weight(x->y) = w  (pot[y] - pot[x] = w)\n    // returns false if already in\
-    \ same component (constraint check only)\n    bool merge(int x, int y, T w) {\n\
-    \        // w = pot[y] - pot[x]\n        // transform to root-relative\n     \
-    \   auto [rx, px] = find(x);\n        auto [ry, py] = find(y);\n        if (rx\
-    \ == ry) return false; // already connected\n        // want: pot[y_new_root_side]\
-    \ - pot[x_new_root_side] = w\n        // pot[y] = py (relative to ry), pot[x]\
-    \ = px (relative to rx)\n        // w = py + pot[ry] - (px + pot[rx])  after merge\n\
-    \        // => merge ry under rx:  pot[ry] = w + px - py\n        w = w + px -\
-    \ py;\n        if (rank_[rx] < rank_[ry]) { swap(rx, ry); w = -w; }\n        par[ry]\
-    \ = rx;\n        pot[ry] = w;\n        if (rank_[rx] == rank_[ry]) ++rank_[rx];\n\
+    \ d] = find(par[x]);\n        pot[x] += d;\n        par[x] = r;\n        return\
+    \ {par[x], pot[x]};\n    }\n\n    bool same(int x, int y) { return find(x).first\
+    \ == find(y).first; }\n\n    T potential(int x) { return find(x).second; }\n\n\
+    \    // diff(x, y) = potential(y) - potential(x)\n    T diff(int x, int y) { return\
+    \ potential(y) - potential(x); }\n\n    // merge(x, y, w): declare diff(x, y)\
+    \ = w  (i.e. pot[y] - pot[x] = w)\n    // Returns true  if x and y were in different\
+    \ components (merged).\n    // Returns false if already in same component;\n \
+    \   //   the return value in that case also indicates consistency: true=consistent,\
+    \ false=contradiction.\n    bool merge(int x, int y, T w) {\n        // Adjust\
+    \ w to be root-relative: w_root = w + pot[x] - pot[y]\n        w += potential(x)\
+    \ - potential(y);\n        int rx = find(x).first;\n        int ry = find(y).first;\n\
+    \        if (rx == ry) return w == T{};  // already connected: check consistency\n\
+    \        // Union by size\n        if (sz[rx] < sz[ry]) { swap(rx, ry); w = -w;\
+    \ }\n        sz[rx] += sz[ry];\n        par[ry] = rx;\n        pot[ry] = w;\n\
     \        return true;\n    }\n};\n#line 3 \"math/modint.hpp\"\nusing namespace\
     \ std;\n\ntemplate <long long Mod>\nstruct modint {\n    long long val;\n    modint(long\
     \ long v = 0) : val(v % Mod) { if (val < 0) val += Mod; }\n    modint operator+(const\
@@ -252,7 +253,7 @@ data:
   isVerificationFile: true
   path: verify/library_checker_unionfind_with_potential.test.cpp
   requiredBy: []
-  timestamp: '2026-03-10 02:22:16+09:00'
+  timestamp: '2026-03-10 03:22:29+09:00'
   verificationStatus: TEST_WRONG_ANSWER
   verifiedWith: []
 documentation_of: verify/library_checker_unionfind_with_potential.test.cpp

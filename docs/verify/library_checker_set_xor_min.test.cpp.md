@@ -155,21 +155,27 @@ data:
     \ long long mod = 998244353;\nconstexpr long long MOD = 1000000007;\n\ninline\
     \ void IO() {\n    ios::sync_with_stdio(false);\n    std::cin.tie(nullptr);\n\
     }\n\nvoid solve();\n\n#line 3 \"structure/binary_trie.hpp\"\nusing namespace std;\n\
-    \n// Binary trie  (non-negative integers, B-bit keys)\n// Operations in O(B):\n\
-    //   insert(x), erase(x)\n//   count(x)     -- number of x stored\n//   size()\
-    \       -- total count\n//   min_element()  -- minimum stored value\n//   max_element()\
-    \  -- maximum stored value\n//   xor_min(x)   -- min(v XOR x) over all stored\
-    \ v  (\"set_xor_min\" problem)\n//   kth(k)       -- k-th (0-indexed) smallest\n\
-    //   lower_bound(x) -- count of elements < x\n\ntemplate <int B = 30>\nstruct\
-    \ binary_trie {\n    struct Node {\n        int ch[2] = {-1, -1};\n        int\
-    \ cnt = 0;\n    };\n    vector<Node> nd;\n\n    binary_trie() { nd.push_back({});\
-    \ } // root = 0\n\n    int _new() { nd.push_back({}); return nd.size() - 1; }\n\
-    \n    void insert(int x, int delta = 1) {\n        int v = 0;\n        nd[0].cnt\
-    \ += delta;\n        for (int i = B - 1; i >= 0; i--) {\n            int b = (x\
-    \ >> i) & 1;\n            if (nd[v].ch[b] == -1) nd[v].ch[b] = _new();\n     \
-    \       v = nd[v].ch[b];\n            nd[v].cnt += delta;\n        }\n    }\n\
-    \    void erase(int x) { insert(x, -1); }\n\n    int count(int x) const {\n  \
-    \      int v = 0;\n        for (int i = B - 1; i >= 0; i--) {\n            int\
+    \n// Binary Trie  (non-negative integers, B-bit keys)\n// Reference: Nyaan's Library\n\
+    // Operations in O(B):\n//   insert(x)      -- add x (creates nodes only on insert)\n\
+    //   erase(x)       -- remove one x (no-op if not present, never creates nodes)\n\
+    //   count(x)       -- number of x stored\n//   size()         -- total count\n\
+    //   min_element()  -- minimum stored value\n//   max_element()  -- maximum stored\
+    \ value\n//   xor_min(x)     -- min(v XOR x) over all stored v\n//   kth(k)  \
+    \       -- k-th (0-indexed) smallest\n//   lower_bound(x) -- count of elements\
+    \ < x\n\ntemplate <int B = 30>\nstruct binary_trie {\n    struct Node {\n    \
+    \    int ch[2] = {-1, -1};\n        int cnt = 0;\n    };\n    vector<Node> nd;\n\
+    \n    binary_trie() { nd.push_back({}); }  // root = 0\n\n    int _new() { nd.push_back({});\
+    \ return (int)nd.size() - 1; }\n\n    // insert: add x, creating nodes as needed\n\
+    \    void insert(int x) {\n        int v = 0;\n        nd[0].cnt++;\n        for\
+    \ (int i = B - 1; i >= 0; i--) {\n            int b = (x >> i) & 1;\n        \
+    \    if (nd[v].ch[b] == -1) nd[v].ch[b] = _new();\n            v = nd[v].ch[b];\n\
+    \            nd[v].cnt++;\n        }\n    }\n\n    // erase: remove one copy of\
+    \ x. No-op if x is not present.\n    // Never creates new nodes.\n    void erase(int\
+    \ x) {\n        if (count(x) == 0) return;\n        int v = 0;\n        nd[0].cnt--;\n\
+    \        for (int i = B - 1; i >= 0; i--) {\n            int b = (x >> i) & 1;\n\
+    \            v = nd[v].ch[b];  // node exists (count > 0 guarantees the path)\n\
+    \            nd[v].cnt--;\n        }\n    }\n\n    int count(int x) const {\n\
+    \        int v = 0;\n        for (int i = B - 1; i >= 0; i--) {\n            int\
     \ b = (x >> i) & 1;\n            if (nd[v].ch[b] == -1) return 0;\n          \
     \  v = nd[v].ch[b];\n        }\n        return nd[v].cnt;\n    }\n    int size()\
     \ const { return nd[0].cnt; }\n    bool empty() const { return nd[0].cnt == 0;\
@@ -179,22 +185,23 @@ data:
     \            if (k < lc) { v = l; }\n            else { k -= lc; res |= (1 <<\
     \ i); v = nd[v].ch[1]; }\n        }\n        return res;\n    }\n    int min_element()\
     \ const { return kth(0); }\n    int max_element() const { return kth(size() -\
-    \ 1); }\n\n    // min XOR with x\n    int xor_min(int x) const {\n        assert(!empty());\n\
-    \        int v = 0, res = 0;\n        for (int i = B - 1; i >= 0; i--) {\n   \
-    \         int b = (x >> i) & 1;\n            int want = b; // prefer same bit\
-    \ => XOR becomes 0\n            if (nd[v].ch[want] == -1 || nd[nd[v].ch[want]].cnt\
-    \ == 0) want ^= 1;\n            res |= ((want ^ b) << i);\n            v = nd[v].ch[want];\n\
-    \        }\n        return res;\n    }\n\n    // number of elements < x\n    int\
-    \ lower_bound(int x) const {\n        int v = 0, cnt = 0;\n        for (int i\
-    \ = B - 1; i >= 0; i--) {\n            int b = (x >> i) & 1;\n            if (b\
-    \ == 1) {\n                int l = nd[v].ch[0];\n                if (l != -1)\
-    \ cnt += nd[l].cnt;\n            }\n            if (nd[v].ch[b] == -1) break;\n\
-    \            v = nd[v].ch[b];\n        }\n        return cnt;\n    }\n};\n#line\
-    \ 4 \"verify/library_checker_set_xor_min.test.cpp\"\n\nint main(){\n    IO();\n\
-    \    int T = 1;\n    while (T--) solve();\n}\n\nvoid solve(){\n    int q; cin\
-    \ >> q;\n    binary_trie<30> bt;\n    rep(q){\n        int t, x; cin >> t >> x;\n\
-    \        if (t == 0)      bt.insert(x);\n        else if (t == 1) bt.erase(x);\n\
-    \        else             cout << bt.xor_min(x) << nl;\n    }\n}\n"
+    \ 1); }\n\n    // min (v XOR x) over all stored v\n    int xor_min(int x) const\
+    \ {\n        assert(!empty());\n        int v = 0, res = 0;\n        for (int\
+    \ i = B - 1; i >= 0; i--) {\n            int b = (x >> i) & 1;\n            int\
+    \ want = b;  // prefer same bit => XOR bit becomes 0\n            if (nd[v].ch[want]\
+    \ == -1 || nd[nd[v].ch[want]].cnt == 0) want ^= 1;\n            res |= ((want\
+    \ ^ b) << i);\n            v = nd[v].ch[want];\n        }\n        return res;\n\
+    \    }\n\n    // number of elements < x\n    int lower_bound(int x) const {\n\
+    \        int v = 0, cnt = 0;\n        for (int i = B - 1; i >= 0; i--) {\n   \
+    \         int b = (x >> i) & 1;\n            if (b == 1) {\n                int\
+    \ l = nd[v].ch[0];\n                if (l != -1) cnt += nd[l].cnt;\n         \
+    \   }\n            if (nd[v].ch[b] == -1) break;\n            v = nd[v].ch[b];\n\
+    \        }\n        return cnt;\n    }\n};\n#line 4 \"verify/library_checker_set_xor_min.test.cpp\"\
+    \n\nint main(){\n    IO();\n    int T = 1;\n    while (T--) solve();\n}\n\nvoid\
+    \ solve(){\n    int q; cin >> q;\n    binary_trie<30> bt;\n    rep(q){\n     \
+    \   int t, x; cin >> t >> x;\n        if (t == 0)      bt.insert(x);\n       \
+    \ else if (t == 1) bt.erase(x);\n        else             cout << bt.xor_min(x)\
+    \ << nl;\n    }\n}\n"
   code: "#define PROBLEM \"https://judge.yosupo.jp/problem/set_xor_min\"\n#include\
     \ \"template\"\n#include \"binary_trie\"\n\nint main(){\n    IO();\n    int T\
     \ = 1;\n    while (T--) solve();\n}\n\nvoid solve(){\n    int q; cin >> q;\n \
@@ -207,7 +214,7 @@ data:
   isVerificationFile: true
   path: verify/library_checker_set_xor_min.test.cpp
   requiredBy: []
-  timestamp: '2026-03-09 22:49:24+09:00'
+  timestamp: '2026-03-10 03:22:29+09:00'
   verificationStatus: TEST_WRONG_ANSWER
   verifiedWith: []
 documentation_of: verify/library_checker_set_xor_min.test.cpp

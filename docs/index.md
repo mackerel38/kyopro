@@ -109,7 +109,7 @@ data:
     - icon: ':heavy_check_mark:'
       path: structure/BIT.hpp
       title: structure/BIT.hpp
-    - icon: ':x:'
+    - icon: ':heavy_check_mark:'
       path: structure/BIT2d.hpp
       title: structure/BIT2d.hpp
     - icon: ':x:'
@@ -124,12 +124,15 @@ data:
     - icon: ':warning:'
       path: structure/ordered_set.hpp
       title: structure/ordered_set.hpp
-    - icon: ':x:'
+    - icon: ':warning:'
       path: structure/segment_beats.hpp
       title: structure/segment_beats.hpp
     - icon: ':heavy_check_mark:'
       path: structure/segtree.hpp
       title: structure/segtree.hpp
+    - icon: ':warning:'
+      path: structure/segtree_beats.hpp
+      title: structure/segtree_beats.hpp
     - icon: ':heavy_check_mark:'
       path: structure/sparse_table.hpp
       title: structure/sparse_table.hpp
@@ -183,7 +186,7 @@ data:
     - icon: ':heavy_check_mark:'
       path: verify/library_checker_point_add_range_sum_bit.test.cpp
       title: verify/library_checker_point_add_range_sum_bit.test.cpp
-    - icon: ':x:'
+    - icon: ':heavy_check_mark:'
       path: verify/library_checker_point_add_rectangle_sum.test.cpp
       title: verify/library_checker_point_add_rectangle_sum.test.cpp
     - icon: ':heavy_check_mark:'

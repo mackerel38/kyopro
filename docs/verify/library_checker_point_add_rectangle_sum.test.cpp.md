@@ -1,7 +1,7 @@
 ---
 data:
   _extendedDependsOn:
-  - icon: ':x:'
+  - icon: ':heavy_check_mark:'
     path: structure/BIT2d.hpp
     title: structure/BIT2d.hpp
   - icon: ':question:'
@@ -9,9 +9,9 @@ data:
     title: utility/template.hpp
   _extendedRequiredBy: []
   _extendedVerifiedWith: []
-  _isVerificationFailed: true
+  _isVerificationFailed: false
   _pathExtension: cpp
-  _verificationStatusIcon: ':x:'
+  _verificationStatusIcon: ':heavy_check_mark:'
   attributes:
     '*NOT_SPECIAL_COMMENTS*': ''
     PROBLEM: https://judge.yosupo.jp/problem/point_add_rectangle_sum
@@ -193,63 +193,59 @@ data:
     \ 1) + sum(lx - 1, ly - 1);\n    }\n};\n#line 4 \"verify/library_checker_point_add_rectangle_sum.test.cpp\"\
     \n\nint main(){\n    IO();\n    int T = 1;\n    while (T--) solve();\n}\n\nvoid\
     \ solve(){\n    int n, q; cin >> n >> q;\n    vector<int> px(n), py(n), pw(n);\n\
-    \    rep(i, n) cin >> px[i] >> py[i] >> pw[i];\n\n    // Read all queries offline\
-    \ to enable x-coordinate compression\n    vector<array<int,5>> qs(q);\n    rep(i,\
-    \ q){\n        cin >> qs[i][0];\n        if (qs[i][0] == 0) cin >> qs[i][1] >>\
-    \ qs[i][2] >> qs[i][3];\n        else               cin >> qs[i][1] >> qs[i][2]\
-    \ >> qs[i][3] >> qs[i][4];\n    }\n\n    // Compress x-coordinates of all add\
-    \ targets (initial N points)\n    vector<int> xs(px.begin(), px.end());\n    sort(xs.begin(),\
-    \ xs.end()); xs.erase(unique(xs.begin(), xs.end()), xs.end());\n    int mx = xs.size();\n\
-    \n    // 1-indexed compressed x\n    auto cx1 = [&](int x) -> int {\n        return\
-    \ (int)(lower_bound(xs.begin(), xs.end(), x) - xs.begin()) + 1;\n    };\n\n  \
-    \  // Build BIT2d_compressed: register all N initial points' y-values\n    BIT2d_compressed<ll>\
-    \ seg(mx);\n    rep(i, n) seg.reserve(cx1(px[i]), py[i]);\n    seg.build();\n\n\
-    \    // Add initial weights\n    rep(i, n) seg.add(cx1(px[i]), py[i], pw[i]);\n\
-    \n    // Process queries\n    rep(i, q){\n        if (qs[i][0] == 0){\n      \
-    \      // add qs[i][3] to point (qs[i][1], qs[i][2])\n            seg.add(cx1(qs[i][1]),\
-    \ qs[i][2], qs[i][3]);\n        } else {\n            // sum over x in [l,r),\
-    \ y in [d,u)\n            int l = qs[i][1], d = qs[i][2], r = qs[i][3], u = qs[i][4];\n\
+    \    rep(i, n) cin >> px[i] >> py[i] >> pw[i];\n\n    // Read all queries offline\n\
+    \    vector<array<int,5>> qs(q);\n    rep(i, q){\n        cin >> qs[i][0];\n \
+    \       if (qs[i][0] == 0) cin >> qs[i][1] >> qs[i][2] >> qs[i][3];\n        else\
+    \               cin >> qs[i][1] >> qs[i][2] >> qs[i][3] >> qs[i][4];\n    }\n\n\
+    \    // Compress x-coordinates of ALL add points (initial N points + type-0 query\
+    \ points)\n    vector<int> xs(px.begin(), px.end());\n    rep(i, q) if (qs[i][0]\
+    \ == 0) xs.push_back(qs[i][1]);\n    sort(xs.begin(), xs.end()); xs.erase(unique(xs.begin(),\
+    \ xs.end()), xs.end());\n    int mx = xs.size();\n\n    // 1-indexed compressed\
+    \ x\n    auto cx1 = [&](int x) -> int {\n        return (int)(lower_bound(xs.begin(),\
+    \ xs.end(), x) - xs.begin()) + 1;\n    };\n\n    // Reserve y-coordinates for\
+    \ ALL add points before build()\n    BIT2d_compressed<ll> seg(mx);\n    rep(i,\
+    \ n) seg.reserve(cx1(px[i]), py[i]);\n    rep(i, q) if (qs[i][0] == 0) seg.reserve(cx1(qs[i][1]),\
+    \ qs[i][2]);\n    seg.build();\n\n    // Add initial weights\n    rep(i, n) seg.add(cx1(px[i]),\
+    \ py[i], pw[i]);\n\n    // Process queries\n    rep(i, q){\n        if (qs[i][0]\
+    \ == 0){\n            seg.add(cx1(qs[i][1]), qs[i][2], qs[i][3]);\n        } else\
+    \ {\n            int l = qs[i][1], d = qs[i][2], r = qs[i][3], u = qs[i][4];\n\
     \            if (l >= r || d >= u){ cout << 0 << nl; continue; }\n           \
-    \ // Compressed x-indices with original value in [l, r)\n            int lx =\
-    \ (int)(lower_bound(xs.begin(), xs.end(), l)   - xs.begin()) + 1;\n          \
-    \  int rx = (int)(lower_bound(xs.begin(), xs.end(), r)   - xs.begin());     //\
-    \ last idx with xs[k]<r\n            if (lx > rx){ cout << 0 << nl; continue;\
-    \ }\n            cout << seg.sum(lx, rx, d, u - 1) << nl;\n        }\n    }\n\
-    }\n"
+    \ int lx = (int)(lower_bound(xs.begin(), xs.end(), l) - xs.begin()) + 1;\n   \
+    \         int rx = (int)(lower_bound(xs.begin(), xs.end(), r) - xs.begin());\n\
+    \            if (lx > rx){ cout << 0 << nl; continue; }\n            cout << seg.sum(lx,\
+    \ rx, d, u - 1) << nl;\n        }\n    }\n}\n"
   code: "#define PROBLEM \"https://judge.yosupo.jp/problem/point_add_rectangle_sum\"\
     \n#include \"template\"\n#include \"BIT2d\"\n\nint main(){\n    IO();\n    int\
     \ T = 1;\n    while (T--) solve();\n}\n\nvoid solve(){\n    int n, q; cin >> n\
     \ >> q;\n    vector<int> px(n), py(n), pw(n);\n    rep(i, n) cin >> px[i] >> py[i]\
-    \ >> pw[i];\n\n    // Read all queries offline to enable x-coordinate compression\n\
-    \    vector<array<int,5>> qs(q);\n    rep(i, q){\n        cin >> qs[i][0];\n \
-    \       if (qs[i][0] == 0) cin >> qs[i][1] >> qs[i][2] >> qs[i][3];\n        else\
-    \               cin >> qs[i][1] >> qs[i][2] >> qs[i][3] >> qs[i][4];\n    }\n\n\
-    \    // Compress x-coordinates of all add targets (initial N points)\n    vector<int>\
-    \ xs(px.begin(), px.end());\n    sort(xs.begin(), xs.end()); xs.erase(unique(xs.begin(),\
-    \ xs.end()), xs.end());\n    int mx = xs.size();\n\n    // 1-indexed compressed\
-    \ x\n    auto cx1 = [&](int x) -> int {\n        return (int)(lower_bound(xs.begin(),\
-    \ xs.end(), x) - xs.begin()) + 1;\n    };\n\n    // Build BIT2d_compressed: register\
-    \ all N initial points' y-values\n    BIT2d_compressed<ll> seg(mx);\n    rep(i,\
-    \ n) seg.reserve(cx1(px[i]), py[i]);\n    seg.build();\n\n    // Add initial weights\n\
-    \    rep(i, n) seg.add(cx1(px[i]), py[i], pw[i]);\n\n    // Process queries\n\
-    \    rep(i, q){\n        if (qs[i][0] == 0){\n            // add qs[i][3] to point\
-    \ (qs[i][1], qs[i][2])\n            seg.add(cx1(qs[i][1]), qs[i][2], qs[i][3]);\n\
-    \        } else {\n            // sum over x in [l,r), y in [d,u)\n          \
-    \  int l = qs[i][1], d = qs[i][2], r = qs[i][3], u = qs[i][4];\n            if\
-    \ (l >= r || d >= u){ cout << 0 << nl; continue; }\n            // Compressed\
-    \ x-indices with original value in [l, r)\n            int lx = (int)(lower_bound(xs.begin(),\
-    \ xs.end(), l)   - xs.begin()) + 1;\n            int rx = (int)(lower_bound(xs.begin(),\
-    \ xs.end(), r)   - xs.begin());     // last idx with xs[k]<r\n            if (lx\
-    \ > rx){ cout << 0 << nl; continue; }\n            cout << seg.sum(lx, rx, d,\
-    \ u - 1) << nl;\n        }\n    }\n}\n"
+    \ >> pw[i];\n\n    // Read all queries offline\n    vector<array<int,5>> qs(q);\n\
+    \    rep(i, q){\n        cin >> qs[i][0];\n        if (qs[i][0] == 0) cin >> qs[i][1]\
+    \ >> qs[i][2] >> qs[i][3];\n        else               cin >> qs[i][1] >> qs[i][2]\
+    \ >> qs[i][3] >> qs[i][4];\n    }\n\n    // Compress x-coordinates of ALL add\
+    \ points (initial N points + type-0 query points)\n    vector<int> xs(px.begin(),\
+    \ px.end());\n    rep(i, q) if (qs[i][0] == 0) xs.push_back(qs[i][1]);\n    sort(xs.begin(),\
+    \ xs.end()); xs.erase(unique(xs.begin(), xs.end()), xs.end());\n    int mx = xs.size();\n\
+    \n    // 1-indexed compressed x\n    auto cx1 = [&](int x) -> int {\n        return\
+    \ (int)(lower_bound(xs.begin(), xs.end(), x) - xs.begin()) + 1;\n    };\n\n  \
+    \  // Reserve y-coordinates for ALL add points before build()\n    BIT2d_compressed<ll>\
+    \ seg(mx);\n    rep(i, n) seg.reserve(cx1(px[i]), py[i]);\n    rep(i, q) if (qs[i][0]\
+    \ == 0) seg.reserve(cx1(qs[i][1]), qs[i][2]);\n    seg.build();\n\n    // Add\
+    \ initial weights\n    rep(i, n) seg.add(cx1(px[i]), py[i], pw[i]);\n\n    //\
+    \ Process queries\n    rep(i, q){\n        if (qs[i][0] == 0){\n            seg.add(cx1(qs[i][1]),\
+    \ qs[i][2], qs[i][3]);\n        } else {\n            int l = qs[i][1], d = qs[i][2],\
+    \ r = qs[i][3], u = qs[i][4];\n            if (l >= r || d >= u){ cout << 0 <<\
+    \ nl; continue; }\n            int lx = (int)(lower_bound(xs.begin(), xs.end(),\
+    \ l) - xs.begin()) + 1;\n            int rx = (int)(lower_bound(xs.begin(), xs.end(),\
+    \ r) - xs.begin());\n            if (lx > rx){ cout << 0 << nl; continue; }\n\
+    \            cout << seg.sum(lx, rx, d, u - 1) << nl;\n        }\n    }\n}\n"
   dependsOn:
   - utility/template.hpp
   - structure/BIT2d.hpp
   isVerificationFile: true
   path: verify/library_checker_point_add_rectangle_sum.test.cpp
   requiredBy: []
-  timestamp: '2026-03-10 02:39:46+09:00'
-  verificationStatus: TEST_WRONG_ANSWER
+  timestamp: '2026-03-10 03:22:29+09:00'
+  verificationStatus: TEST_ACCEPTED
   verifiedWith: []
 documentation_of: verify/library_checker_point_add_rectangle_sum.test.cpp
 layout: document

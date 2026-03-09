@@ -30,7 +30,7 @@ data:
   - icon: ':heavy_check_mark:'
     path: verify/library_checker_point_add_range_sum_bit.test.cpp
     title: verify/library_checker_point_add_range_sum_bit.test.cpp
-  - icon: ':x:'
+  - icon: ':heavy_check_mark:'
     path: verify/library_checker_point_add_rectangle_sum.test.cpp
     title: verify/library_checker_point_add_rectangle_sum.test.cpp
   - icon: ':heavy_check_mark:'
@@ -42,9 +42,6 @@ data:
   - icon: ':heavy_check_mark:'
     path: verify/library_checker_range_affine_range_sum.test.cpp
     title: verify/library_checker_range_affine_range_sum.test.cpp
-  - icon: ':x:'
-    path: verify/library_checker_range_chmin_chmax_add_range_sum.test.cpp
-    title: verify/library_checker_range_chmin_chmax_add_range_sum.test.cpp
   - icon: ':heavy_check_mark:'
     path: verify/library_checker_range_kth_smallest.test.cpp
     title: verify/library_checker_range_kth_smallest.test.cpp
@@ -360,7 +357,6 @@ data:
   - verify/library_checker_point_add_rectangle_sum.test.cpp
   - verify/library_checker_set_xor_min.test.cpp
   - verify/library_checker_enumerate_primes.test.cpp
-  - verify/library_checker_range_chmin_chmax_add_range_sum.test.cpp
   - verify/library_checker_zalgorithm.test.cpp
   - verify/library_checker_unionfind.test.cpp
   - verify/library_checker_range_kth_smallest.test.cpp

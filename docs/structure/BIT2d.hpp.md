@@ -3,12 +3,12 @@ data:
   _extendedDependsOn: []
   _extendedRequiredBy: []
   _extendedVerifiedWith:
-  - icon: ':x:'
+  - icon: ':heavy_check_mark:'
     path: verify/library_checker_point_add_rectangle_sum.test.cpp
     title: verify/library_checker_point_add_rectangle_sum.test.cpp
-  _isVerificationFailed: true
+  _isVerificationFailed: false
   _pathExtension: hpp
-  _verificationStatusIcon: ':x:'
+  _verificationStatusIcon: ':heavy_check_mark:'
   attributes:
     links: []
   bundledCode: "#line 2 \"structure/BIT2d.hpp\"\n#include <bits/stdc++.h>\nusing namespace\
@@ -90,7 +90,7 @@ data:
   path: structure/BIT2d.hpp
   requiredBy: []
   timestamp: '2026-03-10 02:22:16+09:00'
-  verificationStatus: LIBRARY_ALL_WA
+  verificationStatus: LIBRARY_ALL_AC
   verifiedWith:
   - verify/library_checker_point_add_rectangle_sum.test.cpp
 documentation_of: structure/BIT2d.hpp
