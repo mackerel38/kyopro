@@ -1,12 +1,13 @@
 #pragma once
-#include <bits/stdc++.h>
-using namespace std;
+#include "graphtemplate.hpp"
 
 // Kruskal MST
-// edges: vector of {weight, u, v}
+// Use: graph<T, false, true> (undirected, weighted)
 // Returns {total_weight, edges_used}
-template <class T = long long>
-pair<T, vector<tuple<T,int,int>>> kruskal(int n, vector<tuple<T,int,int>> edges) {
+template <class T>
+pair<T, edges<T>> kruskal(graph<T, false, true>& g) {
+    int n = g.size();
+    // Union-Find (inline)
     vector<int> data(n, -1);
     function<int(int)> root = [&](int k) -> int {
         return data[k] < 0 ? k : data[k] = root(data[k]);
@@ -19,13 +20,17 @@ pair<T, vector<tuple<T,int,int>>> kruskal(int n, vector<tuple<T,int,int>> edges)
         return true;
     };
 
-    sort(edges.begin(), edges.end());
+    // Sort edges by cost
+    edges<T> sorted_edges = g._edges;
+    sort(sorted_edges.begin(), sorted_edges.end(),
+         [](const edge<T>& a, const edge<T>& b){ return a.cost < b.cost; });
+
     T total = T{};
-    vector<tuple<T,int,int>> used;
-    for (auto [w, u, v] : edges) {
-        if (uf_merge(u, v)) {
-            total += w;
-            used.emplace_back(w, u, v);
+    edges<T> used;
+    for (auto& e : sorted_edges) {
+        if (uf_merge(e.from, e.to)) {
+            total += e.cost;
+            used.push_back(e);
         }
     }
     return {total, used};

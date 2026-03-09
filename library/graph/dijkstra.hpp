@@ -1,12 +1,11 @@
 #pragma once
-#include <bits/stdc++.h>
-using namespace std;
+#include "graphtemplate.hpp"
 
 // Dijkstra: returns shortest distances from src
-// graph: adjacency list of (to, weight)
-template <class T = long long>
-vector<T> dijkstra(const vector<vector<pair<int,T>>>& graph, int src) {
-    int n = graph.size();
+// Use: graph<T, directed, true> (weighted=true)
+template <class T, bool directed>
+vector<T> dijkstra(graph<T, directed, true>& g, int src) {
+    int n = g.size();
     const T INF = numeric_limits<T>::max() / 2;
     vector<T> dist(n, INF);
     priority_queue<pair<T,int>, vector<pair<T,int>>, greater<pair<T,int>>> pq;
@@ -15,20 +14,20 @@ vector<T> dijkstra(const vector<vector<pair<int,T>>>& graph, int src) {
     while (!pq.empty()) {
         auto [d, v] = pq.top(); pq.pop();
         if (dist[v] < d) continue;
-        for (auto [u, w] : graph[v]) {
-            if (dist[v] + w < dist[u]) {
-                dist[u] = dist[v] + w;
-                pq.push({dist[u], u});
+        for (auto& e : g[v]) {
+            if (dist[v] + e.cost < dist[e.to]) {
+                dist[e.to] = dist[v] + e.cost;
+                pq.push({dist[e.to], e.to});
             }
         }
     }
     return dist;
 }
 
-// Dijkstra with prev array for path reconstruction
-template <class T = long long>
-pair<vector<T>, vector<int>> dijkstra_prev(const vector<vector<pair<int,T>>>& graph, int src) {
-    int n = graph.size();
+// Dijkstra with prev edge for path reconstruction
+template <class T, bool directed>
+pair<vector<T>, vector<int>> dijkstra_prev(graph<T, directed, true>& g, int src) {
+    int n = g.size();
     const T INF = numeric_limits<T>::max() / 2;
     vector<T> dist(n, INF);
     vector<int> prev(n, -1);
@@ -38,11 +37,11 @@ pair<vector<T>, vector<int>> dijkstra_prev(const vector<vector<pair<int,T>>>& gr
     while (!pq.empty()) {
         auto [d, v] = pq.top(); pq.pop();
         if (dist[v] < d) continue;
-        for (auto [u, w] : graph[v]) {
-            if (dist[v] + w < dist[u]) {
-                dist[u] = dist[v] + w;
-                prev[u] = v;
-                pq.push({dist[u], u});
+        for (auto& e : g[v]) {
+            if (dist[v] + e.cost < dist[e.to]) {
+                dist[e.to] = dist[v] + e.cost;
+                prev[e.to] = v;
+                pq.push({dist[e.to], e.to});
             }
         }
     }

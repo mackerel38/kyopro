@@ -1,21 +1,21 @@
 #pragma once
-#include <bits/stdc++.h>
-using namespace std;
+#include "graphtemplate.hpp"
 
 // BFS: returns distance from src (-1 if unreachable)
-template <class Graph = vector<vector<int>>>
-vector<long long> bfs(const Graph& graph, int src) {
-    int n = graph.size();
+// graph<T, directed, weighted> (T=int, unweighted)
+template <class T, bool directed, bool weighted>
+vector<long long> bfs(graph<T, directed, weighted>& g, int src) {
+    int n = g.size();
     vector<long long> dist(n, -1);
     queue<int> q;
     dist[src] = 0;
     q.push(src);
     while (!q.empty()) {
         int v = q.front(); q.pop();
-        for (int u : graph[v]) {
-            if (dist[u] == -1) {
-                dist[u] = dist[v] + 1;
-                q.push(u);
+        for (auto& e : g[v]) {
+            if (dist[e.to] == -1) {
+                dist[e.to] = dist[v] + 1;
+                q.push(e.to);
             }
         }
     }
