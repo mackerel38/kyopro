@@ -33,7 +33,7 @@ data:
   - icon: ':heavy_check_mark:'
     path: verify/library_checker_point_add_rectangle_sum.test.cpp
     title: verify/library_checker_point_add_rectangle_sum.test.cpp
-  - icon: ':x:'
+  - icon: ':heavy_check_mark:'
     path: verify/library_checker_predecessor_problem.test.cpp
     title: verify/library_checker_predecessor_problem.test.cpp
   - icon: ':heavy_check_mark:'
@@ -63,9 +63,9 @@ data:
   - icon: ':heavy_check_mark:'
     path: verify/library_checker_zalgorithm.test.cpp
     title: verify/library_checker_zalgorithm.test.cpp
-  _isVerificationFailed: true
+  _isVerificationFailed: false
   _pathExtension: hpp
-  _verificationStatusIcon: ':question:'
+  _verificationStatusIcon: ':heavy_check_mark:'
   attributes:
     links: []
   bundledCode: "#line 2 \"utility/template.hpp\"\n#ifdef poe\n#define debug(x) cerr\
@@ -346,7 +346,7 @@ data:
   requiredBy:
   - main.cpp
   timestamp: '2026-03-02 19:15:13+09:00'
-  verificationStatus: LIBRARY_SOME_WA
+  verificationStatus: LIBRARY_ALL_AC
   verifiedWith:
   - verify/library_checker_shortest_path.test.cpp
   - verify/library_checker_point_add_range_sum_bit.test.cpp

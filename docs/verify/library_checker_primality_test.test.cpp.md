@@ -4,7 +4,7 @@ data:
   - icon: ':heavy_check_mark:'
     path: math/prime.hpp
     title: math/prime.hpp
-  - icon: ':question:'
+  - icon: ':heavy_check_mark:'
     path: utility/template.hpp
     title: utility/template.hpp
   _extendedRequiredBy: []

@@ -127,7 +127,7 @@ data:
     - icon: ':heavy_check_mark:'
       path: structure/sparse_table.hpp
       title: structure/sparse_table.hpp
-    - icon: ':x:'
+    - icon: ':heavy_check_mark:'
       path: structure/splay_tree.hpp
       title: structure/splay_tree.hpp
     - icon: ':heavy_check_mark:'
@@ -147,7 +147,7 @@ data:
     - icon: ':heavy_check_mark:'
       path: utility/mo.hpp
       title: utility/mo.hpp
-    - icon: ':question:'
+    - icon: ':heavy_check_mark:'
       path: utility/template.hpp
       title: utility/template.hpp
   verificationCategories:
@@ -180,7 +180,7 @@ data:
     - icon: ':heavy_check_mark:'
       path: verify/library_checker_point_add_rectangle_sum.test.cpp
       title: verify/library_checker_point_add_rectangle_sum.test.cpp
-    - icon: ':x:'
+    - icon: ':heavy_check_mark:'
       path: verify/library_checker_predecessor_problem.test.cpp
       title: verify/library_checker_predecessor_problem.test.cpp
     - icon: ':heavy_check_mark:'

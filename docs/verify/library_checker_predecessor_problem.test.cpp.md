@@ -1,17 +1,17 @@
 ---
 data:
   _extendedDependsOn:
-  - icon: ':x:'
+  - icon: ':heavy_check_mark:'
     path: structure/splay_tree.hpp
     title: structure/splay_tree.hpp
-  - icon: ':question:'
+  - icon: ':heavy_check_mark:'
     path: utility/template.hpp
     title: utility/template.hpp
   _extendedRequiredBy: []
   _extendedVerifiedWith: []
-  _isVerificationFailed: true
+  _isVerificationFailed: false
   _pathExtension: cpp
-  _verificationStatusIcon: ':x:'
+  _verificationStatusIcon: ':heavy_check_mark:'
   attributes:
     '*NOT_SPECIAL_COMMENTS*': ''
     PROBLEM: https://judge.yosupo.jp/problem/predecessor_problem
@@ -155,42 +155,44 @@ data:
     \ long long mod = 998244353;\nconstexpr long long MOD = 1000000007;\n\ninline\
     \ void IO() {\n    ios::sync_with_stdio(false);\n    std::cin.tie(nullptr);\n\
     }\n\nvoid solve();\n\n#line 3 \"structure/splay_tree.hpp\"\nusing namespace std;\n\
-    \n// Splay Tree\n// - insert(key)    : O(log n) amortized\n// - erase(key)   \
-    \  : O(log n) amortized\n// - contains(key)  : O(log n) amortized\n// - predecessor(key):\
-    \ max element strictly less than key, O(log n) amortized\n// - successor(key)\
-    \  : min element strictly greater than key, O(log n) amortized\ntemplate <class\
-    \ Key, class Comp = less<Key>>\nstruct splay_tree {\nprivate:\n    struct Node\
-    \ {\n        Key key;\n        Node *ch[2], *par;\n        Node(const Key& k)\
-    \ : key(k), par(nullptr) { ch[0] = ch[1] = nullptr; }\n    };\n\n    Node* root\
-    \ = nullptr;\n    int _size = 0;\n    [[no_unique_address]] Comp comp;\n\n   \
-    \ bool eq(const Key& a, const Key& b) const {\n        return !comp(a, b) && !comp(b,\
-    \ a);\n    }\n\n    void clear_rec(Node* x) {\n        if (!x) return;\n     \
-    \   clear_rec(x->ch[0]);\n        clear_rec(x->ch[1]);\n        delete x;\n  \
-    \  }\n\n    int dir(Node* x) const { return x->par->ch[1] == x ? 1 : 0; }\n\n\
-    \    void rotate(Node* x) {\n        Node* p = x->par;\n        Node* g = p->par;\n\
-    \        int d = dir(x);\n        p->ch[d] = x->ch[d ^ 1];\n        if (x->ch[d\
-    \ ^ 1]) x->ch[d ^ 1]->par = p;\n        x->ch[d ^ 1] = p;\n        p->par = x;\n\
-    \        x->par = g;\n        if (g) g->ch[g->ch[1] == p] = x;\n        else root\
-    \ = x;\n    }\n\n    void splay(Node* x) {\n        while (x->par) {\n       \
-    \     Node* p = x->par;\n            if (p->par) {\n                if (dir(x)\
-    \ == dir(p)) rotate(p);\n                else rotate(x);\n            }\n    \
-    \        rotate(x);\n        }\n        root = x;\n    }\n\n    // Returns the\
-    \ node equal to key, or the last visited node in BST search.\n    Node* find_node(const\
-    \ Key& key) const {\n        Node* cur = root;\n        Node* last = nullptr;\n\
-    \        while (cur) {\n            last = cur;\n            if (eq(cur->key,\
-    \ key)) return cur;\n            cur = cur->ch[comp(cur->key, key)]; // go right\
-    \ if cur->key < key\n        }\n        return last;\n    }\n\npublic:\n    splay_tree()\
-    \ = default;\n    splay_tree(const splay_tree&) = delete;\n    splay_tree& operator=(const\
-    \ splay_tree&) = delete;\n    ~splay_tree() { clear_rec(root); }\n\n    int size()\
-    \ const { return _size; }\n    bool empty() const { return _size == 0; }\n\n \
-    \   // O(log n) amortized\n    bool contains(const Key& key) {\n        if (!root)\
-    \ return false;\n        Node* x = find_node(key);\n        splay(x);\n      \
-    \  return eq(x->key, key);\n    }\n\n    // Returns true if inserted, false if\
-    \ already present. O(log n) amortized\n    bool insert(const Key& key) {\n   \
-    \     if (!root) {\n            root = new Node(key);\n            _size++;\n\
-    \            return true;\n        }\n        Node* x = find_node(key);\n    \
-    \    splay(x);\n        if (eq(x->key, key)) return false;\n        Node* nd =\
-    \ new Node(key);\n        _size++;\n        if (comp(x->key, key)) { // x->key\
+    \n// Splay Tree\n// - insert(key)     : O(log n) amortized\n// - erase(key)  \
+    \    : O(log n) amortized\n// - contains(key)   : O(log n) amortized\n// - predecessor(key):\
+    \ max element strictly < key,  O(log n) amortized\n// - successor(key)  : min\
+    \ element strictly > key,  O(log n) amortized\n// - lower_bound(key): min element\
+    \ >= key,           O(log n) amortized\n// - prev_le(key)    : max element <=\
+    \ key,           O(log n) amortized\n// - min_element()   : min element in set\n\
+    // - max_element()   : max element in set\ntemplate <class Key, class Comp = less<Key>>\n\
+    struct splay_tree {\nprivate:\n    struct Node {\n        Key key;\n        Node\
+    \ *ch[2], *par;\n        Node(const Key& k) : key(k), par(nullptr) { ch[0] = ch[1]\
+    \ = nullptr; }\n    };\n\n    Node* root = nullptr;\n    int _size = 0;\n    [[no_unique_address]]\
+    \ Comp comp;\n\n    bool eq(const Key& a, const Key& b) const {\n        return\
+    \ !comp(a, b) && !comp(b, a);\n    }\n\n    void clear_rec(Node* x) {\n      \
+    \  if (!x) return;\n        clear_rec(x->ch[0]);\n        clear_rec(x->ch[1]);\n\
+    \        delete x;\n    }\n\n    int dir(Node* x) const { return x->par->ch[1]\
+    \ == x ? 1 : 0; }\n\n    void rotate(Node* x) {\n        Node* p = x->par;\n \
+    \       Node* g = p->par;\n        int d = dir(x);\n        p->ch[d] = x->ch[d\
+    \ ^ 1];\n        if (x->ch[d ^ 1]) x->ch[d ^ 1]->par = p;\n        x->ch[d ^ 1]\
+    \ = p;\n        p->par = x;\n        x->par = g;\n        if (g) g->ch[g->ch[1]\
+    \ == p] = x;\n        else root = x;\n    }\n\n    void splay(Node* x) {\n   \
+    \     while (x->par) {\n            Node* p = x->par;\n            if (p->par)\
+    \ {\n                if (dir(x) == dir(p)) rotate(p);\n                else rotate(x);\n\
+    \            }\n            rotate(x);\n        }\n        root = x;\n    }\n\n\
+    \    // Returns the node equal to key, or the last visited node in BST search.\n\
+    \    Node* find_node(const Key& key) const {\n        Node* cur = root;\n    \
+    \    Node* last = nullptr;\n        while (cur) {\n            last = cur;\n \
+    \           if (eq(cur->key, key)) return cur;\n            cur = cur->ch[comp(cur->key,\
+    \ key)]; // go right if cur->key < key\n        }\n        return last;\n    }\n\
+    \npublic:\n    splay_tree() = default;\n    splay_tree(const splay_tree&) = delete;\n\
+    \    splay_tree& operator=(const splay_tree&) = delete;\n    ~splay_tree() { clear_rec(root);\
+    \ }\n\n    int size() const { return _size; }\n    bool empty() const { return\
+    \ _size == 0; }\n\n    // O(log n) amortized\n    bool contains(const Key& key)\
+    \ {\n        if (!root) return false;\n        Node* x = find_node(key);\n   \
+    \     splay(x);\n        return eq(x->key, key);\n    }\n\n    // Returns true\
+    \ if inserted, false if already present. O(log n) amortized\n    bool insert(const\
+    \ Key& key) {\n        if (!root) {\n            root = new Node(key);\n     \
+    \       _size++;\n            return true;\n        }\n        Node* x = find_node(key);\n\
+    \        splay(x);\n        if (eq(x->key, key)) return false;\n        Node*\
+    \ nd = new Node(key);\n        _size++;\n        if (comp(x->key, key)) { // x->key\
     \ < key: nd splits right\n            nd->ch[0] = x;\n            nd->ch[1] =\
     \ x->ch[1];\n            if (x->ch[1]) x->ch[1]->par = nd;\n            x->ch[1]\
     \ = nullptr;\n            x->par = nd;\n        } else { // x->key > key: nd splits\
@@ -219,23 +221,36 @@ data:
     \ key: x is the successor\n        // x->key <= key: successor is in right subtree\n\
     \        Node* cur = x->ch[1];\n        if (!cur) return nullopt;\n        while\
     \ (cur->ch[0]) cur = cur->ch[0];\n        return cur->key;\n    }\n\n    // Min\
-    \ element in the set, or nullopt\n    optional<Key> min_element() {\n        if\
-    \ (!root) return nullopt;\n        Node* cur = root;\n        while (cur->ch[0])\
-    \ cur = cur->ch[0];\n        splay(cur);\n        return cur->key;\n    }\n\n\
-    \    // Max element in the set, or nullopt\n    optional<Key> max_element() {\n\
-    \        if (!root) return nullopt;\n        Node* cur = root;\n        while\
-    \ (cur->ch[1]) cur = cur->ch[1];\n        splay(cur);\n        return cur->key;\n\
-    \    }\n};\n#line 4 \"verify/library_checker_predecessor_problem.test.cpp\"\n\n\
-    int main(){\n    IO();\n    int T = 1;\n    while (T--) solve();\n}\n\nvoid solve(){\n\
-    \    int n, q;\n    cin >> n >> q;\n    string t;\n    cin >> t;\n\n    splay_tree<int>\
-    \ st;\n    rep(i, n) {\n        if (t[i] == '1') st.insert(i);\n    }\n\n    rep(q){\n\
-    \        int type, k;\n        cin >> type >> k;\n        if (type == 0) {\n \
-    \           st.insert(k);\n        } else if (type == 1) {\n            st.erase(k);\n\
-    \        } else if (type == 2) {\n            cout << (st.contains(k) ? 1 : 0)\
-    \ << nl;\n        } else if (type == 3) {\n            auto res = st.predecessor(k);\n\
-    \            cout << (res ? *res : -1) << nl;\n        } else {\n            auto\
-    \ res = st.successor(k);\n            cout << (res ? *res : -1) << nl;\n     \
-    \   }\n    }\n}\n"
+    \ element >= key, or nullopt. O(log n) amortized\n    optional<Key> lower_bound(const\
+    \ Key& key) {\n        if (!root) return nullopt;\n        Node* x = find_node(key);\n\
+    \        splay(x);\n        if (!comp(x->key, key)) {\n            // x->key >=\
+    \ key\n            return x->key;\n        }\n        // x->key < key -> look\
+    \ in right subtree for min\n        Node* cur = x->ch[1];\n        if (!cur) return\
+    \ nullopt;\n        while (cur->ch[0]) cur = cur->ch[0];\n        return cur->key;\n\
+    \    }\n\n    // Max element <= key, or nullopt. O(log n) amortized\n    optional<Key>\
+    \ prev_le(const Key& key) {\n        if (!root) return nullopt;\n        Node*\
+    \ x = find_node(key);\n        splay(x);\n        if (!comp(key, x->key)) {\n\
+    \            // x->key <= key\n            return x->key;\n        }\n       \
+    \ // x->key > key -> look in left subtree for max\n        Node* cur = x->ch[0];\n\
+    \        if (!cur) return nullopt;\n        while (cur->ch[1]) cur = cur->ch[1];\n\
+    \        return cur->key;\n    }\n\n    // Min element in the set, or nullopt\n\
+    \    optional<Key> min_element() {\n        if (!root) return nullopt;\n     \
+    \   Node* cur = root;\n        while (cur->ch[0]) cur = cur->ch[0];\n        splay(cur);\n\
+    \        return cur->key;\n    }\n\n    // Max element in the set, or nullopt\n\
+    \    optional<Key> max_element() {\n        if (!root) return nullopt;\n     \
+    \   Node* cur = root;\n        while (cur->ch[1]) cur = cur->ch[1];\n        splay(cur);\n\
+    \        return cur->key;\n    }\n};\n#line 4 \"verify/library_checker_predecessor_problem.test.cpp\"\
+    \n\nint main(){\n    IO();\n    int T = 1;\n    while (T--) solve();\n}\n\nvoid\
+    \ solve(){\n    int n, q;\n    cin >> n >> q;\n    string t;\n    cin >> t;\n\n\
+    \    splay_tree<int> st;\n    rep(i, n) {\n        if (t[i] == '1') st.insert(i);\n\
+    \    }\n\n    rep(q){\n        int type, k;\n        cin >> type >> k;\n     \
+    \   if (type == 0) {\n            st.insert(k);\n        } else if (type == 1)\
+    \ {\n            st.erase(k);\n        } else if (type == 2) {\n            cout\
+    \ << (st.contains(k) ? 1 : 0) << nl;\n        } else if (type == 3) {\n      \
+    \      auto res = st.lower_bound(k);  // min >= k\n            cout << (res ?\
+    \ *res : -1) << nl;\n        } else { // type == 4\n            auto res = st.prev_le(k);\
+    \      // max <= k\n            cout << (res ? *res : -1) << nl;\n        }\n\
+    \    }\n}\n"
   code: "#define PROBLEM \"https://judge.yosupo.jp/problem/predecessor_problem\"\n\
     #include \"template\"\n#include \"splay_tree\"\n\nint main(){\n    IO();\n   \
     \ int T = 1;\n    while (T--) solve();\n}\n\nvoid solve(){\n    int n, q;\n  \
@@ -244,18 +259,18 @@ data:
     \        int type, k;\n        cin >> type >> k;\n        if (type == 0) {\n \
     \           st.insert(k);\n        } else if (type == 1) {\n            st.erase(k);\n\
     \        } else if (type == 2) {\n            cout << (st.contains(k) ? 1 : 0)\
-    \ << nl;\n        } else if (type == 3) {\n            auto res = st.predecessor(k);\n\
-    \            cout << (res ? *res : -1) << nl;\n        } else {\n            auto\
-    \ res = st.successor(k);\n            cout << (res ? *res : -1) << nl;\n     \
-    \   }\n    }\n}\n"
+    \ << nl;\n        } else if (type == 3) {\n            auto res = st.lower_bound(k);\
+    \  // min >= k\n            cout << (res ? *res : -1) << nl;\n        } else {\
+    \ // type == 4\n            auto res = st.prev_le(k);      // max <= k\n     \
+    \       cout << (res ? *res : -1) << nl;\n        }\n    }\n}\n"
   dependsOn:
   - utility/template.hpp
   - structure/splay_tree.hpp
   isVerificationFile: true
   path: verify/library_checker_predecessor_problem.test.cpp
   requiredBy: []
-  timestamp: '2026-03-10 08:26:51+09:00'
-  verificationStatus: TEST_WRONG_ANSWER
+  timestamp: '2026-03-10 08:46:59+09:00'
+  verificationStatus: TEST_ACCEPTED
   verifiedWith: []
 documentation_of: verify/library_checker_predecessor_problem.test.cpp
 layout: document

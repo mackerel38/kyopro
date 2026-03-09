@@ -4,7 +4,7 @@ data:
   - icon: ':heavy_check_mark:'
     path: structure/wavelet_matrix.hpp
     title: structure/wavelet_matrix.hpp
-  - icon: ':question:'
+  - icon: ':heavy_check_mark:'
     path: utility/template.hpp
     title: utility/template.hpp
   _extendedRequiredBy: []

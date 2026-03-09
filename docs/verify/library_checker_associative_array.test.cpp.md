@@ -4,7 +4,7 @@ data:
   - icon: ':heavy_check_mark:'
     path: utility/hashmap.hpp
     title: utility/hashmap.hpp
-  - icon: ':question:'
+  - icon: ':heavy_check_mark:'
     path: utility/template.hpp
     title: utility/template.hpp
   _extendedRequiredBy: []

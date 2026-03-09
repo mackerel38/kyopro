@@ -7,7 +7,7 @@ data:
   - icon: ':heavy_check_mark:'
     path: structure/lazysegtree.hpp
     title: structure/lazysegtree.hpp
-  - icon: ':question:'
+  - icon: ':heavy_check_mark:'
     path: utility/template.hpp
     title: utility/template.hpp
   _extendedRequiredBy: []
