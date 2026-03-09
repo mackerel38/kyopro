@@ -87,7 +87,7 @@ data:
     - icon: ':warning:'
       path: math/extgcd.hpp
       title: math/extgcd.hpp
-    - icon: ':question:'
+    - icon: ':heavy_check_mark:'
       path: math/modint.hpp
       title: math/modint.hpp
     - icon: ':heavy_check_mark:'
@@ -112,21 +112,12 @@ data:
     - icon: ':heavy_check_mark:'
       path: structure/BIT2d.hpp
       title: structure/BIT2d.hpp
-    - icon: ':x:'
-      path: structure/binary_trie.hpp
-      title: structure/binary_trie.hpp
     - icon: ':heavy_check_mark:'
       path: structure/lazysegtree.hpp
       title: structure/lazysegtree.hpp
     - icon: ':heavy_check_mark:'
       path: structure/majority_vote.hpp
       title: structure/majority_vote.hpp
-    - icon: ':warning:'
-      path: structure/ordered_set.hpp
-      title: structure/ordered_set.hpp
-    - icon: ':warning:'
-      path: structure/segment_beats.hpp
-      title: structure/segment_beats.hpp
     - icon: ':heavy_check_mark:'
       path: structure/segtree.hpp
       title: structure/segtree.hpp
@@ -145,9 +136,6 @@ data:
     - icon: ':heavy_check_mark:'
       path: structure/wavelet_matrix.hpp
       title: structure/wavelet_matrix.hpp
-    - icon: ':x:'
-      path: structure/weighted_unionfind.hpp
-      title: structure/weighted_unionfind.hpp
   - name: utility
     pages:
     - icon: ':heavy_check_mark:'
@@ -156,7 +144,7 @@ data:
     - icon: ':heavy_check_mark:'
       path: utility/mo.hpp
       title: utility/mo.hpp
-    - icon: ':question:'
+    - icon: ':heavy_check_mark:'
       path: utility/template.hpp
       title: utility/template.hpp
   verificationCategories:
@@ -198,15 +186,9 @@ data:
     - icon: ':heavy_check_mark:'
       path: verify/library_checker_range_affine_range_sum.test.cpp
       title: verify/library_checker_range_affine_range_sum.test.cpp
-    - icon: ':x:'
-      path: verify/library_checker_range_chmin_chmax_add_range_sum.test.cpp
-      title: verify/library_checker_range_chmin_chmax_add_range_sum.test.cpp
     - icon: ':heavy_check_mark:'
       path: verify/library_checker_range_kth_smallest.test.cpp
       title: verify/library_checker_range_kth_smallest.test.cpp
-    - icon: ':x:'
-      path: verify/library_checker_set_xor_min.test.cpp
-      title: verify/library_checker_set_xor_min.test.cpp
     - icon: ':heavy_check_mark:'
       path: verify/library_checker_shortest_path.test.cpp
       title: verify/library_checker_shortest_path.test.cpp
@@ -219,9 +201,6 @@ data:
     - icon: ':heavy_check_mark:'
       path: verify/library_checker_unionfind.test.cpp
       title: verify/library_checker_unionfind.test.cpp
-    - icon: ':x:'
-      path: verify/library_checker_unionfind_with_potential.test.cpp
-      title: verify/library_checker_unionfind_with_potential.test.cpp
     - icon: ':heavy_check_mark:'
       path: verify/library_checker_zalgorithm.test.cpp
       title: verify/library_checker_zalgorithm.test.cpp

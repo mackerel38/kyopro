@@ -12,12 +12,9 @@ data:
   - icon: ':heavy_check_mark:'
     path: verify/library_checker_range_affine_range_sum.test.cpp
     title: verify/library_checker_range_affine_range_sum.test.cpp
-  - icon: ':x:'
-    path: verify/library_checker_unionfind_with_potential.test.cpp
-    title: verify/library_checker_unionfind_with_potential.test.cpp
-  _isVerificationFailed: true
+  _isVerificationFailed: false
   _pathExtension: hpp
-  _verificationStatusIcon: ':question:'
+  _verificationStatusIcon: ':heavy_check_mark:'
   attributes:
     links: []
   bundledCode: "#line 2 \"math/modint.hpp\"\n#include <bits/stdc++.h>\nusing namespace\
@@ -88,9 +85,8 @@ data:
   requiredBy:
   - math/combination.hpp
   timestamp: '2026-03-09 22:49:24+09:00'
-  verificationStatus: LIBRARY_SOME_WA
+  verificationStatus: LIBRARY_ALL_AC
   verifiedWith:
-  - verify/library_checker_unionfind_with_potential.test.cpp
   - verify/library_checker_queue_operate_all_composite.test.cpp
   - verify/library_checker_range_affine_range_sum.test.cpp
 documentation_of: math/modint.hpp

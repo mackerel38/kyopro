@@ -45,9 +45,6 @@ data:
   - icon: ':heavy_check_mark:'
     path: verify/library_checker_range_kth_smallest.test.cpp
     title: verify/library_checker_range_kth_smallest.test.cpp
-  - icon: ':x:'
-    path: verify/library_checker_set_xor_min.test.cpp
-    title: verify/library_checker_set_xor_min.test.cpp
   - icon: ':heavy_check_mark:'
     path: verify/library_checker_shortest_path.test.cpp
     title: verify/library_checker_shortest_path.test.cpp
@@ -60,15 +57,12 @@ data:
   - icon: ':heavy_check_mark:'
     path: verify/library_checker_unionfind.test.cpp
     title: verify/library_checker_unionfind.test.cpp
-  - icon: ':x:'
-    path: verify/library_checker_unionfind_with_potential.test.cpp
-    title: verify/library_checker_unionfind_with_potential.test.cpp
   - icon: ':heavy_check_mark:'
     path: verify/library_checker_zalgorithm.test.cpp
     title: verify/library_checker_zalgorithm.test.cpp
-  _isVerificationFailed: true
+  _isVerificationFailed: false
   _pathExtension: hpp
-  _verificationStatusIcon: ':question:'
+  _verificationStatusIcon: ':heavy_check_mark:'
   attributes:
     links: []
   bundledCode: "#line 2 \"utility/template.hpp\"\n#ifdef poe\n#define debug(x) cerr\
@@ -349,13 +343,11 @@ data:
   requiredBy:
   - main.cpp
   timestamp: '2026-03-02 19:15:13+09:00'
-  verificationStatus: LIBRARY_SOME_WA
+  verificationStatus: LIBRARY_ALL_AC
   verifiedWith:
   - verify/library_checker_shortest_path.test.cpp
   - verify/library_checker_point_add_range_sum_bit.test.cpp
-  - verify/library_checker_unionfind_with_potential.test.cpp
   - verify/library_checker_point_add_rectangle_sum.test.cpp
-  - verify/library_checker_set_xor_min.test.cpp
   - verify/library_checker_enumerate_primes.test.cpp
   - verify/library_checker_zalgorithm.test.cpp
   - verify/library_checker_unionfind.test.cpp
