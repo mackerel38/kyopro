@@ -29,10 +29,10 @@ void solve(){
         } else if (type == 2) {
             cout << (st.contains(k) ? 1 : 0) << nl;
         } else if (type == 3) {
-            auto res = st.predecessor(k);
+            auto res = st.lower_bound(k);  // min >= k
             cout << (res ? *res : -1) << nl;
-        } else {
-            auto res = st.successor(k);
+        } else { // type == 4
+            auto res = st.prev_le(k);      // max <= k
             cout << (res ? *res : -1) << nl;
         }
     }
