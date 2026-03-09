@@ -1,26 +1,26 @@
 ---
 data:
   _extendedDependsOn:
-  - icon: ':heavy_check_mark:'
-    path: structure/BIT2d.hpp
-    title: structure/BIT2d.hpp
+  - icon: ':x:'
+    path: structure/splay_tree.hpp
+    title: structure/splay_tree.hpp
   - icon: ':question:'
     path: utility/template.hpp
     title: utility/template.hpp
   _extendedRequiredBy: []
   _extendedVerifiedWith: []
-  _isVerificationFailed: false
+  _isVerificationFailed: true
   _pathExtension: cpp
-  _verificationStatusIcon: ':heavy_check_mark:'
+  _verificationStatusIcon: ':x:'
   attributes:
     '*NOT_SPECIAL_COMMENTS*': ''
-    PROBLEM: https://judge.yosupo.jp/problem/point_add_rectangle_sum
+    PROBLEM: https://judge.yosupo.jp/problem/predecessor_problem
     links:
-    - https://judge.yosupo.jp/problem/point_add_rectangle_sum
-  bundledCode: "#line 1 \"verify/library_checker_point_add_rectangle_sum.test.cpp\"\
-    \n#define PROBLEM \"https://judge.yosupo.jp/problem/point_add_rectangle_sum\"\n\
-    #line 2 \"utility/template.hpp\"\n#ifdef poe\n#define debug(x) cerr << #x << \"\
-    : \" << x << '\\n'\n#else\n#define debug(x)\n#endif\n\n#include <bits/stdc++.h>\n\
+    - https://judge.yosupo.jp/problem/predecessor_problem
+  bundledCode: "#line 1 \"verify/library_checker_predecessor_problem.test.cpp\"\n\
+    #define PROBLEM \"https://judge.yosupo.jp/problem/predecessor_problem\"\n#line\
+    \ 2 \"utility/template.hpp\"\n#ifdef poe\n#define debug(x) cerr << #x << \": \"\
+    \ << x << '\\n'\n#else\n#define debug(x)\n#endif\n\n#include <bits/stdc++.h>\n\
     using namespace std;\n\nusing uint = unsigned int;\nusing ll = long long;\nusing\
     \ ull = unsigned long long;\nusing i128 = __int128;\nusing u128 = unsigned __int128;\n\
     using ld = long double;\nusing str = string;\nusing vi = vector<int>;\nusing vvi\
@@ -154,103 +154,113 @@ data:
     constexpr long double eps = 1e-9;\nconst long double PI = acos(-1);\nconstexpr\
     \ long long mod = 998244353;\nconstexpr long long MOD = 1000000007;\n\ninline\
     \ void IO() {\n    ios::sync_with_stdio(false);\n    std::cin.tie(nullptr);\n\
-    }\n\nvoid solve();\n\n#line 3 \"structure/BIT2d.hpp\"\nusing namespace std;\n\n\
-    // 2D Fenwick (BIT) tree\n// (1) Dense 2D: O(H*W) space, O(log H * log W) per\
-    \ query\n// (2) Compressed 2D (offline): for point_add_rectangle_sum etc.\n\n\
-    // --- Dense 2D BIT ---\ntemplate <class T = long long>\nstruct BIT2d {\n    int\
-    \ h, w;\n    vector<vector<T>> fw;  // fw = Fenwick\n\n    BIT2d() = default;\n\
-    \    BIT2d(int h, int w) : h(h), w(w), fw(h + 1, vector<T>(w + 1, 0)) {}\n\n \
-    \   // add v to point (x, y)  1-indexed\n    void add(int x, int y, T v) {\n \
-    \       for (int i = x; i <= h; i += i & -i)\n            for (int j = y; j <=\
-    \ w; j += j & -j)\n                fw[i][j] += v;\n    }\n\n    // prefix sum\
-    \ [1,x] x [1,y]  1-indexed\n    T sum(int x, int y) const {\n        T s = 0;\n\
-    \        for (int i = x; i > 0; i -= i & -i)\n            for (int j = y; j >\
-    \ 0; j -= j & -j)\n                s += fw[i][j];\n        return s;\n    }\n\n\
-    \    // sum [lx,rx] x [ly,ry]  1-indexed inclusive\n    T sum(int lx, int rx,\
-    \ int ly, int ry) const {\n        return sum(rx, ry) - sum(lx - 1, ry) - sum(rx,\
-    \ ly - 1) + sum(lx - 1, ly - 1);\n    }\n};\n\n// --- Compressed 2D BIT (offline)\
-    \ ---\n// For each x-coordinate, maintain a 1D Fenwick over y-coordinates actually\
-    \ used.\n// O(Q log Q) time + space.\ntemplate <class T = long long>\nstruct BIT2d_compressed\
-    \ {\n    int n;  // x-axis size\n    vector<vector<int>> ys;   // sorted y-coords\
-    \ per x BIT node\n    vector<vector<T>>   fw;   // Fenwick values\n    bool built\
-    \ = false;\n\n    BIT2d_compressed() = default;\n    BIT2d_compressed(int n) :\
-    \ n(n), ys(n + 1), fw(n + 1) {}\n\n    // register point (x, y) before build \
-    \ (1-indexed x)\n    void reserve(int x, int y) {\n        for (int i = x; i <=\
-    \ n; i += i & -i) ys[i].push_back(y);\n    }\n\n    void build() {\n        for\
-    \ (int i = 1; i <= n; i++) {\n            sort(ys[i].begin(), ys[i].end());\n\
-    \            ys[i].erase(unique(ys[i].begin(), ys[i].end()), ys[i].end());\n \
-    \           fw[i].assign(ys[i].size() + 1, 0);\n        }\n        built = true;\n\
-    \    }\n\n    void _fw_add(int x, int y, T v) {\n        int j = (int)(lower_bound(ys[x].begin(),\
-    \ ys[x].end(), y) - ys[x].begin()) + 1;\n        for (; j <= (int)ys[x].size();\
-    \ j += j & -j) fw[x][j] += v;\n    }\n    T _fw_sum(int x, int y) const {\n  \
-    \      int j = (int)(upper_bound(ys[x].begin(), ys[x].end(), y) - ys[x].begin());\n\
-    \        T s = 0;\n        for (; j > 0; j -= j & -j) s += fw[x][j];\n       \
-    \ return s;\n    }\n\n    void add(int x, int y, T v) {\n        for (int i =\
-    \ x; i <= n; i += i & -i) _fw_add(i, y, v);\n    }\n\n    T sum(int x, int y)\
-    \ const {\n        T s = 0;\n        for (int i = x; i > 0; i -= i & -i) s +=\
-    \ _fw_sum(i, y);\n        return s;\n    }\n\n    T sum(int lx, int rx, int ly,\
-    \ int ry) const {\n        return sum(rx, ry) - sum(lx - 1, ry) - sum(rx, ly -\
-    \ 1) + sum(lx - 1, ly - 1);\n    }\n};\n#line 4 \"verify/library_checker_point_add_rectangle_sum.test.cpp\"\
-    \n\nint main(){\n    IO();\n    int T = 1;\n    while (T--) solve();\n}\n\nvoid\
-    \ solve(){\n    int n, q; cin >> n >> q;\n    vector<int> px(n), py(n), pw(n);\n\
-    \    rep(i, n) cin >> px[i] >> py[i] >> pw[i];\n\n    // Read all queries offline\n\
-    \    vector<array<int,5>> qs(q);\n    rep(i, q){\n        cin >> qs[i][0];\n \
-    \       if (qs[i][0] == 0) cin >> qs[i][1] >> qs[i][2] >> qs[i][3];\n        else\
-    \               cin >> qs[i][1] >> qs[i][2] >> qs[i][3] >> qs[i][4];\n    }\n\n\
-    \    // Compress x-coordinates of ALL add points (initial N points + type-0 query\
-    \ points)\n    vector<int> xs(px.begin(), px.end());\n    rep(i, q) if (qs[i][0]\
-    \ == 0) xs.push_back(qs[i][1]);\n    sort(xs.begin(), xs.end()); xs.erase(unique(xs.begin(),\
-    \ xs.end()), xs.end());\n    int mx = xs.size();\n\n    // 1-indexed compressed\
-    \ x\n    auto cx1 = [&](int x) -> int {\n        return (int)(lower_bound(xs.begin(),\
-    \ xs.end(), x) - xs.begin()) + 1;\n    };\n\n    // Reserve y-coordinates for\
-    \ ALL add points before build()\n    BIT2d_compressed<ll> seg(mx);\n    rep(i,\
-    \ n) seg.reserve(cx1(px[i]), py[i]);\n    rep(i, q) if (qs[i][0] == 0) seg.reserve(cx1(qs[i][1]),\
-    \ qs[i][2]);\n    seg.build();\n\n    // Add initial weights\n    rep(i, n) seg.add(cx1(px[i]),\
-    \ py[i], pw[i]);\n\n    // Process queries\n    rep(i, q){\n        if (qs[i][0]\
-    \ == 0){\n            seg.add(cx1(qs[i][1]), qs[i][2], qs[i][3]);\n        } else\
-    \ {\n            int l = qs[i][1], d = qs[i][2], r = qs[i][3], u = qs[i][4];\n\
-    \            if (l >= r || d >= u){ cout << 0 << nl; continue; }\n           \
-    \ int lx = (int)(lower_bound(xs.begin(), xs.end(), l) - xs.begin()) + 1;\n   \
-    \         int rx = (int)(lower_bound(xs.begin(), xs.end(), r) - xs.begin());\n\
-    \            if (lx > rx){ cout << 0 << nl; continue; }\n            cout << seg.sum(lx,\
-    \ rx, d, u - 1) << nl;\n        }\n    }\n}\n"
-  code: "#define PROBLEM \"https://judge.yosupo.jp/problem/point_add_rectangle_sum\"\
-    \n#include \"template\"\n#include \"BIT2d\"\n\nint main(){\n    IO();\n    int\
-    \ T = 1;\n    while (T--) solve();\n}\n\nvoid solve(){\n    int n, q; cin >> n\
-    \ >> q;\n    vector<int> px(n), py(n), pw(n);\n    rep(i, n) cin >> px[i] >> py[i]\
-    \ >> pw[i];\n\n    // Read all queries offline\n    vector<array<int,5>> qs(q);\n\
-    \    rep(i, q){\n        cin >> qs[i][0];\n        if (qs[i][0] == 0) cin >> qs[i][1]\
-    \ >> qs[i][2] >> qs[i][3];\n        else               cin >> qs[i][1] >> qs[i][2]\
-    \ >> qs[i][3] >> qs[i][4];\n    }\n\n    // Compress x-coordinates of ALL add\
-    \ points (initial N points + type-0 query points)\n    vector<int> xs(px.begin(),\
-    \ px.end());\n    rep(i, q) if (qs[i][0] == 0) xs.push_back(qs[i][1]);\n    sort(xs.begin(),\
-    \ xs.end()); xs.erase(unique(xs.begin(), xs.end()), xs.end());\n    int mx = xs.size();\n\
-    \n    // 1-indexed compressed x\n    auto cx1 = [&](int x) -> int {\n        return\
-    \ (int)(lower_bound(xs.begin(), xs.end(), x) - xs.begin()) + 1;\n    };\n\n  \
-    \  // Reserve y-coordinates for ALL add points before build()\n    BIT2d_compressed<ll>\
-    \ seg(mx);\n    rep(i, n) seg.reserve(cx1(px[i]), py[i]);\n    rep(i, q) if (qs[i][0]\
-    \ == 0) seg.reserve(cx1(qs[i][1]), qs[i][2]);\n    seg.build();\n\n    // Add\
-    \ initial weights\n    rep(i, n) seg.add(cx1(px[i]), py[i], pw[i]);\n\n    //\
-    \ Process queries\n    rep(i, q){\n        if (qs[i][0] == 0){\n            seg.add(cx1(qs[i][1]),\
-    \ qs[i][2], qs[i][3]);\n        } else {\n            int l = qs[i][1], d = qs[i][2],\
-    \ r = qs[i][3], u = qs[i][4];\n            if (l >= r || d >= u){ cout << 0 <<\
-    \ nl; continue; }\n            int lx = (int)(lower_bound(xs.begin(), xs.end(),\
-    \ l) - xs.begin()) + 1;\n            int rx = (int)(lower_bound(xs.begin(), xs.end(),\
-    \ r) - xs.begin());\n            if (lx > rx){ cout << 0 << nl; continue; }\n\
-    \            cout << seg.sum(lx, rx, d, u - 1) << nl;\n        }\n    }\n}\n"
+    }\n\nvoid solve();\n\n#line 3 \"structure/splay_tree.hpp\"\nusing namespace std;\n\
+    \n// Splay Tree\n// - insert(key)    : O(log n) amortized\n// - erase(key)   \
+    \  : O(log n) amortized\n// - contains(key)  : O(log n) amortized\n// - predecessor(key):\
+    \ max element strictly less than key, O(log n) amortized\n// - successor(key)\
+    \  : min element strictly greater than key, O(log n) amortized\ntemplate <class\
+    \ Key, class Comp = less<Key>>\nstruct splay_tree {\nprivate:\n    struct Node\
+    \ {\n        Key key;\n        Node *ch[2], *par;\n        Node(const Key& k)\
+    \ : key(k), par(nullptr) { ch[0] = ch[1] = nullptr; }\n    };\n\n    Node* root\
+    \ = nullptr;\n    int _size = 0;\n    [[no_unique_address]] Comp comp;\n\n   \
+    \ bool eq(const Key& a, const Key& b) const {\n        return !comp(a, b) && !comp(b,\
+    \ a);\n    }\n\n    void clear_rec(Node* x) {\n        if (!x) return;\n     \
+    \   clear_rec(x->ch[0]);\n        clear_rec(x->ch[1]);\n        delete x;\n  \
+    \  }\n\n    int dir(Node* x) const { return x->par->ch[1] == x ? 1 : 0; }\n\n\
+    \    void rotate(Node* x) {\n        Node* p = x->par;\n        Node* g = p->par;\n\
+    \        int d = dir(x);\n        p->ch[d] = x->ch[d ^ 1];\n        if (x->ch[d\
+    \ ^ 1]) x->ch[d ^ 1]->par = p;\n        x->ch[d ^ 1] = p;\n        p->par = x;\n\
+    \        x->par = g;\n        if (g) g->ch[g->ch[1] == p] = x;\n        else root\
+    \ = x;\n    }\n\n    void splay(Node* x) {\n        while (x->par) {\n       \
+    \     Node* p = x->par;\n            if (p->par) {\n                if (dir(x)\
+    \ == dir(p)) rotate(p);\n                else rotate(x);\n            }\n    \
+    \        rotate(x);\n        }\n        root = x;\n    }\n\n    // Returns the\
+    \ node equal to key, or the last visited node in BST search.\n    Node* find_node(const\
+    \ Key& key) const {\n        Node* cur = root;\n        Node* last = nullptr;\n\
+    \        while (cur) {\n            last = cur;\n            if (eq(cur->key,\
+    \ key)) return cur;\n            cur = cur->ch[comp(cur->key, key)]; // go right\
+    \ if cur->key < key\n        }\n        return last;\n    }\n\npublic:\n    splay_tree()\
+    \ = default;\n    splay_tree(const splay_tree&) = delete;\n    splay_tree& operator=(const\
+    \ splay_tree&) = delete;\n    ~splay_tree() { clear_rec(root); }\n\n    int size()\
+    \ const { return _size; }\n    bool empty() const { return _size == 0; }\n\n \
+    \   // O(log n) amortized\n    bool contains(const Key& key) {\n        if (!root)\
+    \ return false;\n        Node* x = find_node(key);\n        splay(x);\n      \
+    \  return eq(x->key, key);\n    }\n\n    // Returns true if inserted, false if\
+    \ already present. O(log n) amortized\n    bool insert(const Key& key) {\n   \
+    \     if (!root) {\n            root = new Node(key);\n            _size++;\n\
+    \            return true;\n        }\n        Node* x = find_node(key);\n    \
+    \    splay(x);\n        if (eq(x->key, key)) return false;\n        Node* nd =\
+    \ new Node(key);\n        _size++;\n        if (comp(x->key, key)) { // x->key\
+    \ < key: nd splits right\n            nd->ch[0] = x;\n            nd->ch[1] =\
+    \ x->ch[1];\n            if (x->ch[1]) x->ch[1]->par = nd;\n            x->ch[1]\
+    \ = nullptr;\n            x->par = nd;\n        } else { // x->key > key: nd splits\
+    \ left\n            nd->ch[1] = x;\n            nd->ch[0] = x->ch[0];\n      \
+    \      if (x->ch[0]) x->ch[0]->par = nd;\n            x->ch[0] = nullptr;\n  \
+    \          x->par = nd;\n        }\n        root = nd;\n        return true;\n\
+    \    }\n\n    // Returns true if erased, false if not found. O(log n) amortized\n\
+    \    bool erase(const Key& key) {\n        if (!root) return false;\n        Node*\
+    \ x = find_node(key);\n        splay(x);\n        if (!eq(x->key, key)) return\
+    \ false;\n        Node* L = x->ch[0];\n        Node* R = x->ch[1];\n        if\
+    \ (L) L->par = nullptr;\n        if (R) R->par = nullptr;\n        delete x;\n\
+    \        _size--;\n        if (!L) { root = R; return true; }\n        if (!R)\
+    \ { root = L; return true; }\n        // Splay max of L to root, then attach R\n\
+    \        root = L;\n        Node* cur = L;\n        while (cur->ch[1]) cur = cur->ch[1];\n\
+    \        splay(cur);\n        root->ch[1] = R;\n        R->par = root;\n     \
+    \   return true;\n    }\n\n    // Max element strictly less than key, or nullopt.\
+    \ O(log n) amortized\n    optional<Key> predecessor(const Key& key) {\n      \
+    \  if (!root) return nullopt;\n        Node* x = find_node(key);\n        splay(x);\n\
+    \        if (comp(x->key, key)) return x->key; // x->key < key: x is the predecessor\n\
+    \        // x->key >= key: predecessor is in left subtree\n        Node* cur =\
+    \ x->ch[0];\n        if (!cur) return nullopt;\n        while (cur->ch[1]) cur\
+    \ = cur->ch[1];\n        return cur->key;\n    }\n\n    // Min element strictly\
+    \ greater than key, or nullopt. O(log n) amortized\n    optional<Key> successor(const\
+    \ Key& key) {\n        if (!root) return nullopt;\n        Node* x = find_node(key);\n\
+    \        splay(x);\n        if (comp(key, x->key)) return x->key; // x->key >\
+    \ key: x is the successor\n        // x->key <= key: successor is in right subtree\n\
+    \        Node* cur = x->ch[1];\n        if (!cur) return nullopt;\n        while\
+    \ (cur->ch[0]) cur = cur->ch[0];\n        return cur->key;\n    }\n\n    // Min\
+    \ element in the set, or nullopt\n    optional<Key> min_element() {\n        if\
+    \ (!root) return nullopt;\n        Node* cur = root;\n        while (cur->ch[0])\
+    \ cur = cur->ch[0];\n        splay(cur);\n        return cur->key;\n    }\n\n\
+    \    // Max element in the set, or nullopt\n    optional<Key> max_element() {\n\
+    \        if (!root) return nullopt;\n        Node* cur = root;\n        while\
+    \ (cur->ch[1]) cur = cur->ch[1];\n        splay(cur);\n        return cur->key;\n\
+    \    }\n};\n#line 4 \"verify/library_checker_predecessor_problem.test.cpp\"\n\n\
+    int main(){\n    IO();\n    int T = 1;\n    while (T--) solve();\n}\n\nvoid solve(){\n\
+    \    int n, q;\n    cin >> n >> q;\n    string t;\n    cin >> t;\n\n    splay_tree<int>\
+    \ st;\n    rep(i, n) {\n        if (t[i] == '1') st.insert(i);\n    }\n\n    rep(q){\n\
+    \        int type, k;\n        cin >> type >> k;\n        if (type == 0) {\n \
+    \           st.insert(k);\n        } else if (type == 1) {\n            st.erase(k);\n\
+    \        } else if (type == 2) {\n            cout << (st.contains(k) ? 1 : 0)\
+    \ << nl;\n        } else if (type == 3) {\n            auto res = st.predecessor(k);\n\
+    \            cout << (res ? *res : -1) << nl;\n        } else {\n            auto\
+    \ res = st.successor(k);\n            cout << (res ? *res : -1) << nl;\n     \
+    \   }\n    }\n}\n"
+  code: "#define PROBLEM \"https://judge.yosupo.jp/problem/predecessor_problem\"\n\
+    #include \"template\"\n#include \"splay_tree\"\n\nint main(){\n    IO();\n   \
+    \ int T = 1;\n    while (T--) solve();\n}\n\nvoid solve(){\n    int n, q;\n  \
+    \  cin >> n >> q;\n    string t;\n    cin >> t;\n\n    splay_tree<int> st;\n \
+    \   rep(i, n) {\n        if (t[i] == '1') st.insert(i);\n    }\n\n    rep(q){\n\
+    \        int type, k;\n        cin >> type >> k;\n        if (type == 0) {\n \
+    \           st.insert(k);\n        } else if (type == 1) {\n            st.erase(k);\n\
+    \        } else if (type == 2) {\n            cout << (st.contains(k) ? 1 : 0)\
+    \ << nl;\n        } else if (type == 3) {\n            auto res = st.predecessor(k);\n\
+    \            cout << (res ? *res : -1) << nl;\n        } else {\n            auto\
+    \ res = st.successor(k);\n            cout << (res ? *res : -1) << nl;\n     \
+    \   }\n    }\n}\n"
   dependsOn:
   - utility/template.hpp
-  - structure/BIT2d.hpp
+  - structure/splay_tree.hpp
   isVerificationFile: true
-  path: verify/library_checker_point_add_rectangle_sum.test.cpp
+  path: verify/library_checker_predecessor_problem.test.cpp
   requiredBy: []
-  timestamp: '2026-03-10 03:22:29+09:00'
-  verificationStatus: TEST_ACCEPTED
+  timestamp: '2026-03-10 08:26:51+09:00'
+  verificationStatus: TEST_WRONG_ANSWER
   verifiedWith: []
-documentation_of: verify/library_checker_point_add_rectangle_sum.test.cpp
+documentation_of: verify/library_checker_predecessor_problem.test.cpp
 layout: document
 redirect_from:
-- /verify/verify/library_checker_point_add_rectangle_sum.test.cpp
-- /verify/verify/library_checker_point_add_rectangle_sum.test.cpp.html
-title: verify/library_checker_point_add_rectangle_sum.test.cpp
+- /verify/verify/library_checker_predecessor_problem.test.cpp
+- /verify/verify/library_checker_predecessor_problem.test.cpp.html
+title: verify/library_checker_predecessor_problem.test.cpp
 ---

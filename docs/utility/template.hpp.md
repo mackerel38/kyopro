@@ -33,6 +33,9 @@ data:
   - icon: ':heavy_check_mark:'
     path: verify/library_checker_point_add_rectangle_sum.test.cpp
     title: verify/library_checker_point_add_rectangle_sum.test.cpp
+  - icon: ':x:'
+    path: verify/library_checker_predecessor_problem.test.cpp
+    title: verify/library_checker_predecessor_problem.test.cpp
   - icon: ':heavy_check_mark:'
     path: verify/library_checker_primality_test.test.cpp
     title: verify/library_checker_primality_test.test.cpp
@@ -60,9 +63,9 @@ data:
   - icon: ':heavy_check_mark:'
     path: verify/library_checker_zalgorithm.test.cpp
     title: verify/library_checker_zalgorithm.test.cpp
-  _isVerificationFailed: false
+  _isVerificationFailed: true
   _pathExtension: hpp
-  _verificationStatusIcon: ':heavy_check_mark:'
+  _verificationStatusIcon: ':question:'
   attributes:
     links: []
   bundledCode: "#line 2 \"utility/template.hpp\"\n#ifdef poe\n#define debug(x) cerr\
@@ -343,7 +346,7 @@ data:
   requiredBy:
   - main.cpp
   timestamp: '2026-03-02 19:15:13+09:00'
-  verificationStatus: LIBRARY_ALL_AC
+  verificationStatus: LIBRARY_SOME_WA
   verifiedWith:
   - verify/library_checker_shortest_path.test.cpp
   - verify/library_checker_point_add_range_sum_bit.test.cpp
@@ -355,6 +358,7 @@ data:
   - verify/library_checker_associative_array.test.cpp
   - verify/library_checker_factorize.test.cpp
   - verify/library_checker_staticrmq.test.cpp
+  - verify/library_checker_predecessor_problem.test.cpp
   - verify/library_checker_queue_operate_all_composite.test.cpp
   - verify/library_checker_static_range_inversions_query.test.cpp
   - verify/library_checker_majority_voting.test.cpp
