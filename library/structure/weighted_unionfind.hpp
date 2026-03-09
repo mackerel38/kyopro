@@ -2,63 +2,60 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// Weighted Union Find  (potentials on an abelian group)
+// Weighted Union Find with potential  (abelian group on T)
+// Reference: Nyaan's Library
 //
-// weight(x) is defined relative to root:  pot[root] = 0, pot[x] = d(root -> x)
-// weight(x, y) := pot[y] - pot[x]  = d(x -> y)
-//
-// merge(x, y, w):  set  weight(x, y) = w  (= pot[y] - pot[x])
-//   returns true if successful (no contradiction), false if already connected
-// same(x, y):  returns true if x and y are in the same component
-// diff(x, y):  returns pot[y] - pot[x]  (UB if !same(x,y))
-//
-// T: value type with operator+ and operator-  (e.g. long long)
+// Semantics:
+//   potential(x)      : value of x relative to its component root (pot[root] = 0)
+//   diff(x, y)        : potential(y) - potential(x)  (= w(x->y))
+//   merge(x, y, w)    : declare diff(x, y) = w
+//                       returns true  if merged successfully (x and y were in different components)
+//                       returns false if x and y were already in the same component
+//                         (in this case the constraint is checked: true iff consistent)
+//   same(x, y)        : true iff x and y are in the same component
 
 template <class T = long long>
 struct weighted_unionfind {
-    vector<int> par;
-    vector<T>   pot;  // pot[x] = d(par[x] -> x)   (pot[root] = 0)
-    vector<int> rank_;
+    vector<int> par, sz;
+    vector<T>   pot;  // pot[x] = d(par[x] -> x); pot[root] = 0 after find
 
     weighted_unionfind() = default;
-    weighted_unionfind(int n) : par(n), pot(n, T{}), rank_(n, 0) {
+    weighted_unionfind(int n) : par(n), sz(n, 1), pot(n, T{}) {
         iota(par.begin(), par.end(), 0);
     }
 
-    // returns {root, potential of x relative to root}
+    // Returns {root, potential of x relative to root}.
+    // Applies path compression: pot[x] becomes d(root -> x).
     pair<int, T> find(int x) {
         if (par[x] == x) return {x, T{}};
-        auto [r, p] = find(par[x]);
+        auto [r, d] = find(par[x]);
+        pot[x] += d;
         par[x] = r;
-        pot[x] += p;
-        return {r, pot[x]};
+        return {par[x], pot[x]};
     }
 
     bool same(int x, int y) { return find(x).first == find(y).first; }
 
-    // potential of x relative to component root
     T potential(int x) { return find(x).second; }
 
-    // d(x -> y) = pot[y] - pot[x]
+    // diff(x, y) = potential(y) - potential(x)
     T diff(int x, int y) { return potential(y) - potential(x); }
 
-    // set weight(x->y) = w  (pot[y] - pot[x] = w)
-    // returns false if already in same component (constraint check only)
+    // merge(x, y, w): declare diff(x, y) = w  (i.e. pot[y] - pot[x] = w)
+    // Returns true  if x and y were in different components (merged).
+    // Returns false if already in same component;
+    //   the return value in that case also indicates consistency: true=consistent, false=contradiction.
     bool merge(int x, int y, T w) {
-        // w = pot[y] - pot[x]
-        // transform to root-relative
-        auto [rx, px] = find(x);
-        auto [ry, py] = find(y);
-        if (rx == ry) return false; // already connected
-        // want: pot[y_new_root_side] - pot[x_new_root_side] = w
-        // pot[y] = py (relative to ry), pot[x] = px (relative to rx)
-        // w = py + pot[ry] - (px + pot[rx])  after merge
-        // => merge ry under rx:  pot[ry] = w + px - py
-        w = w + px - py;
-        if (rank_[rx] < rank_[ry]) { swap(rx, ry); w = -w; }
+        // Adjust w to be root-relative: w_root = w + pot[x] - pot[y]
+        w += potential(x) - potential(y);
+        int rx = find(x).first;
+        int ry = find(y).first;
+        if (rx == ry) return w == T{};  // already connected: check consistency
+        // Union by size
+        if (sz[rx] < sz[ry]) { swap(rx, ry); w = -w; }
+        sz[rx] += sz[ry];
         par[ry] = rx;
         pot[ry] = w;
-        if (rank_[rx] == rank_[ry]) ++rank_[rx];
         return true;
     }
 };

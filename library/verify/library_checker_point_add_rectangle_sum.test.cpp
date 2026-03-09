@@ -13,7 +13,7 @@ void solve(){
     vector<int> px(n), py(n), pw(n);
     rep(i, n) cin >> px[i] >> py[i] >> pw[i];
 
-    // Read all queries offline to enable x-coordinate compression
+    // Read all queries offline
     vector<array<int,5>> qs(q);
     rep(i, q){
         cin >> qs[i][0];
@@ -21,8 +21,9 @@ void solve(){
         else               cin >> qs[i][1] >> qs[i][2] >> qs[i][3] >> qs[i][4];
     }
 
-    // Compress x-coordinates of all add targets (initial N points)
+    // Compress x-coordinates of ALL add points (initial N points + type-0 query points)
     vector<int> xs(px.begin(), px.end());
+    rep(i, q) if (qs[i][0] == 0) xs.push_back(qs[i][1]);
     sort(xs.begin(), xs.end()); xs.erase(unique(xs.begin(), xs.end()), xs.end());
     int mx = xs.size();
 
@@ -31,9 +32,10 @@ void solve(){
         return (int)(lower_bound(xs.begin(), xs.end(), x) - xs.begin()) + 1;
     };
 
-    // Build BIT2d_compressed: register all N initial points' y-values
+    // Reserve y-coordinates for ALL add points before build()
     BIT2d_compressed<ll> seg(mx);
     rep(i, n) seg.reserve(cx1(px[i]), py[i]);
+    rep(i, q) if (qs[i][0] == 0) seg.reserve(cx1(qs[i][1]), qs[i][2]);
     seg.build();
 
     // Add initial weights
@@ -42,15 +44,12 @@ void solve(){
     // Process queries
     rep(i, q){
         if (qs[i][0] == 0){
-            // add qs[i][3] to point (qs[i][1], qs[i][2])
             seg.add(cx1(qs[i][1]), qs[i][2], qs[i][3]);
         } else {
-            // sum over x in [l,r), y in [d,u)
             int l = qs[i][1], d = qs[i][2], r = qs[i][3], u = qs[i][4];
             if (l >= r || d >= u){ cout << 0 << nl; continue; }
-            // Compressed x-indices with original value in [l, r)
-            int lx = (int)(lower_bound(xs.begin(), xs.end(), l)   - xs.begin()) + 1;
-            int rx = (int)(lower_bound(xs.begin(), xs.end(), r)   - xs.begin());     // last idx with xs[k]<r
+            int lx = (int)(lower_bound(xs.begin(), xs.end(), l) - xs.begin()) + 1;
+            int rx = (int)(lower_bound(xs.begin(), xs.end(), r) - xs.begin());
             if (lx > rx){ cout << 0 << nl; continue; }
             cout << seg.sum(lx, rx, d, u - 1) << nl;
         }
