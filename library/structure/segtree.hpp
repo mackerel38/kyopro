@@ -79,7 +79,7 @@ struct segtree {
     template<class F>
     int min_left(int x, const F& f) {
         assert(0<=x && x<_n);
-        asserr(f(e()));
+        assert(f(e()));
         if (x == 0) return 0;
         x += size;
         T r = e();
