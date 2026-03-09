@@ -32,18 +32,18 @@ void solve(){
     };
 
     // Build BIT2d_compressed: register all N initial points' y-values
-    BIT2d_compressed<ll> bit(mx);
-    rep(i, n) bit.reserve(cx1(px[i]), py[i]);
-    bit.build();
+    BIT2d_compressed<ll> seg(mx);
+    rep(i, n) seg.reserve(cx1(px[i]), py[i]);
+    seg.build();
 
     // Add initial weights
-    rep(i, n) bit.add(cx1(px[i]), py[i], pw[i]);
+    rep(i, n) seg.add(cx1(px[i]), py[i], pw[i]);
 
     // Process queries
     rep(i, q){
         if (qs[i][0] == 0){
             // add qs[i][3] to point (qs[i][1], qs[i][2])
-            bit.add(cx1(qs[i][1]), qs[i][2], qs[i][3]);
+            seg.add(cx1(qs[i][1]), qs[i][2], qs[i][3]);
         } else {
             // sum over x in [l,r), y in [d,u)
             int l = qs[i][1], d = qs[i][2], r = qs[i][3], u = qs[i][4];
@@ -52,7 +52,7 @@ void solve(){
             int lx = (int)(lower_bound(xs.begin(), xs.end(), l)   - xs.begin()) + 1;
             int rx = (int)(lower_bound(xs.begin(), xs.end(), r)   - xs.begin());     // last idx with xs[k]<r
             if (lx > rx){ cout << 0 << nl; continue; }
-            cout << bit.sum(lx, rx, d, u - 1) << nl;
+            cout << seg.sum(lx, rx, d, u - 1) << nl;
         }
     }
 }

@@ -11,15 +11,15 @@ int main() {
 void solve() {
     int n, q; cin >> n >> q;
     vll a(n); cin >> a;
-    BIT<ll> bit(a);
+    BIT<ll> seg(a);
     rep(q) {
         int t; cin >> t;
         if (t == 0) {
             int p; ll x; cin >> p >> x;
-            bit.add(p, x);
+            seg.add(p, x);
         } else {
             int l, r; cin >> l >> r;
-            cout << bit.sum(l, r) << nl;
+            cout << seg.sum(l, r) << nl;
         }
     }
 }
