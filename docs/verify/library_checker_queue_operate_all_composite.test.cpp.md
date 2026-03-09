@@ -2,8 +2,11 @@
 data:
   _extendedDependsOn:
   - icon: ':question:'
-    path: structure/segtree.hpp
-    title: structure/segtree.hpp
+    path: math/modint.hpp
+    title: math/modint.hpp
+  - icon: ':heavy_check_mark:'
+    path: structure/swag.hpp
+    title: structure/swag.hpp
   - icon: ':question:'
     path: utility/template.hpp
     title: utility/template.hpp
@@ -14,13 +17,13 @@ data:
   _verificationStatusIcon: ':heavy_check_mark:'
   attributes:
     '*NOT_SPECIAL_COMMENTS*': ''
-    PROBLEM: https://judge.yosupo.jp/problem/point_add_range_sum
+    PROBLEM: https://judge.yosupo.jp/problem/queue_operate_all_composite
     links:
-    - https://judge.yosupo.jp/problem/point_add_range_sum
-  bundledCode: "#line 1 \"verify/library_checker_point_add_range_sum.test.cpp\"\n\
-    #define PROBLEM \"https://judge.yosupo.jp/problem/point_add_range_sum\"\n#line\
-    \ 2 \"utility/template.hpp\"\n#ifdef poe\n#define debug(x) cerr << #x << \": \"\
-    \ << x << '\\n'\n#else\n#define debug(x)\n#endif\n\n#include <bits/stdc++.h>\n\
+    - https://judge.yosupo.jp/problem/queue_operate_all_composite
+  bundledCode: "#line 1 \"verify/library_checker_queue_operate_all_composite.test.cpp\"\
+    \n#define PROBLEM \"https://judge.yosupo.jp/problem/queue_operate_all_composite\"\
+    \n#line 2 \"utility/template.hpp\"\n#ifdef poe\n#define debug(x) cerr << #x <<\
+    \ \": \" << x << '\\n'\n#else\n#define debug(x)\n#endif\n\n#include <bits/stdc++.h>\n\
     using namespace std;\n\nusing uint = unsigned int;\nusing ll = long long;\nusing\
     \ ull = unsigned long long;\nusing i128 = __int128;\nusing u128 = unsigned __int128;\n\
     using ld = long double;\nusing str = string;\nusing vi = vector<int>;\nusing vvi\
@@ -154,71 +157,93 @@ data:
     constexpr long double eps = 1e-9;\nconst long double PI = acos(-1);\nconstexpr\
     \ long long mod = 998244353;\nconstexpr long long MOD = 1000000007;\n\ninline\
     \ void IO() {\n    ios::sync_with_stdio(false);\n    std::cin.tie(nullptr);\n\
-    }\n\nvoid solve();\n\n#line 3 \"structure/segtree.hpp\"\nusing namespace std;\n\
-    template <class T, auto op, auto e>\nstruct segtree {\n    int _n, size;\n   \
-    \ vector<T> data;\n\n    segtree() = default;\n    segtree(int n) : _n(n) { build(vector<T>(n,\
-    \ e())); }\n    segtree(const vector<T>& v) : _n(ssize(v)) { build(v); }\n   \
-    \ void build(const vector<T>& v) {\n        size = __bit_ceil((unsigned int)_n);\n\
-    \        data.assign(2*size, e());\n        for (int i=0; i<_n; ++i) data[size+i]\
-    \ = v[i];\n        for (int i=size-1; 0<i; --i) update(i);\n    }\n    \n    void\
-    \ update(int x) { data[x] = op(data[2*x], data[2*x+1]); }\n\n    void set(int\
-    \ x, T y) {\n        assert(0<=x && x<_n);\n        x += size;\n        data[x]\
-    \ = y;\n        for (x>>=1; 0<x; x>>=1) update(x);\n    }\n    void add(int x,\
-    \ T y) { set(x, op(get(x), y)); }\n\n    T get(int x) const {\n        assert(0<=x\
-    \ && x<_n);\n        return data[size+x];\n    }\n    T operator[](int x) const\
-    \ { return get(x); }\n    T allprod() const { return data[1]; }\n    vector<T>\
-    \ values() const {\n        vector<T> re;\n        re.assign(data.begin()+size,\
-    \ data.begin()+size+_n);\n        return re;\n    }\n\n    T prod(int x, int y)\
-    \ const {\n        assert(0<=x && x<=y && y<=_n);\n        x += size;\n      \
-    \  y += size;\n        T l = e(), r = e();\n        while (x < y) {\n        \
-    \    if (x & 1) l = op(l, data[x++]);\n            if (y & 1) r = op(data[--y],\
-    \ r);\n            x >>= 1;\n            y >>= 1;\n        }\n        return op(l,\
-    \ r);\n    }\n\n    template<class F>\n    int max_right(int x, const F& f) const\
-    \ {\n        assert(0<=x && x<=_n);\n        assert(f(e()));\n        if (x ==\
-    \ _n) return _n;\n        x += size;\n        T l = e();\n        do {\n     \
-    \       while ((x&1) == 0) x >>= 1;\n            if (!f(op(l, data[x]))) {\n \
-    \               while (x < size) {\n                    x = x * 2;\n         \
-    \           if (f(op(l, data[x]))) { \n                        l = op(l, data[x]);\n\
-    \                        x++;\n                    }\n                }\n    \
-    \            return x - size;\n            }\n            l = op(l, data[x]);\n\
-    \            x++;\n        } while ((x & -x) != x);\n        return _n;\n    }\n\
-    \    template<class F>\n    int min_left(int x, const F& f) {\n        assert(0<=x\
-    \ && x<_n);\n        asserr(f(e()));\n        if (x == 0) return 0;\n        x\
-    \ += size;\n        T r = e();\n        do {\n            x--;\n            while\
-    \ (1<x && (x&1)) x >>= 1;\n            if (!f(op(data[x], r))) {\n           \
-    \     while (x < size) {\n                    x = x * 2 + 1;\n               \
-    \     if (f(op(data[x], r))) {\n                        r = op(data[x], r);\n\
-    \                        x--;\n                    }\n                }\n    \
-    \            return x + 1 - size;\n            }\n            r = op(data[x],\
-    \ r);\n        } while ((x & -x) != x);\n        return 0;\n    }\n};\n#line 4\
-    \ \"verify/library_checker_point_add_range_sum.test.cpp\"\n\nint main() {\n  \
-    \  IO();\n    int T = 1;\n    // cin >> T;\n    while (T--) solve();\n}\n\nvoid\
-    \ solve() {\n    int n, q; cin >> n >> q;\n    vll a(n); cin >> a;\n    segtree<ll,\
-    \ [](ll x,ll y){return x+y;}, [](){return 0LL;}> seg(a);\n    rep(q) {\n     \
-    \   int t; cin >> t;\n        if (t == 0) {\n            int p, x; cin >> p >>\
-    \ x;\n            seg.add(p, x);\n        } else {\n            int l, r; cin\
-    \ >> l >> r;\n            cout << seg.prod(l, r) << nl;\n        }\n    }\n}\n"
-  code: "#define PROBLEM \"https://judge.yosupo.jp/problem/point_add_range_sum\"\n\
-    #include \"template\"\n#include \"segtree\"\n\nint main() {\n    IO();\n    int\
-    \ T = 1;\n    // cin >> T;\n    while (T--) solve();\n}\n\nvoid solve() {\n  \
-    \  int n, q; cin >> n >> q;\n    vll a(n); cin >> a;\n    segtree<ll, [](ll x,ll\
-    \ y){return x+y;}, [](){return 0LL;}> seg(a);\n    rep(q) {\n        int t; cin\
-    \ >> t;\n        if (t == 0) {\n            int p, x; cin >> p >> x;\n       \
-    \     seg.add(p, x);\n        } else {\n            int l, r; cin >> l >> r;\n\
-    \            cout << seg.prod(l, r) << nl;\n        }\n    }\n}\n"
+    }\n\nvoid solve();\n\n#line 3 \"structure/swag.hpp\"\nusing namespace std;\n\n\
+    // Sliding Window Aggregation (SWAG)\n// push_back / pop_front / fold  all amortized\
+    \ O(1)\n// (S, op, e) must form a monoid (NOT required to be commutative)\ntemplate\
+    \ <class S, auto op, auto e>\nstruct swag {\n    struct node { S val, acc; };\n\
+    \    // front_st.back().acc = op(front elements in queue order)\n    // back_st.back().acc\
+    \  = op(back elements in enqueue order)\n    vector<node> front_st, back_st;\n\
+    \n    swag() = default;\n\n    bool empty() const { return front_st.empty() &&\
+    \ back_st.empty(); }\n    int  size()  const { return (int)front_st.size() + (int)back_st.size();\
+    \ }\n\n    void push_back(S x) {\n        S a = back_st.empty() ? x : op(back_st.back().acc,\
+    \ x);\n        back_st.push_back({x, a});\n    }\n\n    void pop_front() {\n \
+    \       assert(!empty());\n        if (front_st.empty()) {\n            // move\
+    \ back -> front (reverse order)\n            while (!back_st.empty()) {\n    \
+    \            S x = back_st.back().val;\n                back_st.pop_back();\n\
+    \                S a = front_st.empty() ? x : op(x, front_st.back().acc);\n  \
+    \              front_st.push_back({x, a});\n            }\n        }\n       \
+    \ front_st.pop_back();\n    }\n\n    // product of all elements in dequeue order\
+    \ (front ... back)\n    S fold() const {\n        if (front_st.empty() && back_st.empty())\
+    \ return e();\n        if (front_st.empty()) return back_st.back().acc;\n    \
+    \    if (back_st.empty())  return front_st.back().acc;\n        return op(front_st.back().acc,\
+    \ back_st.back().acc);\n    }\n};\n#line 3 \"math/modint.hpp\"\nusing namespace\
+    \ std;\n\ntemplate <long long Mod>\nstruct modint {\n    long long val;\n    modint(long\
+    \ long v = 0) : val(v % Mod) { if (val < 0) val += Mod; }\n    modint operator+(const\
+    \ modint& r) const { return modint(val + r.val); }\n    modint operator-(const\
+    \ modint& r) const { return modint(val - r.val + Mod); }\n    modint operator*(const\
+    \ modint& r) const { return modint(val * r.val % Mod); }\n    modint operator/(const\
+    \ modint& r) const { return *this * r.inv(); }\n    modint& operator+=(const modint&\
+    \ r) { return *this = *this + r; }\n    modint& operator-=(const modint& r) {\
+    \ return *this = *this - r; }\n    modint& operator*=(const modint& r) { return\
+    \ *this = *this * r; }\n    modint& operator/=(const modint& r) { return *this\
+    \ = *this / r; }\n    bool operator==(const modint& r) const { return val == r.val;\
+    \ }\n    bool operator!=(const modint& r) const { return val != r.val; }\n   \
+    \ modint pow(long long n) const {\n        modint res(1), base(val);\n       \
+    \ for (; n > 0; n >>= 1) {\n            if (n & 1) res *= base;\n            base\
+    \ *= base;\n        }\n        return res;\n    }\n    modint inv() const { return\
+    \ pow(Mod - 2); } // Mod must be prime\n    friend ostream& operator<<(ostream&\
+    \ os, const modint& x) { return os << x.val; }\n    friend istream& operator>>(istream&\
+    \ is, modint& x) {\n        long long v; is >> v; x = modint(v); return is;\n\
+    \    }\n};\n\nusing mint  = modint<998244353>;\nusing mint7 = modint<1000000007>;\n\
+    \n// Combination/Permutation precomputed with mod\n// Usage: combination<mint>\
+    \ C(MAXN); C.c(n, r);\ntemplate <class mint>\nstruct combination {\n    vector<mint>\
+    \ fact, inv_fact;\n\n    combination(int n) : fact(n+1), inv_fact(n+1) {\n   \
+    \     fact[0] = 1;\n        for (int i = 1; i <= n; i++) fact[i] = fact[i-1] *\
+    \ i;\n        inv_fact[n] = fact[n].inv();\n        for (int i = n-1; i >= 0;\
+    \ i--) inv_fact[i] = inv_fact[i+1] * (i+1);\n    }\n\n    // nCr\n    mint c(int\
+    \ n, int r) const {\n        if (r < 0 || r > n || n < 0) return 0;\n        return\
+    \ fact[n] * inv_fact[r] * inv_fact[n-r];\n    }\n    // nPr\n    mint p(int n,\
+    \ int r) const {\n        if (r < 0 || r > n || n < 0) return 0;\n        return\
+    \ fact[n] * inv_fact[n-r];\n    }\n    // Multiset coefficient H(n,r) = C(n+r-1,\
+    \ r)\n    mint h(int n, int r) const {\n        if (n == 0 && r == 0) return 1;\n\
+    \        return c(n+r-1, r);\n    }\n};\n#line 5 \"verify/library_checker_queue_operate_all_composite.test.cpp\"\
+    \n\n// f(x) = a*x + b  represented as {a, b}\n// op(f, g) = apply f first, then\
+    \ g:  g(f(x)) = (a_f*a_g)*x + (a_g*b_f + b_g)\nusing S = pair<mint, mint>;\nconst\
+    \ auto swag_op = [](S f, S g) -> S {\n    return {f.first * g.first, g.first *\
+    \ f.second + g.second};\n};\nconst auto swag_e  = []() -> S { return {mint(1),\
+    \ mint(0)}; };\n\nint main(){\n    IO();\n    int T = 1;\n    while (T--) solve();\n\
+    }\n\nvoid solve(){\n    int q; cin >> q;\n    swag<S, swag_op, swag_e> sw;\n \
+    \   rep(q){\n        int t; cin >> t;\n        if (t == 0){\n            mint\
+    \ a, b; cin >> a >> b;\n            sw.push_back({a, b});\n        } else if (t\
+    \ == 1){\n            sw.pop_front();\n        } else {\n            mint x; cin\
+    \ >> x;\n            auto [a, b] = sw.fold();\n            cout << a * x + b <<\
+    \ nl;\n        }\n    }\n}\n"
+  code: "#define PROBLEM \"https://judge.yosupo.jp/problem/queue_operate_all_composite\"\
+    \n#include \"template\"\n#include \"swag\"\n#include \"modint\"\n\n// f(x) = a*x\
+    \ + b  represented as {a, b}\n// op(f, g) = apply f first, then g:  g(f(x)) =\
+    \ (a_f*a_g)*x + (a_g*b_f + b_g)\nusing S = pair<mint, mint>;\nconst auto swag_op\
+    \ = [](S f, S g) -> S {\n    return {f.first * g.first, g.first * f.second + g.second};\n\
+    };\nconst auto swag_e  = []() -> S { return {mint(1), mint(0)}; };\n\nint main(){\n\
+    \    IO();\n    int T = 1;\n    while (T--) solve();\n}\n\nvoid solve(){\n   \
+    \ int q; cin >> q;\n    swag<S, swag_op, swag_e> sw;\n    rep(q){\n        int\
+    \ t; cin >> t;\n        if (t == 0){\n            mint a, b; cin >> a >> b;\n\
+    \            sw.push_back({a, b});\n        } else if (t == 1){\n            sw.pop_front();\n\
+    \        } else {\n            mint x; cin >> x;\n            auto [a, b] = sw.fold();\n\
+    \            cout << a * x + b << nl;\n        }\n    }\n}\n"
   dependsOn:
   - utility/template.hpp
-  - structure/segtree.hpp
+  - structure/swag.hpp
+  - math/modint.hpp
   isVerificationFile: true
-  path: verify/library_checker_point_add_range_sum.test.cpp
+  path: verify/library_checker_queue_operate_all_composite.test.cpp
   requiredBy: []
-  timestamp: '2026-03-07 17:36:50+09:00'
+  timestamp: '2026-03-09 22:49:24+09:00'
   verificationStatus: TEST_ACCEPTED
   verifiedWith: []
-documentation_of: verify/library_checker_point_add_range_sum.test.cpp
+documentation_of: verify/library_checker_queue_operate_all_composite.test.cpp
 layout: document
 redirect_from:
-- /verify/verify/library_checker_point_add_range_sum.test.cpp
-- /verify/verify/library_checker_point_add_range_sum.test.cpp.html
-title: verify/library_checker_point_add_range_sum.test.cpp
+- /verify/verify/library_checker_queue_operate_all_composite.test.cpp
+- /verify/verify/library_checker_queue_operate_all_composite.test.cpp.html
+title: verify/library_checker_queue_operate_all_composite.test.cpp
 ---

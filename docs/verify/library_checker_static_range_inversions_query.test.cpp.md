@@ -1,26 +1,26 @@
 ---
 data:
   _extendedDependsOn:
-  - icon: ':question:'
-    path: structure/segtree.hpp
-    title: structure/segtree.hpp
+  - icon: ':x:'
+    path: utility/mo.hpp
+    title: utility/mo.hpp
   - icon: ':question:'
     path: utility/template.hpp
     title: utility/template.hpp
   _extendedRequiredBy: []
   _extendedVerifiedWith: []
-  _isVerificationFailed: false
+  _isVerificationFailed: true
   _pathExtension: cpp
-  _verificationStatusIcon: ':heavy_check_mark:'
+  _verificationStatusIcon: ':x:'
   attributes:
     '*NOT_SPECIAL_COMMENTS*': ''
-    PROBLEM: https://judge.yosupo.jp/problem/point_add_range_sum
+    PROBLEM: https://judge.yosupo.jp/problem/static_range_inversions_query
     links:
-    - https://judge.yosupo.jp/problem/point_add_range_sum
-  bundledCode: "#line 1 \"verify/library_checker_point_add_range_sum.test.cpp\"\n\
-    #define PROBLEM \"https://judge.yosupo.jp/problem/point_add_range_sum\"\n#line\
-    \ 2 \"utility/template.hpp\"\n#ifdef poe\n#define debug(x) cerr << #x << \": \"\
-    \ << x << '\\n'\n#else\n#define debug(x)\n#endif\n\n#include <bits/stdc++.h>\n\
+    - https://judge.yosupo.jp/problem/static_range_inversions_query
+  bundledCode: "#line 1 \"verify/library_checker_static_range_inversions_query.test.cpp\"\
+    \n#define PROBLEM \"https://judge.yosupo.jp/problem/static_range_inversions_query\"\
+    \n#line 2 \"utility/template.hpp\"\n#ifdef poe\n#define debug(x) cerr << #x <<\
+    \ \": \" << x << '\\n'\n#else\n#define debug(x)\n#endif\n\n#include <bits/stdc++.h>\n\
     using namespace std;\n\nusing uint = unsigned int;\nusing ll = long long;\nusing\
     \ ull = unsigned long long;\nusing i128 = __int128;\nusing u128 = unsigned __int128;\n\
     using ld = long double;\nusing str = string;\nusing vi = vector<int>;\nusing vvi\
@@ -154,71 +154,103 @@ data:
     constexpr long double eps = 1e-9;\nconst long double PI = acos(-1);\nconstexpr\
     \ long long mod = 998244353;\nconstexpr long long MOD = 1000000007;\n\ninline\
     \ void IO() {\n    ios::sync_with_stdio(false);\n    std::cin.tie(nullptr);\n\
-    }\n\nvoid solve();\n\n#line 3 \"structure/segtree.hpp\"\nusing namespace std;\n\
-    template <class T, auto op, auto e>\nstruct segtree {\n    int _n, size;\n   \
-    \ vector<T> data;\n\n    segtree() = default;\n    segtree(int n) : _n(n) { build(vector<T>(n,\
-    \ e())); }\n    segtree(const vector<T>& v) : _n(ssize(v)) { build(v); }\n   \
-    \ void build(const vector<T>& v) {\n        size = __bit_ceil((unsigned int)_n);\n\
-    \        data.assign(2*size, e());\n        for (int i=0; i<_n; ++i) data[size+i]\
-    \ = v[i];\n        for (int i=size-1; 0<i; --i) update(i);\n    }\n    \n    void\
-    \ update(int x) { data[x] = op(data[2*x], data[2*x+1]); }\n\n    void set(int\
-    \ x, T y) {\n        assert(0<=x && x<_n);\n        x += size;\n        data[x]\
-    \ = y;\n        for (x>>=1; 0<x; x>>=1) update(x);\n    }\n    void add(int x,\
-    \ T y) { set(x, op(get(x), y)); }\n\n    T get(int x) const {\n        assert(0<=x\
-    \ && x<_n);\n        return data[size+x];\n    }\n    T operator[](int x) const\
-    \ { return get(x); }\n    T allprod() const { return data[1]; }\n    vector<T>\
-    \ values() const {\n        vector<T> re;\n        re.assign(data.begin()+size,\
-    \ data.begin()+size+_n);\n        return re;\n    }\n\n    T prod(int x, int y)\
-    \ const {\n        assert(0<=x && x<=y && y<=_n);\n        x += size;\n      \
-    \  y += size;\n        T l = e(), r = e();\n        while (x < y) {\n        \
-    \    if (x & 1) l = op(l, data[x++]);\n            if (y & 1) r = op(data[--y],\
-    \ r);\n            x >>= 1;\n            y >>= 1;\n        }\n        return op(l,\
-    \ r);\n    }\n\n    template<class F>\n    int max_right(int x, const F& f) const\
-    \ {\n        assert(0<=x && x<=_n);\n        assert(f(e()));\n        if (x ==\
-    \ _n) return _n;\n        x += size;\n        T l = e();\n        do {\n     \
-    \       while ((x&1) == 0) x >>= 1;\n            if (!f(op(l, data[x]))) {\n \
-    \               while (x < size) {\n                    x = x * 2;\n         \
-    \           if (f(op(l, data[x]))) { \n                        l = op(l, data[x]);\n\
-    \                        x++;\n                    }\n                }\n    \
-    \            return x - size;\n            }\n            l = op(l, data[x]);\n\
-    \            x++;\n        } while ((x & -x) != x);\n        return _n;\n    }\n\
-    \    template<class F>\n    int min_left(int x, const F& f) {\n        assert(0<=x\
-    \ && x<_n);\n        asserr(f(e()));\n        if (x == 0) return 0;\n        x\
-    \ += size;\n        T r = e();\n        do {\n            x--;\n            while\
-    \ (1<x && (x&1)) x >>= 1;\n            if (!f(op(data[x], r))) {\n           \
-    \     while (x < size) {\n                    x = x * 2 + 1;\n               \
-    \     if (f(op(data[x], r))) {\n                        r = op(data[x], r);\n\
-    \                        x--;\n                    }\n                }\n    \
-    \            return x + 1 - size;\n            }\n            r = op(data[x],\
-    \ r);\n        } while ((x & -x) != x);\n        return 0;\n    }\n};\n#line 4\
-    \ \"verify/library_checker_point_add_range_sum.test.cpp\"\n\nint main() {\n  \
-    \  IO();\n    int T = 1;\n    // cin >> T;\n    while (T--) solve();\n}\n\nvoid\
-    \ solve() {\n    int n, q; cin >> n >> q;\n    vll a(n); cin >> a;\n    segtree<ll,\
-    \ [](ll x,ll y){return x+y;}, [](){return 0LL;}> seg(a);\n    rep(q) {\n     \
-    \   int t; cin >> t;\n        if (t == 0) {\n            int p, x; cin >> p >>\
-    \ x;\n            seg.add(p, x);\n        } else {\n            int l, r; cin\
-    \ >> l >> r;\n            cout << seg.prod(l, r) << nl;\n        }\n    }\n}\n"
-  code: "#define PROBLEM \"https://judge.yosupo.jp/problem/point_add_range_sum\"\n\
-    #include \"template\"\n#include \"segtree\"\n\nint main() {\n    IO();\n    int\
-    \ T = 1;\n    // cin >> T;\n    while (T--) solve();\n}\n\nvoid solve() {\n  \
-    \  int n, q; cin >> n >> q;\n    vll a(n); cin >> a;\n    segtree<ll, [](ll x,ll\
-    \ y){return x+y;}, [](){return 0LL;}> seg(a);\n    rep(q) {\n        int t; cin\
-    \ >> t;\n        if (t == 0) {\n            int p, x; cin >> p >> x;\n       \
-    \     seg.add(p, x);\n        } else {\n            int l, r; cin >> l >> r;\n\
-    \            cout << seg.prod(l, r) << nl;\n        }\n    }\n}\n"
+    }\n\nvoid solve();\n\n#line 3 \"utility/mo.hpp\"\nusing namespace std;\n\n// Mo's\
+    \ algorithm  O((N + Q) sqrt(N)) offline range queries\n//\n// Usage:\n//   mo\
+    \ m(n);\n//   m.add(l, r);   // register query [l, r)  (half-open)\n//   m.run(add_l,\
+    \ del_l, add_r, del_r, query_fn);\n//\n// Callbacks:\n//   add_l(i)  : extend\
+    \  left  boundary to include index i\n//   del_l(i)  : shrink  left  boundary\
+    \ to exclude index i\n//   add_r(i)  : extend  right boundary (called with index\
+    \ = new r-1)\n//   del_r(i)  : shrink  right boundary (called with index = old\
+    \ r-1)\n//   query(qi) : answer query qi  (qi is the order of m.add calls)\n//\n\
+    // Current window is always [curL, curR) during execution.\nstruct mo {\n    int\
+    \ n;\n    vector<pair<int,int>> qs;\n\n    mo() = default;\n    mo(int n) : n(n)\
+    \ {}\n\n    void add(int l, int r) { qs.push_back({l, r}); }\n\n    template <class\
+    \ AL, class DL, class AR, class DR, class Q>\n    void run(AL add_l, DL del_l,\
+    \ AR add_r, DR del_r, Q query) {\n        int q = qs.size();\n        if (q ==\
+    \ 0) return;\n        int block = max(1, (int)sqrt(n));\n        vector<int> ord(q);\n\
+    \        iota(ord.begin(), ord.end(), 0);\n        sort(ord.begin(), ord.end(),\
+    \ [&](int a, int b) {\n            int ba = qs[a].first / block, bb = qs[b].first\
+    \ / block;\n            if (ba != bb) return ba < bb;\n            return (ba\
+    \ & 1) ? qs[a].second > qs[b].second\n                            : qs[a].second\
+    \ < qs[b].second;\n        });\n        int l = 0, r = 0;\n        for (int i\
+    \ : ord) {\n            int ql = qs[i].first, qr = qs[i].second;\n           \
+    \ while (r < qr) add_r(r++);\n            while (l > ql) add_l(--l);\n       \
+    \     while (r > qr) del_r(--r);\n            while (l < ql) del_l(l++);\n   \
+    \         query(i);\n        }\n    }\n};\n#line 4 \"verify/library_checker_static_range_inversions_query.test.cpp\"\
+    \n\nint main(){\n    IO();\n    int T = 1;\n    while (T--) solve();\n}\n\nvoid\
+    \ solve(){\n    int n, q; cin >> n >> q;\n    vector<int> a(n);\n    rep(i, n)\
+    \ cin >> a[i];\n\n    // Coordinate compress\n    vector<int> b = a;\n    sort(b.begin(),\
+    \ b.end()); b.erase(unique(b.begin(), b.end()), b.end());\n    int m = b.size();\n\
+    \    rep(i, n) a[i] = (int)(lower_bound(b.begin(), b.end(), a[i]) - b.begin());\n\
+    \n    // Inline BIT (1-indexed, size m)\n    // bit_add(i, v): add v at position\
+    \ i+1  (i is 0-indexed compressed value)\n    // bit_sum(i)   : sum of positions\
+    \ 1..i  = count with compressed value in [0, i)\n    vector<ll> bit(m + 2, 0);\n\
+    \    auto bit_add = [&](int i, ll v){ for (i += 1; i <= m; i += i & -i) bit[i]\
+    \ += v; };\n    auto bit_sum = [&](int i) -> ll { ll s = 0; for (; i > 0; i -=\
+    \ i & -i) s += bit[i]; return s; };\n\n    mo mo_q(n);\n    rep(i, q){ int l,\
+    \ r; cin >> l >> r; mo_q.add(l, r); }\n\n    vector<ll> ans(q);\n    ll cur =\
+    \ 0;\n    int wsize = 0;\n\n    // add_right(i): extend right to include a[i]\n\
+    \    //   new inversions = #{elements in window with value > a[i]}\n    //   \
+    \               = wsize - bit_sum(a[i] + 1)\n    auto add_r = [&](int i){\n  \
+    \      cur += wsize - bit_sum(a[i] + 1);\n        bit_add(a[i], 1); wsize++;\n\
+    \    };\n    // del_right(i): shrink right to exclude a[i]\n    //   removed inversions\
+    \ = #{elements in window excl a[i] with value > a[i]}\n    //                \
+    \      = wsize - bit_sum(a[i] + 1)  (bit still includes a[i])\n    auto del_r\
+    \ = [&](int i){\n        cur -= wsize - bit_sum(a[i] + 1);\n        bit_add(a[i],\
+    \ -1); wsize--;\n    };\n    // add_left(i): extend left to include a[i]\n   \
+    \ //   a[i] becomes new leftmost; new inversions = #{in window with value < a[i]}\n\
+    \    //                                             = bit_sum(a[i])\n    auto\
+    \ add_l = [&](int i){\n        cur += bit_sum(a[i]);\n        bit_add(a[i], 1);\
+    \ wsize++;\n    };\n    // del_left(i): shrink left to exclude a[i]\n    //  \
+    \ removed inversions = #{in window excl a[i] with value < a[i]}\n    //      \
+    \                = bit_sum(a[i])  (a[i] itself not counted)\n    auto del_l =\
+    \ [&](int i){\n        bit_add(a[i], -1); wsize--;\n        cur -= bit_sum(a[i]);\n\
+    \    };\n\n    mo_q.run(add_l, del_l, add_r, del_r, [&](int qi){ ans[qi] = cur;\
+    \ });\n    rep(i, q) cout << ans[i] << nl;\n}\n"
+  code: "#define PROBLEM \"https://judge.yosupo.jp/problem/static_range_inversions_query\"\
+    \n#include \"template\"\n#include \"mo\"\n\nint main(){\n    IO();\n    int T\
+    \ = 1;\n    while (T--) solve();\n}\n\nvoid solve(){\n    int n, q; cin >> n >>\
+    \ q;\n    vector<int> a(n);\n    rep(i, n) cin >> a[i];\n\n    // Coordinate compress\n\
+    \    vector<int> b = a;\n    sort(b.begin(), b.end()); b.erase(unique(b.begin(),\
+    \ b.end()), b.end());\n    int m = b.size();\n    rep(i, n) a[i] = (int)(lower_bound(b.begin(),\
+    \ b.end(), a[i]) - b.begin());\n\n    // Inline BIT (1-indexed, size m)\n    //\
+    \ bit_add(i, v): add v at position i+1  (i is 0-indexed compressed value)\n  \
+    \  // bit_sum(i)   : sum of positions 1..i  = count with compressed value in [0,\
+    \ i)\n    vector<ll> bit(m + 2, 0);\n    auto bit_add = [&](int i, ll v){ for\
+    \ (i += 1; i <= m; i += i & -i) bit[i] += v; };\n    auto bit_sum = [&](int i)\
+    \ -> ll { ll s = 0; for (; i > 0; i -= i & -i) s += bit[i]; return s; };\n\n \
+    \   mo mo_q(n);\n    rep(i, q){ int l, r; cin >> l >> r; mo_q.add(l, r); }\n\n\
+    \    vector<ll> ans(q);\n    ll cur = 0;\n    int wsize = 0;\n\n    // add_right(i):\
+    \ extend right to include a[i]\n    //   new inversions = #{elements in window\
+    \ with value > a[i]}\n    //                  = wsize - bit_sum(a[i] + 1)\n  \
+    \  auto add_r = [&](int i){\n        cur += wsize - bit_sum(a[i] + 1);\n     \
+    \   bit_add(a[i], 1); wsize++;\n    };\n    // del_right(i): shrink right to exclude\
+    \ a[i]\n    //   removed inversions = #{elements in window excl a[i] with value\
+    \ > a[i]}\n    //                      = wsize - bit_sum(a[i] + 1)  (bit still\
+    \ includes a[i])\n    auto del_r = [&](int i){\n        cur -= wsize - bit_sum(a[i]\
+    \ + 1);\n        bit_add(a[i], -1); wsize--;\n    };\n    // add_left(i): extend\
+    \ left to include a[i]\n    //   a[i] becomes new leftmost; new inversions = #{in\
+    \ window with value < a[i]}\n    //                                          \
+    \   = bit_sum(a[i])\n    auto add_l = [&](int i){\n        cur += bit_sum(a[i]);\n\
+    \        bit_add(a[i], 1); wsize++;\n    };\n    // del_left(i): shrink left to\
+    \ exclude a[i]\n    //   removed inversions = #{in window excl a[i] with value\
+    \ < a[i]}\n    //                      = bit_sum(a[i])  (a[i] itself not counted)\n\
+    \    auto del_l = [&](int i){\n        bit_add(a[i], -1); wsize--;\n        cur\
+    \ -= bit_sum(a[i]);\n    };\n\n    mo_q.run(add_l, del_l, add_r, del_r, [&](int\
+    \ qi){ ans[qi] = cur; });\n    rep(i, q) cout << ans[i] << nl;\n}\n"
   dependsOn:
   - utility/template.hpp
-  - structure/segtree.hpp
+  - utility/mo.hpp
   isVerificationFile: true
-  path: verify/library_checker_point_add_range_sum.test.cpp
+  path: verify/library_checker_static_range_inversions_query.test.cpp
   requiredBy: []
-  timestamp: '2026-03-07 17:36:50+09:00'
-  verificationStatus: TEST_ACCEPTED
+  timestamp: '2026-03-09 22:49:24+09:00'
+  verificationStatus: TEST_WRONG_ANSWER
   verifiedWith: []
-documentation_of: verify/library_checker_point_add_range_sum.test.cpp
+documentation_of: verify/library_checker_static_range_inversions_query.test.cpp
 layout: document
 redirect_from:
-- /verify/verify/library_checker_point_add_range_sum.test.cpp
-- /verify/verify/library_checker_point_add_range_sum.test.cpp.html
-title: verify/library_checker_point_add_range_sum.test.cpp
+- /verify/verify/library_checker_static_range_inversions_query.test.cpp
+- /verify/verify/library_checker_static_range_inversions_query.test.cpp.html
+title: verify/library_checker_static_range_inversions_query.test.cpp
 ---

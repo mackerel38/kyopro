@@ -1,9 +1,12 @@
 ---
 data:
   _extendedDependsOn:
-  - icon: ':question:'
-    path: structure/segtree.hpp
-    title: structure/segtree.hpp
+  - icon: ':heavy_check_mark:'
+    path: graph/graphtemplate.hpp
+    title: graph/graphtemplate.hpp
+  - icon: ':heavy_check_mark:'
+    path: graph/kruskal.hpp
+    title: graph/kruskal.hpp
   - icon: ':question:'
     path: utility/template.hpp
     title: utility/template.hpp
@@ -14,11 +17,11 @@ data:
   _verificationStatusIcon: ':heavy_check_mark:'
   attributes:
     '*NOT_SPECIAL_COMMENTS*': ''
-    PROBLEM: https://judge.yosupo.jp/problem/point_add_range_sum
+    PROBLEM: https://judge.yosupo.jp/problem/minimum_spanning_tree
     links:
-    - https://judge.yosupo.jp/problem/point_add_range_sum
-  bundledCode: "#line 1 \"verify/library_checker_point_add_range_sum.test.cpp\"\n\
-    #define PROBLEM \"https://judge.yosupo.jp/problem/point_add_range_sum\"\n#line\
+    - https://judge.yosupo.jp/problem/minimum_spanning_tree
+  bundledCode: "#line 1 \"verify/library_checker_minimum_spanning_tree.test.cpp\"\n\
+    #define PROBLEM \"https://judge.yosupo.jp/problem/minimum_spanning_tree\"\n#line\
     \ 2 \"utility/template.hpp\"\n#ifdef poe\n#define debug(x) cerr << #x << \": \"\
     \ << x << '\\n'\n#else\n#define debug(x)\n#endif\n\n#include <bits/stdc++.h>\n\
     using namespace std;\n\nusing uint = unsigned int;\nusing ll = long long;\nusing\
@@ -154,71 +157,84 @@ data:
     constexpr long double eps = 1e-9;\nconst long double PI = acos(-1);\nconstexpr\
     \ long long mod = 998244353;\nconstexpr long long MOD = 1000000007;\n\ninline\
     \ void IO() {\n    ios::sync_with_stdio(false);\n    std::cin.tie(nullptr);\n\
-    }\n\nvoid solve();\n\n#line 3 \"structure/segtree.hpp\"\nusing namespace std;\n\
-    template <class T, auto op, auto e>\nstruct segtree {\n    int _n, size;\n   \
-    \ vector<T> data;\n\n    segtree() = default;\n    segtree(int n) : _n(n) { build(vector<T>(n,\
-    \ e())); }\n    segtree(const vector<T>& v) : _n(ssize(v)) { build(v); }\n   \
-    \ void build(const vector<T>& v) {\n        size = __bit_ceil((unsigned int)_n);\n\
-    \        data.assign(2*size, e());\n        for (int i=0; i<_n; ++i) data[size+i]\
-    \ = v[i];\n        for (int i=size-1; 0<i; --i) update(i);\n    }\n    \n    void\
-    \ update(int x) { data[x] = op(data[2*x], data[2*x+1]); }\n\n    void set(int\
-    \ x, T y) {\n        assert(0<=x && x<_n);\n        x += size;\n        data[x]\
-    \ = y;\n        for (x>>=1; 0<x; x>>=1) update(x);\n    }\n    void add(int x,\
-    \ T y) { set(x, op(get(x), y)); }\n\n    T get(int x) const {\n        assert(0<=x\
-    \ && x<_n);\n        return data[size+x];\n    }\n    T operator[](int x) const\
-    \ { return get(x); }\n    T allprod() const { return data[1]; }\n    vector<T>\
-    \ values() const {\n        vector<T> re;\n        re.assign(data.begin()+size,\
-    \ data.begin()+size+_n);\n        return re;\n    }\n\n    T prod(int x, int y)\
-    \ const {\n        assert(0<=x && x<=y && y<=_n);\n        x += size;\n      \
-    \  y += size;\n        T l = e(), r = e();\n        while (x < y) {\n        \
-    \    if (x & 1) l = op(l, data[x++]);\n            if (y & 1) r = op(data[--y],\
-    \ r);\n            x >>= 1;\n            y >>= 1;\n        }\n        return op(l,\
-    \ r);\n    }\n\n    template<class F>\n    int max_right(int x, const F& f) const\
-    \ {\n        assert(0<=x && x<=_n);\n        assert(f(e()));\n        if (x ==\
-    \ _n) return _n;\n        x += size;\n        T l = e();\n        do {\n     \
-    \       while ((x&1) == 0) x >>= 1;\n            if (!f(op(l, data[x]))) {\n \
-    \               while (x < size) {\n                    x = x * 2;\n         \
-    \           if (f(op(l, data[x]))) { \n                        l = op(l, data[x]);\n\
-    \                        x++;\n                    }\n                }\n    \
-    \            return x - size;\n            }\n            l = op(l, data[x]);\n\
-    \            x++;\n        } while ((x & -x) != x);\n        return _n;\n    }\n\
-    \    template<class F>\n    int min_left(int x, const F& f) {\n        assert(0<=x\
-    \ && x<_n);\n        asserr(f(e()));\n        if (x == 0) return 0;\n        x\
-    \ += size;\n        T r = e();\n        do {\n            x--;\n            while\
-    \ (1<x && (x&1)) x >>= 1;\n            if (!f(op(data[x], r))) {\n           \
-    \     while (x < size) {\n                    x = x * 2 + 1;\n               \
-    \     if (f(op(data[x], r))) {\n                        r = op(data[x], r);\n\
-    \                        x--;\n                    }\n                }\n    \
-    \            return x + 1 - size;\n            }\n            r = op(data[x],\
-    \ r);\n        } while ((x & -x) != x);\n        return 0;\n    }\n};\n#line 4\
-    \ \"verify/library_checker_point_add_range_sum.test.cpp\"\n\nint main() {\n  \
-    \  IO();\n    int T = 1;\n    // cin >> T;\n    while (T--) solve();\n}\n\nvoid\
-    \ solve() {\n    int n, q; cin >> n >> q;\n    vll a(n); cin >> a;\n    segtree<ll,\
-    \ [](ll x,ll y){return x+y;}, [](){return 0LL;}> seg(a);\n    rep(q) {\n     \
-    \   int t; cin >> t;\n        if (t == 0) {\n            int p, x; cin >> p >>\
-    \ x;\n            seg.add(p, x);\n        } else {\n            int l, r; cin\
-    \ >> l >> r;\n            cout << seg.prod(l, r) << nl;\n        }\n    }\n}\n"
-  code: "#define PROBLEM \"https://judge.yosupo.jp/problem/point_add_range_sum\"\n\
-    #include \"template\"\n#include \"segtree\"\n\nint main() {\n    IO();\n    int\
-    \ T = 1;\n    // cin >> T;\n    while (T--) solve();\n}\n\nvoid solve() {\n  \
-    \  int n, q; cin >> n >> q;\n    vll a(n); cin >> a;\n    segtree<ll, [](ll x,ll\
-    \ y){return x+y;}, [](){return 0LL;}> seg(a);\n    rep(q) {\n        int t; cin\
-    \ >> t;\n        if (t == 0) {\n            int p, x; cin >> p >> x;\n       \
-    \     seg.add(p, x);\n        } else {\n            int l, r; cin >> l >> r;\n\
-    \            cout << seg.prod(l, r) << nl;\n        }\n    }\n}\n"
+    }\n\nvoid solve();\n\n#line 3 \"graph/graphtemplate.hpp\"\nusing namespace std;\n\
+    // \u8FBA\u306E\u69CB\u9020\u4F53 edge(from, to, cost, id)\ntemplate<class T =\
+    \ int>\nstruct edge {\n    int from, to;\n    T cost;\n    int id;\n};\n// \u9802\
+    \u70B9\u306E\u69CB\u9020\u4F53 vector<edge<T>>\ntemplate<class T = int>\nusing\
+    \ edges = vector<edge<T>>;\n// \u30B0\u30E9\u30D5\u306E\u69CB\u9020\u4F53 graph<T,\
+    \ directed, weighted>\ntemplate <class T = int, bool directed = false, bool weighted\
+    \ = false>\nstruct graph {\n    bool isdirected, isweighted;\n    edges<T> _edges;\n\
+    \    vector<edges<T>> data;\n    T sumcost;\n    graph() = default;\n    // \u9802\
+    \u70B9\u6570 n \u306E\u30B0\u30E9\u30D5\u3092\u4F5C\u6210\u3059\u308B\n    graph(int\
+    \ n) : isdirected(directed), isweighted(weighted), data(n), sumcost(T{}) {}\n\
+    \    // from \u304B\u3089 to \u3078\u8FBA\u3092\u8FFD\u52A0\u3059\u308B\n    void\
+    \ add_edge(int from, int to, T cost = 1, int id = -1) {\n        if (id == -1)\
+    \ id = _edges.size();\n        data[from].push_back(edge<T>{from, to, cost, id});\n\
+    \        _edges.push_back(edge<T>{from, to, cost, id});\n        if (!isdirected)\
+    \ {\n            data[to].push_back(edge<T>{to, from, cost, id});\n        }\n\
+    \        sumcost += cost;\n    }\n    // \u8FBA\u3092\u8FFD\u52A0\u3059\u308B\n\
+    \    void add_edge(edge<T> _e) {\n        add_edge(_e.from, _e.to, _e.cost, _e.id);\n\
+    \    }\n    // \u6A19\u6E96\u5165\u529B\u304B\u3089\u8FBA\u3092\u8AAD\u307F\u8FBC\
+    \u3080\n    void read(int m, int indexed = 1) {\n        for (int i=0; i<m; i++)\
+    \ {\n            int from, to;\n            T cost = 1;\n            cin >> from\
+    \ >> to;\n            if (isweighted) cin >> cost;\n            add_edge(from\
+    \ - indexed, to - indexed, cost);\n        }\n    }\n    // \u9802\u70B9\u6570\
+    \u3092\u8FD4\u3059\n    int size() {\n        return data.size();\n    }\n   \
+    \ // \u9802\u70B9\u3092\u8FD4\u3059\n    edges<T> operator[](int k) {\n      \
+    \  return data[k];\n    }\n    // \u30D1\u30B9\u3092\u9802\u70B9\u306B\u5909\u63DB\
+    \u3059\u308B\n    vector<int> path_to_vertex(edges<T>& _e) {\n        vector<int>\
+    \ re;\n        if (_e.size() == 0) {\n            return re;\n        }\n    \
+    \    if (_e.size() == 1) {\n            re.push_back(_e[0].from);\n          \
+    \  re.push_back(_e[0].to);\n            return re;\n        }\n        int x=_e[0].from,y=_e[0].to;\n\
+    \        if (x==_e[1].to || x == _e[1].from) swap(x, y);\n        re.push_back(x);\n\
+    \        for (int i=1; i<(int)_e.size(); i++) {\n            re.push_back(y);\n\
+    \            x = _e[i].to;\n            if (x == y) x = _e[i].from;\n        \
+    \    swap(x, y);\n        }\n        return re;\n    }\n    // \u9802\u70B9\u3092\
+    \u30D1\u30B9\u306B\u5909\u63DB\u3059\u308B\n    edges<T> vertex_to_path(vector<int>&\
+    \ v) {\n        edges<T> re;\n        for (int i=0; i+1<(int)v.size(); i++) {\n\
+    \            for (auto& _e : data[v[i]]) {\n                if (_e.to == v[i+1])\
+    \ {\n                    re.push_back(_e);\n                    break;\n     \
+    \           }\n            }\n        }\n        return re;\n    }\n};\n#line\
+    \ 3 \"graph/kruskal.hpp\"\n\n// Kruskal MST\n// Use: graph<T, false, true> (undirected,\
+    \ weighted)\n// Returns {total_weight, edges_used}\ntemplate <class T>\npair<T,\
+    \ edges<T>> kruskal(graph<T, false, true>& g) {\n    int n = g.size();\n    //\
+    \ Union-Find (inline)\n    vector<int> data(n, -1);\n    function<int(int)> root\
+    \ = [&](int k) -> int {\n        return data[k] < 0 ? k : data[k] = root(data[k]);\n\
+    \    };\n    auto uf_merge = [&](int x, int y) -> bool {\n        if ((x = root(x))\
+    \ == (y = root(y))) return false;\n        if (data[x] < data[y]) swap(x, y);\n\
+    \        data[y] += data[x];\n        data[x] = y;\n        return true;\n   \
+    \ };\n\n    // Sort edges by cost\n    edges<T> sorted_edges = g._edges;\n   \
+    \ sort(sorted_edges.begin(), sorted_edges.end(),\n         [](const edge<T>& a,\
+    \ const edge<T>& b){ return a.cost < b.cost; });\n\n    T total = T{};\n    edges<T>\
+    \ used;\n    for (auto& e : sorted_edges) {\n        if (uf_merge(e.from, e.to))\
+    \ {\n            total += e.cost;\n            used.push_back(e);\n        }\n\
+    \    }\n    return {total, used};\n}\n#line 4 \"verify/library_checker_minimum_spanning_tree.test.cpp\"\
+    \n\nint main() {\n    IO();\n    int T = 1;\n    while (T--) solve();\n}\n\nvoid\
+    \ solve() {\n    int n, m; cin >> n >> m;\n    graph<ll, false, true> g(n);\n\
+    \    g.read(m, 0);\n    auto [total, used] = kruskal(g);\n    cout << total <<\
+    \ nl;\n    rep(i, (int)used.size()) {\n        cout << used[i].id << (i + 1 ==\
+    \ (int)used.size() ? '\\n' : ' ');\n    }\n}\n"
+  code: "#define PROBLEM \"https://judge.yosupo.jp/problem/minimum_spanning_tree\"\
+    \n#include \"template\"\n#include \"kruskal\"\n\nint main() {\n    IO();\n   \
+    \ int T = 1;\n    while (T--) solve();\n}\n\nvoid solve() {\n    int n, m; cin\
+    \ >> n >> m;\n    graph<ll, false, true> g(n);\n    g.read(m, 0);\n    auto [total,\
+    \ used] = kruskal(g);\n    cout << total << nl;\n    rep(i, (int)used.size())\
+    \ {\n        cout << used[i].id << (i + 1 == (int)used.size() ? '\\n' : ' ');\n\
+    \    }\n}\n"
   dependsOn:
   - utility/template.hpp
-  - structure/segtree.hpp
+  - graph/kruskal.hpp
+  - graph/graphtemplate.hpp
   isVerificationFile: true
-  path: verify/library_checker_point_add_range_sum.test.cpp
+  path: verify/library_checker_minimum_spanning_tree.test.cpp
   requiredBy: []
-  timestamp: '2026-03-07 17:36:50+09:00'
+  timestamp: '2026-03-09 22:49:24+09:00'
   verificationStatus: TEST_ACCEPTED
   verifiedWith: []
-documentation_of: verify/library_checker_point_add_range_sum.test.cpp
+documentation_of: verify/library_checker_minimum_spanning_tree.test.cpp
 layout: document
 redirect_from:
-- /verify/verify/library_checker_point_add_range_sum.test.cpp
-- /verify/verify/library_checker_point_add_range_sum.test.cpp.html
-title: verify/library_checker_point_add_range_sum.test.cpp
+- /verify/verify/library_checker_minimum_spanning_tree.test.cpp
+- /verify/verify/library_checker_minimum_spanning_tree.test.cpp.html
+title: verify/library_checker_minimum_spanning_tree.test.cpp
 ---

@@ -9,83 +9,83 @@ data:
     title: utility/template.hpp
   _extendedRequiredBy: []
   _extendedVerifiedWith: []
-  _isVerificationFailed: false
+  _isVerificationFailed: true
   _pathExtension: cpp
-  _verificationStatusIcon: ':heavy_check_mark:'
+  _verificationStatusIcon: ':x:'
   attributes:
     '*NOT_SPECIAL_COMMENTS*': ''
-    PROBLEM: https://judge.yosupo.jp/problem/point_add_range_sum
+    PROBLEM: https://judge.yosupo.jp/problem/majority_voting
     links:
-    - https://judge.yosupo.jp/problem/point_add_range_sum
-  bundledCode: "#line 1 \"verify/library_checker_point_add_range_sum.test.cpp\"\n\
-    #define PROBLEM \"https://judge.yosupo.jp/problem/point_add_range_sum\"\n#line\
-    \ 2 \"utility/template.hpp\"\n#ifdef poe\n#define debug(x) cerr << #x << \": \"\
-    \ << x << '\\n'\n#else\n#define debug(x)\n#endif\n\n#include <bits/stdc++.h>\n\
-    using namespace std;\n\nusing uint = unsigned int;\nusing ll = long long;\nusing\
-    \ ull = unsigned long long;\nusing i128 = __int128;\nusing u128 = unsigned __int128;\n\
-    using ld = long double;\nusing str = string;\nusing vi = vector<int>;\nusing vvi\
-    \ = vector<vector<int>>;\nusing vvvi = vector<vector<vector<int>>>;\nusing pi\
-    \ = pair<int, int>;\nusing ppi = pair<int, pair<int, int>>;\nusing pppi = pair<int,\
-    \ pair<int, pair<int, int>>>;\nusing vpi = vector<pair<int, int>>;\nusing vvpi\
-    \ = vector<vector<pair<int, int>>>;\nusing vvvpi = vector<vector<vector<pair<int,\
-    \ int>>>>;\nusing vll = vector<long long>;\nusing vvll = vector<vector<long long>>;\n\
-    using vvvll = vector<vector<vector<long long>>>;\nusing pll = pair<long long,\
-    \ long long>;\nusing ppll = pair<long long, pair<long long, long long>>;\nusing\
-    \ pppll = pair<long long, pair<long long, pair<long long, long long>>>;\nusing\
-    \ vpll = vector<pair<long long, long long>>;\nusing vvpll = vector<vector<pair<long\
-    \ long, long long>>>;\nusing vvvpll = vector<vector<vector<pair<long long, long\
-    \ long>>>>;\ntemplate <class T> using pairs = pair<T, T>;\ntemplate <class T>\
-    \ using vec = vector<T>;\ntemplate <class T> using vvec = vec<vec<T>>;\ntemplate\
-    \ <class T> using vvvec = vec<vec<vec<T>>>;\ntemplate <class T> using pq = priority_queue<T>;\n\
-    template <class T> using pqg = priority_queue<T, vector<T>, greater<T>>;\n\n#define\
-    \ vv(type, name, x, y, ...) vector<vector<type>> name((x), vector<type>((y), ##__VA_ARGS__))\n\
-    #define vvv(type, name, x, y, z, ...) vector<vector<vector<type>>> name((x), vector<vector<type>>((y),\
-    \ vector<type>((z), ##__VA_ARGS__)))\n\n#define rep_1(n) for (long long _=0LL;\
-    \ _<(long long)(n); ++_)\n#define rep_2(i, n) for (long long i=0LL; i<(long long)(n);\
-    \ ++i)\n#define rep_3(i, l, r) for (long long i=(long long)(l); i<(long long)(r);\
-    \ ++i)\n#define rep_4(i, l, r, s) for (long long i=(long long)(l); i<(long long)(r);\
-    \ i+=(long long)(s))\n#define overload_rep(a, b, c, d, e, ...) e\n#define rep(...)\
-    \ overload_rep(__VA_ARGS__, rep_4, rep_3, rep_2, rep_1)(__VA_ARGS__)\n\n#define\
-    \ rep1_1(n) for (long long _=1LL; _<=(long long)(n); ++_)\n#define rep1_2(i, n)\
-    \ for (long long i=1LL; i<=(long long)(n); ++i)\n#define rep1_3(i, l, r) for (long\
-    \ long i=(long long)(l)+1LL; i<=(long long)(r); ++i)\n#define rep1_4(i, l, r,\
-    \ s) for (long long i=(long long)(l)+1LL; i<=(long long)(r); i+=(long long)(s))\n\
-    #define overload_rep1(a, b, c, d, e, ...) e\n#define rep1(...) overload_rep1(__VA_ARGS__,\
-    \ rep1_4, rep1_3, rep1_2, rep1_1)(__VA_ARGS__)\n\n#define per_1(n) for (long long\
-    \ _=(long long)(n)-1LL; 0LL<=_; --_)\n#define per_2(i, n) for (long long i=(long\
-    \ long)(n)-1LL; 0LL<=i; --i)\n#define per_3(i, l, r) for (long long i=(long long)(r)-1LL;\
-    \ (long long)(l)<=i; --i)\n#define per_4(i, l, r, s) for (long long i=(long long)(r)-1LL;\
-    \ (long long)(l)<=i; i-=(long long)(s))\n#define overload_per(a, b, c, d, e, ...)\
-    \ e\n#define per(...) overload_per(__VA_ARGS__, per_4, per_3, per_2, per_1)(__VA_ARGS__)\n\
-    \n#define per1_1(n) for (long long _=(long long)(n); 0LL<_; --_)\n#define per1_2(i,\
-    \ n) for (long long i=(long long)(n); 0LL<i; --i)\n#define per1_3(i, l, r) for\
-    \ (long long i=(long long)(r); (long long)(l)<i; --i)\n#define per1_4(i, l, r,\
-    \ s) for (long long i=(long long)(r); (long long)(l)<i; i-=(long long)(s))\n#define\
-    \ overload_per1(a, b, c, d, e, ...) e\n#define per1(...) overload_per1(__VA_ARGS__,\
-    \ per1_4, per1_3, per1_2, per1_1)(__VA_ARGS__)\n\n#define range_1(v) for (auto&\
-    \ _ : (v))\n#define range_2(i, v) for (auto& i : (v))\n#define range_3(i, j, v)\
-    \ for (auto& [i, j] : (v))\n#define overload_range(a, b, c, d, ...) d\n#define\
-    \ range(...) overload_range(__VA_ARGS__, range_3, range_2, range_1)(__VA_ARGS__)\n\
-    \n#define all(x) (x).begin(), (x).end()\n#define rall(x) (x).rbegin(), (x).rend()\n\
-    #define len(x) ssize(x)\n#define elif else if\n#define pb emplace_back\n#define\
-    \ db pop_back\n#define pf emplace_front\n#define df pop_front\n#define fi first\n\
-    #define se second\n\n#define Sort(v) sort((v).begin(), (v).end())\n#define troS(v)\
-    \ sort((v).rbegin(), (v).rend())\n#define Reverse(v) reverse((v).begin(), (v).end())\n\
-    #define uniq(v) sort((v).begin(), (v).end()), (v).erase(unique((v).begin(), (v).end()),\
-    \ (v).end()), (v).shrink_to_fit()\n#define bit(x, i) (((x)>>i)&1)\n\n#define nextp(v)\
-    \ next_permutation((v).begin(), (v).end())\ntemplate <class T>\nbool next_combination(T\
-    \ l, T r, int k) {\n    T m = l + k;\n    if (l==r || r==m || m==l) return false;\n\
-    \    T t = m;\n    while (l != t) {\n        t--;\n        if (*t < *(r-1)) {\n\
-    \            T d = m;\n            while (*d <=*t) d++;\n            iter_swap(t,\
-    \ d);\n            rotate(t+1, d+1, r);\n            rotate(m, m+(r-d)-1, r);\n\
-    \            return true;\n        }\n    }\n    rotate(l, m, r);\n    return\
-    \ false;\n}\n#define nextc(v, k) next_combination((v).begin(), (v).end(), k)\n\
-    \n#define Yes cout << \"Yes\\n\"\n#define No cout << \"No\\n\"\n#define YN(x)\
-    \ cout << ((x) ? \"Yes\\n\" : \"No\\n\")\n#define O(x) cout << (x) << '\\n'\n\n\
-    #define ismid_1(x) true\ntemplate <class T, class U>\nbool inner_ismid_2(T x,\
-    \ U r) { return T{}<=x && x<r; }\n#define ismid_2(x, r) inner_ismid_2(x, r)\n\
-    template <class T, class U, class V>\nbool inner_ismid_3(T l, U x, V r) { return\
-    \ l<=x && x<r; }\n#define ismid_3(l, x, r) inner_ismid_3(l, x, r)\n#define overload_ismid(a,\
+    - https://judge.yosupo.jp/problem/majority_voting
+  bundledCode: "#line 1 \"verify/library_checker_majority_voting.test.cpp\"\n#define\
+    \ PROBLEM \"https://judge.yosupo.jp/problem/majority_voting\"\n#line 2 \"utility/template.hpp\"\
+    \n#ifdef poe\n#define debug(x) cerr << #x << \": \" << x << '\\n'\n#else\n#define\
+    \ debug(x)\n#endif\n\n#include <bits/stdc++.h>\nusing namespace std;\n\nusing\
+    \ uint = unsigned int;\nusing ll = long long;\nusing ull = unsigned long long;\n\
+    using i128 = __int128;\nusing u128 = unsigned __int128;\nusing ld = long double;\n\
+    using str = string;\nusing vi = vector<int>;\nusing vvi = vector<vector<int>>;\n\
+    using vvvi = vector<vector<vector<int>>>;\nusing pi = pair<int, int>;\nusing ppi\
+    \ = pair<int, pair<int, int>>;\nusing pppi = pair<int, pair<int, pair<int, int>>>;\n\
+    using vpi = vector<pair<int, int>>;\nusing vvpi = vector<vector<pair<int, int>>>;\n\
+    using vvvpi = vector<vector<vector<pair<int, int>>>>;\nusing vll = vector<long\
+    \ long>;\nusing vvll = vector<vector<long long>>;\nusing vvvll = vector<vector<vector<long\
+    \ long>>>;\nusing pll = pair<long long, long long>;\nusing ppll = pair<long long,\
+    \ pair<long long, long long>>;\nusing pppll = pair<long long, pair<long long,\
+    \ pair<long long, long long>>>;\nusing vpll = vector<pair<long long, long long>>;\n\
+    using vvpll = vector<vector<pair<long long, long long>>>;\nusing vvvpll = vector<vector<vector<pair<long\
+    \ long, long long>>>>;\ntemplate <class T> using pairs = pair<T, T>;\ntemplate\
+    \ <class T> using vec = vector<T>;\ntemplate <class T> using vvec = vec<vec<T>>;\n\
+    template <class T> using vvvec = vec<vec<vec<T>>>;\ntemplate <class T> using pq\
+    \ = priority_queue<T>;\ntemplate <class T> using pqg = priority_queue<T, vector<T>,\
+    \ greater<T>>;\n\n#define vv(type, name, x, y, ...) vector<vector<type>> name((x),\
+    \ vector<type>((y), ##__VA_ARGS__))\n#define vvv(type, name, x, y, z, ...) vector<vector<vector<type>>>\
+    \ name((x), vector<vector<type>>((y), vector<type>((z), ##__VA_ARGS__)))\n\n#define\
+    \ rep_1(n) for (long long _=0LL; _<(long long)(n); ++_)\n#define rep_2(i, n) for\
+    \ (long long i=0LL; i<(long long)(n); ++i)\n#define rep_3(i, l, r) for (long long\
+    \ i=(long long)(l); i<(long long)(r); ++i)\n#define rep_4(i, l, r, s) for (long\
+    \ long i=(long long)(l); i<(long long)(r); i+=(long long)(s))\n#define overload_rep(a,\
+    \ b, c, d, e, ...) e\n#define rep(...) overload_rep(__VA_ARGS__, rep_4, rep_3,\
+    \ rep_2, rep_1)(__VA_ARGS__)\n\n#define rep1_1(n) for (long long _=1LL; _<=(long\
+    \ long)(n); ++_)\n#define rep1_2(i, n) for (long long i=1LL; i<=(long long)(n);\
+    \ ++i)\n#define rep1_3(i, l, r) for (long long i=(long long)(l)+1LL; i<=(long\
+    \ long)(r); ++i)\n#define rep1_4(i, l, r, s) for (long long i=(long long)(l)+1LL;\
+    \ i<=(long long)(r); i+=(long long)(s))\n#define overload_rep1(a, b, c, d, e,\
+    \ ...) e\n#define rep1(...) overload_rep1(__VA_ARGS__, rep1_4, rep1_3, rep1_2,\
+    \ rep1_1)(__VA_ARGS__)\n\n#define per_1(n) for (long long _=(long long)(n)-1LL;\
+    \ 0LL<=_; --_)\n#define per_2(i, n) for (long long i=(long long)(n)-1LL; 0LL<=i;\
+    \ --i)\n#define per_3(i, l, r) for (long long i=(long long)(r)-1LL; (long long)(l)<=i;\
+    \ --i)\n#define per_4(i, l, r, s) for (long long i=(long long)(r)-1LL; (long long)(l)<=i;\
+    \ i-=(long long)(s))\n#define overload_per(a, b, c, d, e, ...) e\n#define per(...)\
+    \ overload_per(__VA_ARGS__, per_4, per_3, per_2, per_1)(__VA_ARGS__)\n\n#define\
+    \ per1_1(n) for (long long _=(long long)(n); 0LL<_; --_)\n#define per1_2(i, n)\
+    \ for (long long i=(long long)(n); 0LL<i; --i)\n#define per1_3(i, l, r) for (long\
+    \ long i=(long long)(r); (long long)(l)<i; --i)\n#define per1_4(i, l, r, s) for\
+    \ (long long i=(long long)(r); (long long)(l)<i; i-=(long long)(s))\n#define overload_per1(a,\
+    \ b, c, d, e, ...) e\n#define per1(...) overload_per1(__VA_ARGS__, per1_4, per1_3,\
+    \ per1_2, per1_1)(__VA_ARGS__)\n\n#define range_1(v) for (auto& _ : (v))\n#define\
+    \ range_2(i, v) for (auto& i : (v))\n#define range_3(i, j, v) for (auto& [i, j]\
+    \ : (v))\n#define overload_range(a, b, c, d, ...) d\n#define range(...) overload_range(__VA_ARGS__,\
+    \ range_3, range_2, range_1)(__VA_ARGS__)\n\n#define all(x) (x).begin(), (x).end()\n\
+    #define rall(x) (x).rbegin(), (x).rend()\n#define len(x) ssize(x)\n#define elif\
+    \ else if\n#define pb emplace_back\n#define db pop_back\n#define pf emplace_front\n\
+    #define df pop_front\n#define fi first\n#define se second\n\n#define Sort(v) sort((v).begin(),\
+    \ (v).end())\n#define troS(v) sort((v).rbegin(), (v).rend())\n#define Reverse(v)\
+    \ reverse((v).begin(), (v).end())\n#define uniq(v) sort((v).begin(), (v).end()),\
+    \ (v).erase(unique((v).begin(), (v).end()), (v).end()), (v).shrink_to_fit()\n\
+    #define bit(x, i) (((x)>>i)&1)\n\n#define nextp(v) next_permutation((v).begin(),\
+    \ (v).end())\ntemplate <class T>\nbool next_combination(T l, T r, int k) {\n \
+    \   T m = l + k;\n    if (l==r || r==m || m==l) return false;\n    T t = m;\n\
+    \    while (l != t) {\n        t--;\n        if (*t < *(r-1)) {\n            T\
+    \ d = m;\n            while (*d <=*t) d++;\n            iter_swap(t, d);\n   \
+    \         rotate(t+1, d+1, r);\n            rotate(m, m+(r-d)-1, r);\n       \
+    \     return true;\n        }\n    }\n    rotate(l, m, r);\n    return false;\n\
+    }\n#define nextc(v, k) next_combination((v).begin(), (v).end(), k)\n\n#define\
+    \ Yes cout << \"Yes\\n\"\n#define No cout << \"No\\n\"\n#define YN(x) cout <<\
+    \ ((x) ? \"Yes\\n\" : \"No\\n\")\n#define O(x) cout << (x) << '\\n'\n\n#define\
+    \ ismid_1(x) true\ntemplate <class T, class U>\nbool inner_ismid_2(T x, U r) {\
+    \ return T{}<=x && x<r; }\n#define ismid_2(x, r) inner_ismid_2(x, r)\ntemplate\
+    \ <class T, class U, class V>\nbool inner_ismid_3(T l, U x, V r) { return l<=x\
+    \ && x<r; }\n#define ismid_3(l, x, r) inner_ismid_3(l, x, r)\n#define overload_ismid(a,\
     \ b, x, d, ...) d\n#define ismid(...) overload_ismid(__VA_ARGS__, ismid_3, ismid_2,\
     \ ismid_1)(__VA_ARGS__)\n\ninline int popcnt(int x) { return __builtin_popcount((unsigned\
     \ int)x); }\ninline int popcnt(unsigned int x) { return __builtin_popcount(x);\
@@ -191,34 +191,54 @@ data:
     \                        x--;\n                    }\n                }\n    \
     \            return x + 1 - size;\n            }\n            r = op(data[x],\
     \ r);\n        } while ((x & -x) != x);\n        return 0;\n    }\n};\n#line 4\
-    \ \"verify/library_checker_point_add_range_sum.test.cpp\"\n\nint main() {\n  \
-    \  IO();\n    int T = 1;\n    // cin >> T;\n    while (T--) solve();\n}\n\nvoid\
-    \ solve() {\n    int n, q; cin >> n >> q;\n    vll a(n); cin >> a;\n    segtree<ll,\
-    \ [](ll x,ll y){return x+y;}, [](){return 0LL;}> seg(a);\n    rep(q) {\n     \
-    \   int t; cin >> t;\n        if (t == 0) {\n            int p, x; cin >> p >>\
-    \ x;\n            seg.add(p, x);\n        } else {\n            int l, r; cin\
-    \ >> l >> r;\n            cout << seg.prod(l, r) << nl;\n        }\n    }\n}\n"
-  code: "#define PROBLEM \"https://judge.yosupo.jp/problem/point_add_range_sum\"\n\
-    #include \"template\"\n#include \"segtree\"\n\nint main() {\n    IO();\n    int\
-    \ T = 1;\n    // cin >> T;\n    while (T--) solve();\n}\n\nvoid solve() {\n  \
-    \  int n, q; cin >> n >> q;\n    vll a(n); cin >> a;\n    segtree<ll, [](ll x,ll\
-    \ y){return x+y;}, [](){return 0LL;}> seg(a);\n    rep(q) {\n        int t; cin\
-    \ >> t;\n        if (t == 0) {\n            int p, x; cin >> p >> x;\n       \
-    \     seg.add(p, x);\n        } else {\n            int l, r; cin >> l >> r;\n\
-    \            cout << seg.prod(l, r) << nl;\n        }\n    }\n}\n"
+    \ \"verify/library_checker_majority_voting.test.cpp\"\n\n// Boyer-Moore voting\
+    \ merge as segtree monoid  S = {candidate, excess}\nusing S = pair<int, int>;\n\
+    const auto bm_op = [](S a, S b) -> S {\n    if (a.second == 0) return b;\n   \
+    \ if (b.second == 0) return a;\n    if (a.first == b.first) return {a.first, a.second\
+    \ + b.second};\n    if (a.second > b.second) return {a.first, a.second - b.second};\n\
+    \    if (a.second < b.second) return {b.first, b.second - a.second};\n    return\
+    \ {b.first, 0};\n};\nconst auto bm_e = []() -> S { return {0, 0}; };\n\nint main(){\n\
+    \    IO();\n    int T = 1;\n    while (T--) solve();\n}\n\nvoid solve(){\n   \
+    \ int n, q; cin >> n >> q;\n    vector<int> a(n);\n    rep(i, n) cin >> a[i];\n\
+    \n    // Precompute sorted positions per value for O(log n) count\n    map<int,\
+    \ vector<int>> pos;\n    rep(i, n) pos[a[i]].push_back(i);\n\n    vector<S> sv(n);\n\
+    \    rep(i, n) sv[i] = {a[i], 1};\n    segtree<S, bm_op, bm_e> seg(sv);\n\n  \
+    \  rep(q){\n        int l, r; cin >> l >> r;\n        auto [cand, dummy] = seg.query(l,\
+    \ r);\n        auto it = pos.find(cand);\n        int cnt = 0;\n        if (it\
+    \ != pos.end()){\n            auto& v = it->second;\n            cnt = (int)(lower_bound(v.begin(),\
+    \ v.end(), r) -\n                        lower_bound(v.begin(), v.end(), l));\n\
+    \        }\n        cout << (cnt * 2 > r - l ? cand : -1) << nl;\n    }\n}\n"
+  code: "#define PROBLEM \"https://judge.yosupo.jp/problem/majority_voting\"\n#include\
+    \ \"template\"\n#include \"segtree\"\n\n// Boyer-Moore voting merge as segtree\
+    \ monoid  S = {candidate, excess}\nusing S = pair<int, int>;\nconst auto bm_op\
+    \ = [](S a, S b) -> S {\n    if (a.second == 0) return b;\n    if (b.second ==\
+    \ 0) return a;\n    if (a.first == b.first) return {a.first, a.second + b.second};\n\
+    \    if (a.second > b.second) return {a.first, a.second - b.second};\n    if (a.second\
+    \ < b.second) return {b.first, b.second - a.second};\n    return {b.first, 0};\n\
+    };\nconst auto bm_e = []() -> S { return {0, 0}; };\n\nint main(){\n    IO();\n\
+    \    int T = 1;\n    while (T--) solve();\n}\n\nvoid solve(){\n    int n, q; cin\
+    \ >> n >> q;\n    vector<int> a(n);\n    rep(i, n) cin >> a[i];\n\n    // Precompute\
+    \ sorted positions per value for O(log n) count\n    map<int, vector<int>> pos;\n\
+    \    rep(i, n) pos[a[i]].push_back(i);\n\n    vector<S> sv(n);\n    rep(i, n)\
+    \ sv[i] = {a[i], 1};\n    segtree<S, bm_op, bm_e> seg(sv);\n\n    rep(q){\n  \
+    \      int l, r; cin >> l >> r;\n        auto [cand, dummy] = seg.query(l, r);\n\
+    \        auto it = pos.find(cand);\n        int cnt = 0;\n        if (it != pos.end()){\n\
+    \            auto& v = it->second;\n            cnt = (int)(lower_bound(v.begin(),\
+    \ v.end(), r) -\n                        lower_bound(v.begin(), v.end(), l));\n\
+    \        }\n        cout << (cnt * 2 > r - l ? cand : -1) << nl;\n    }\n}\n"
   dependsOn:
   - utility/template.hpp
   - structure/segtree.hpp
   isVerificationFile: true
-  path: verify/library_checker_point_add_range_sum.test.cpp
+  path: verify/library_checker_majority_voting.test.cpp
   requiredBy: []
-  timestamp: '2026-03-07 17:36:50+09:00'
-  verificationStatus: TEST_ACCEPTED
+  timestamp: '2026-03-09 22:49:24+09:00'
+  verificationStatus: TEST_WRONG_ANSWER
   verifiedWith: []
-documentation_of: verify/library_checker_point_add_range_sum.test.cpp
+documentation_of: verify/library_checker_majority_voting.test.cpp
 layout: document
 redirect_from:
-- /verify/verify/library_checker_point_add_range_sum.test.cpp
-- /verify/verify/library_checker_point_add_range_sum.test.cpp.html
-title: verify/library_checker_point_add_range_sum.test.cpp
+- /verify/verify/library_checker_majority_voting.test.cpp
+- /verify/verify/library_checker_majority_voting.test.cpp.html
+title: verify/library_checker_majority_voting.test.cpp
 ---

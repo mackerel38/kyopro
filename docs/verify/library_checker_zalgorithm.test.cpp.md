@@ -2,8 +2,8 @@
 data:
   _extendedDependsOn:
   - icon: ':heavy_check_mark:'
-    path: structure/unionfind.hpp
-    title: structure/unionfind.hpp
+    path: string/z_algorithm.hpp
+    title: string/z_algorithm.hpp
   - icon: ':question:'
     path: utility/template.hpp
     title: utility/template.hpp
@@ -14,11 +14,11 @@ data:
   _verificationStatusIcon: ':heavy_check_mark:'
   attributes:
     '*NOT_SPECIAL_COMMENTS*': ''
-    PROBLEM: https://judge.yosupo.jp/problem/unionfind
+    PROBLEM: https://judge.yosupo.jp/problem/zalgorithm
     links:
-    - https://judge.yosupo.jp/problem/unionfind
-  bundledCode: "#line 1 \"verify/library_checker_unionfind.test.cpp\"\n#define PROBLEM\
-    \ \"https://judge.yosupo.jp/problem/unionfind\"\n#line 2 \"utility/template.hpp\"\
+    - https://judge.yosupo.jp/problem/zalgorithm
+  bundledCode: "#line 1 \"verify/library_checker_zalgorithm.test.cpp\"\n#define PROBLEM\
+    \ \"https://judge.yosupo.jp/problem/zalgorithm\"\n#line 2 \"utility/template.hpp\"\
     \n#ifdef poe\n#define debug(x) cerr << #x << \": \" << x << '\\n'\n#else\n#define\
     \ debug(x)\n#endif\n\n#include <bits/stdc++.h>\nusing namespace std;\n\nusing\
     \ uint = unsigned int;\nusing ll = long long;\nusing ull = unsigned long long;\n\
@@ -154,46 +154,40 @@ data:
     constexpr long double eps = 1e-9;\nconst long double PI = acos(-1);\nconstexpr\
     \ long long mod = 998244353;\nconstexpr long long MOD = 1000000007;\n\ninline\
     \ void IO() {\n    ios::sync_with_stdio(false);\n    std::cin.tie(nullptr);\n\
-    }\n\nvoid solve();\n\n#line 3 \"structure/unionfind.hpp\"\nusing namespace std;\n\
-    \nstruct unionfind {\n    vector<int> data;\n\n    unionfind(int n) : data(n,\
-    \ -1) {}\n\n    int root(int k) { return data[k]<0 ? k : data[k] = root(data[k]);\
-    \ }\n    int operator[](int k) { return root(k); }\n\n    bool merge(int x, int\
-    \ y) {\n        if ((x = root(x)) == (y = root(y))) return false;\n        if\
-    \ (data[x] < data[y]) swap(x, y);\n        data[y] += data[x];\n        data[x]\
-    \ = y;\n        return true;\n    }\n    template<class F>\n    bool merge(int\
-    \ x, int y, const F& f) {\n        if ((x = root(x)) == (y = root(y))) return\
-    \ false;\n        if (data[y] < data[x]) swap(x, y);\n        data[x] += data[y];\n\
-    \        data[y] = x;\n        f(x, y);\n        return true;\n    }\n\n    int\
-    \ size(int k) { return -data[root(k)]; }\n\n    bool same(int x, int y) { return\
-    \ root(x) == root(y); }\n\n    vector<vector<int>> groups() {\n        vector<vector<int>>\
-    \ mem(data.size());\n        for (int i=0; i<ssize(mem); ++i) mem[root(i)].emplace_back(i);\n\
-    \        vector<vector<int>> re;\n        for (int i=0; i<ssize(mem); ++i) if\
-    \ (!mem[i].empty()) re.emplace_back(mem[i]);\n        return re;\n    }\n\n  \
-    \  int components() const {\n        int cnt = 0;\n        for (auto& i : data)\
-    \ if (i < 0) cnt++;\n        return cnt;\n    }\n};\n\n#line 4 \"verify/library_checker_unionfind.test.cpp\"\
-    \n\nint main() {\n    IO();\n    int T = 1;\n    // cin >> T;\n    while (T--)\
-    \ solve();\n}\n\nvoid solve() {\n    int n, q; cin >> n >> q;\n    unionfind uf(n);\n\
-    \    rep(q) {\n        int t, u, v; cin >> t >> u >> v;\n        if (t == 0) uf.merge(u,\
-    \ v);\n        else cout << uf.same(u, v) << nl;\n    }\n}\n"
-  code: "#define PROBLEM \"https://judge.yosupo.jp/problem/unionfind\"\n#include \"\
-    template\"\n#include \"unionfind\"\n\nint main() {\n    IO();\n    int T = 1;\n\
-    \    // cin >> T;\n    while (T--) solve();\n}\n\nvoid solve() {\n    int n, q;\
-    \ cin >> n >> q;\n    unionfind uf(n);\n    rep(q) {\n        int t, u, v; cin\
-    \ >> t >> u >> v;\n        if (t == 0) uf.merge(u, v);\n        else cout << uf.same(u,\
-    \ v) << nl;\n    }\n}\n"
+    }\n\nvoid solve();\n\n#line 3 \"string/z_algorithm.hpp\"\nusing namespace std;\n\
+    \n// Z-algorithm: z[i] = length of the longest substring starting at i\n//   \
+    \           that matches a prefix of s. z[0] = n by convention.\nvector<int> z_algorithm(const\
+    \ string& s) {\n    int n = s.size();\n    vector<int> z(n, 0);\n    z[0] = n;\n\
+    \    int l = 0, r = 0;\n    for (int i = 1; i < n; i++) {\n        if (i < r)\
+    \ z[i] = min(r - i, z[i - l]);\n        while (i + z[i] < n && s[z[i]] == s[i\
+    \ + z[i]]) z[i]++;\n        if (i + z[i] > r) { l = i; r = i + z[i]; }\n    }\n\
+    \    return z;\n}\n\n// Find all occurrences of pattern in text using Z-algorithm\n\
+    vector<int> z_search(const string& text, const string& pattern) {\n    string\
+    \ s = pattern + \"$\" + text;\n    auto z = z_algorithm(s);\n    int m = pattern.size();\n\
+    \    vector<int> res;\n    for (int i = m+1; i < (int)s.size(); i++)\n       \
+    \ if (z[i] >= m) res.push_back(i - m - 1);\n    return res;\n}\n#line 4 \"verify/library_checker_zalgorithm.test.cpp\"\
+    \n\nint main() {\n    IO();\n    int T = 1;\n    while (T--) solve();\n}\n\nvoid\
+    \ solve() {\n    string s; cin >> s;\n    auto z = z_algorithm(s);\n    rep(i,\
+    \ (int)z.size()) {\n        cout << z[i] << (i + 1 == (int)z.size() ? '\\n' :\
+    \ ' ');\n    }\n}\n"
+  code: "#define PROBLEM \"https://judge.yosupo.jp/problem/zalgorithm\"\n#include\
+    \ \"template\"\n#include \"z_algorithm\"\n\nint main() {\n    IO();\n    int T\
+    \ = 1;\n    while (T--) solve();\n}\n\nvoid solve() {\n    string s; cin >> s;\n\
+    \    auto z = z_algorithm(s);\n    rep(i, (int)z.size()) {\n        cout << z[i]\
+    \ << (i + 1 == (int)z.size() ? '\\n' : ' ');\n    }\n}\n"
   dependsOn:
   - utility/template.hpp
-  - structure/unionfind.hpp
+  - string/z_algorithm.hpp
   isVerificationFile: true
-  path: verify/library_checker_unionfind.test.cpp
+  path: verify/library_checker_zalgorithm.test.cpp
   requiredBy: []
-  timestamp: '2026-03-07 14:24:46+09:00'
+  timestamp: '2026-03-09 22:49:24+09:00'
   verificationStatus: TEST_ACCEPTED
   verifiedWith: []
-documentation_of: verify/library_checker_unionfind.test.cpp
+documentation_of: verify/library_checker_zalgorithm.test.cpp
 layout: document
 redirect_from:
-- /verify/verify/library_checker_unionfind.test.cpp
-- /verify/verify/library_checker_unionfind.test.cpp.html
-title: verify/library_checker_unionfind.test.cpp
+- /verify/verify/library_checker_zalgorithm.test.cpp
+- /verify/verify/library_checker_zalgorithm.test.cpp.html
+title: verify/library_checker_zalgorithm.test.cpp
 ---

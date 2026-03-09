@@ -7,17 +7,74 @@ data:
     title: main.cpp
   _extendedVerifiedWith:
   - icon: ':heavy_check_mark:'
+    path: verify/library_checker_associative_array.test.cpp
+    title: verify/library_checker_associative_array.test.cpp
+  - icon: ':heavy_check_mark:'
+    path: verify/library_checker_enumerate_primes.test.cpp
+    title: verify/library_checker_enumerate_primes.test.cpp
+  - icon: ':heavy_check_mark:'
+    path: verify/library_checker_factorize.test.cpp
+    title: verify/library_checker_factorize.test.cpp
+  - icon: ':x:'
+    path: verify/library_checker_majority_voting.test.cpp
+    title: verify/library_checker_majority_voting.test.cpp
+  - icon: ':heavy_check_mark:'
+    path: verify/library_checker_minimum_spanning_tree.test.cpp
+    title: verify/library_checker_minimum_spanning_tree.test.cpp
+  - icon: ':x:'
+    path: verify/library_checker_ordered_set.test.cpp
+    title: verify/library_checker_ordered_set.test.cpp
+  - icon: ':heavy_check_mark:'
     path: verify/library_checker_point_add_range_sum.test.cpp
     title: verify/library_checker_point_add_range_sum.test.cpp
   - icon: ':heavy_check_mark:'
     path: verify/library_checker_point_add_range_sum_1.test.cpp
     title: verify/library_checker_point_add_range_sum_1.test.cpp
+  - icon: ':x:'
+    path: verify/library_checker_point_add_range_sum_bit.test.cpp
+    title: verify/library_checker_point_add_range_sum_bit.test.cpp
+  - icon: ':x:'
+    path: verify/library_checker_point_add_rectangle_sum.test.cpp
+    title: verify/library_checker_point_add_rectangle_sum.test.cpp
+  - icon: ':heavy_check_mark:'
+    path: verify/library_checker_primality_test.test.cpp
+    title: verify/library_checker_primality_test.test.cpp
+  - icon: ':heavy_check_mark:'
+    path: verify/library_checker_queue_operate_all_composite.test.cpp
+    title: verify/library_checker_queue_operate_all_composite.test.cpp
+  - icon: ':heavy_check_mark:'
+    path: verify/library_checker_range_affine_range_sum.test.cpp
+    title: verify/library_checker_range_affine_range_sum.test.cpp
+  - icon: ':x:'
+    path: verify/library_checker_range_chmin_chmax_add_range_sum.test.cpp
+    title: verify/library_checker_range_chmin_chmax_add_range_sum.test.cpp
+  - icon: ':heavy_check_mark:'
+    path: verify/library_checker_range_kth_smallest.test.cpp
+    title: verify/library_checker_range_kth_smallest.test.cpp
+  - icon: ':x:'
+    path: verify/library_checker_set_xor_min.test.cpp
+    title: verify/library_checker_set_xor_min.test.cpp
+  - icon: ':heavy_check_mark:'
+    path: verify/library_checker_shortest_path.test.cpp
+    title: verify/library_checker_shortest_path.test.cpp
+  - icon: ':x:'
+    path: verify/library_checker_static_range_inversions_query.test.cpp
+    title: verify/library_checker_static_range_inversions_query.test.cpp
+  - icon: ':heavy_check_mark:'
+    path: verify/library_checker_staticrmq.test.cpp
+    title: verify/library_checker_staticrmq.test.cpp
   - icon: ':heavy_check_mark:'
     path: verify/library_checker_unionfind.test.cpp
     title: verify/library_checker_unionfind.test.cpp
-  _isVerificationFailed: false
+  - icon: ':x:'
+    path: verify/library_checker_unionfind_with_potential.test.cpp
+    title: verify/library_checker_unionfind_with_potential.test.cpp
+  - icon: ':heavy_check_mark:'
+    path: verify/library_checker_zalgorithm.test.cpp
+    title: verify/library_checker_zalgorithm.test.cpp
+  _isVerificationFailed: true
   _pathExtension: hpp
-  _verificationStatusIcon: ':heavy_check_mark:'
+  _verificationStatusIcon: ':question:'
   attributes:
     links: []
   bundledCode: "#line 2 \"utility/template.hpp\"\n#ifdef poe\n#define debug(x) cerr\
@@ -298,11 +355,30 @@ data:
   requiredBy:
   - main.cpp
   timestamp: '2026-03-02 19:15:13+09:00'
-  verificationStatus: LIBRARY_ALL_AC
+  verificationStatus: LIBRARY_SOME_WA
   verifiedWith:
+  - verify/library_checker_shortest_path.test.cpp
+  - verify/library_checker_point_add_range_sum_bit.test.cpp
+  - verify/library_checker_unionfind_with_potential.test.cpp
+  - verify/library_checker_point_add_rectangle_sum.test.cpp
+  - verify/library_checker_set_xor_min.test.cpp
+  - verify/library_checker_enumerate_primes.test.cpp
+  - verify/library_checker_range_chmin_chmax_add_range_sum.test.cpp
+  - verify/library_checker_zalgorithm.test.cpp
   - verify/library_checker_unionfind.test.cpp
+  - verify/library_checker_range_kth_smallest.test.cpp
+  - verify/library_checker_associative_array.test.cpp
+  - verify/library_checker_factorize.test.cpp
+  - verify/library_checker_staticrmq.test.cpp
+  - verify/library_checker_queue_operate_all_composite.test.cpp
+  - verify/library_checker_ordered_set.test.cpp
+  - verify/library_checker_static_range_inversions_query.test.cpp
+  - verify/library_checker_majority_voting.test.cpp
+  - verify/library_checker_range_affine_range_sum.test.cpp
   - verify/library_checker_point_add_range_sum.test.cpp
+  - verify/library_checker_primality_test.test.cpp
   - verify/library_checker_point_add_range_sum_1.test.cpp
+  - verify/library_checker_minimum_spanning_tree.test.cpp
 documentation_of: utility/template.hpp
 layout: document
 redirect_from:

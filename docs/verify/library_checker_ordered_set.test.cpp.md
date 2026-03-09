@@ -1,24 +1,24 @@
 ---
 data:
   _extendedDependsOn:
-  - icon: ':heavy_check_mark:'
-    path: structure/unionfind.hpp
-    title: structure/unionfind.hpp
+  - icon: ':x:'
+    path: structure/ordered_set.hpp
+    title: structure/ordered_set.hpp
   - icon: ':question:'
     path: utility/template.hpp
     title: utility/template.hpp
   _extendedRequiredBy: []
   _extendedVerifiedWith: []
-  _isVerificationFailed: false
+  _isVerificationFailed: true
   _pathExtension: cpp
-  _verificationStatusIcon: ':heavy_check_mark:'
+  _verificationStatusIcon: ':x:'
   attributes:
     '*NOT_SPECIAL_COMMENTS*': ''
-    PROBLEM: https://judge.yosupo.jp/problem/unionfind
+    PROBLEM: https://judge.yosupo.jp/problem/ordered_set
     links:
-    - https://judge.yosupo.jp/problem/unionfind
-  bundledCode: "#line 1 \"verify/library_checker_unionfind.test.cpp\"\n#define PROBLEM\
-    \ \"https://judge.yosupo.jp/problem/unionfind\"\n#line 2 \"utility/template.hpp\"\
+    - https://judge.yosupo.jp/problem/ordered_set
+  bundledCode: "#line 1 \"verify/library_checker_ordered_set.test.cpp\"\n#define PROBLEM\
+    \ \"https://judge.yosupo.jp/problem/ordered_set\"\n#line 2 \"utility/template.hpp\"\
     \n#ifdef poe\n#define debug(x) cerr << #x << \": \" << x << '\\n'\n#else\n#define\
     \ debug(x)\n#endif\n\n#include <bits/stdc++.h>\nusing namespace std;\n\nusing\
     \ uint = unsigned int;\nusing ll = long long;\nusing ull = unsigned long long;\n\
@@ -154,46 +154,86 @@ data:
     constexpr long double eps = 1e-9;\nconst long double PI = acos(-1);\nconstexpr\
     \ long long mod = 998244353;\nconstexpr long long MOD = 1000000007;\n\ninline\
     \ void IO() {\n    ios::sync_with_stdio(false);\n    std::cin.tie(nullptr);\n\
-    }\n\nvoid solve();\n\n#line 3 \"structure/unionfind.hpp\"\nusing namespace std;\n\
-    \nstruct unionfind {\n    vector<int> data;\n\n    unionfind(int n) : data(n,\
-    \ -1) {}\n\n    int root(int k) { return data[k]<0 ? k : data[k] = root(data[k]);\
-    \ }\n    int operator[](int k) { return root(k); }\n\n    bool merge(int x, int\
-    \ y) {\n        if ((x = root(x)) == (y = root(y))) return false;\n        if\
-    \ (data[x] < data[y]) swap(x, y);\n        data[y] += data[x];\n        data[x]\
-    \ = y;\n        return true;\n    }\n    template<class F>\n    bool merge(int\
-    \ x, int y, const F& f) {\n        if ((x = root(x)) == (y = root(y))) return\
-    \ false;\n        if (data[y] < data[x]) swap(x, y);\n        data[x] += data[y];\n\
-    \        data[y] = x;\n        f(x, y);\n        return true;\n    }\n\n    int\
-    \ size(int k) { return -data[root(k)]; }\n\n    bool same(int x, int y) { return\
-    \ root(x) == root(y); }\n\n    vector<vector<int>> groups() {\n        vector<vector<int>>\
-    \ mem(data.size());\n        for (int i=0; i<ssize(mem); ++i) mem[root(i)].emplace_back(i);\n\
-    \        vector<vector<int>> re;\n        for (int i=0; i<ssize(mem); ++i) if\
-    \ (!mem[i].empty()) re.emplace_back(mem[i]);\n        return re;\n    }\n\n  \
-    \  int components() const {\n        int cnt = 0;\n        for (auto& i : data)\
-    \ if (i < 0) cnt++;\n        return cnt;\n    }\n};\n\n#line 4 \"verify/library_checker_unionfind.test.cpp\"\
-    \n\nint main() {\n    IO();\n    int T = 1;\n    // cin >> T;\n    while (T--)\
-    \ solve();\n}\n\nvoid solve() {\n    int n, q; cin >> n >> q;\n    unionfind uf(n);\n\
-    \    rep(q) {\n        int t, u, v; cin >> t >> u >> v;\n        if (t == 0) uf.merge(u,\
-    \ v);\n        else cout << uf.same(u, v) << nl;\n    }\n}\n"
-  code: "#define PROBLEM \"https://judge.yosupo.jp/problem/unionfind\"\n#include \"\
-    template\"\n#include \"unionfind\"\n\nint main() {\n    IO();\n    int T = 1;\n\
-    \    // cin >> T;\n    while (T--) solve();\n}\n\nvoid solve() {\n    int n, q;\
-    \ cin >> n >> q;\n    unionfind uf(n);\n    rep(q) {\n        int t, u, v; cin\
-    \ >> t >> u >> v;\n        if (t == 0) uf.merge(u, v);\n        else cout << uf.same(u,\
-    \ v) << nl;\n    }\n}\n"
+    }\n\nvoid solve();\n\n#line 3 \"structure/ordered_set.hpp\"\nusing namespace std;\n\
+    \n// Ordered set (multiset) using BIT for rank queries\n// Values must be in [0,\
+    \ MAXV)  after coordinate compression.\n// For arbitrary integers, use BIT + coordinate\
+    \ compression externally.\n//\n// O(log N) per operation.  N = number of distinct\
+    \ buckets (MAXV).\nstruct ordered_set {\n    int n;\n    vector<int> bit;\n  \
+    \  int total = 0;\n\n    ordered_set() = default;\n    ordered_set(int n) : n(n),\
+    \ bit(n + 1, 0) {}\n\n    void _add(int i, int v) { for (i++; i <= n; i += i &\
+    \ -i) bit[i] += v; }\n    int  _sum(int i) const  { int s = 0; for (; i > 0; i\
+    \ -= i & -i) s += bit[i]; return s; }\n    int  _sum(int l, int r) const { return\
+    \ l >= r ? 0 : _sum(r) - _sum(l); } // [l, r)\n\n    void insert(int x) { _add(x,\
+    \  1); ++total; }\n    void erase (int x) { _add(x, -1); --total; }\n    int \
+    \ count (int x) const { return _sum(x, x + 1); }\n    int  size  ()       const\
+    \ { return total; }\n    bool empty ()       const { return total == 0; }\n\n\
+    \    // rank of x: number of elements < x\n    int  rank(int x) const { return\
+    \ _sum(x); }\n\n    // k-th (0-indexed) smallest element\n    int kth(int k) const\
+    \ {\n        assert(0 <= k && k < total);\n        int pos = 0;\n        for (int\
+    \ pw = 1 << __lg(n); pw; pw >>= 1)\n            if (pos + pw <= n && bit[pos +\
+    \ pw] <= k)\n                k -= bit[pos += pw];\n        return pos; // 0-indexed\
+    \ value\n    }\n\n    // smallest element >= x  (lower_bound)\n    int lower_bound(int\
+    \ x) const { return kth(rank(x)); }\n    // smallest element >  x  (upper_bound)\n\
+    \    int upper_bound(int x) const {\n        int r = rank(x + 1);\n        assert(r\
+    \ < total);\n        return kth(r);\n    }\n};\n#line 4 \"verify/library_checker_ordered_set.test.cpp\"\
+    \n\nint main(){\n    IO();\n    int T = 1;\n    while (T--) solve();\n}\n\nvoid\
+    \ solve(){\n    int q; cin >> q;\n    // Read all queries first for offline coordinate\
+    \ compression\n    vector<pair<int,int>> qs(q);\n    rep(i, q) cin >> qs[i].first\
+    \ >> qs[i].second;\n\n    // Collect all element values (types 0,1,3,4,5 use values;\
+    \ type 2 uses rank k)\n    vector<int> vals;\n    rep(i, q) if (qs[i].first !=\
+    \ 2) vals.push_back(qs[i].second);\n    sort(vals.begin(), vals.end()); vals.erase(unique(vals.begin(),\
+    \ vals.end()), vals.end());\n    int m = (int)vals.size();\n\n    auto comp =\
+    \ [&](int x) -> int {\n        return (int)(lower_bound(vals.begin(), vals.end(),\
+    \ x) - vals.begin());\n    };\n\n    ordered_set os(m);\n    rep(i, q){\n    \
+    \    int t = qs[i].first, x = qs[i].second;\n        if (t == 0){\n          \
+    \  os.insert(comp(x));\n        } else if (t == 1){\n            os.erase(comp(x));\n\
+    \        } else if (t == 2){\n            // k-th smallest (0-indexed)\n     \
+    \       cout << vals[os.kth(x)] << nl;\n        } else if (t == 3){\n        \
+    \    // count of elements strictly less than x\n            cout << os.rank(comp(x))\
+    \ << nl;\n        } else if (t == 4){\n            // largest element <= x  (or\
+    \ 0 if none)\n            int r = os.rank(comp(x) + 1); // count of elements with\
+    \ value <= x\n            if (r == 0) cout << 0 << nl;\n            else cout\
+    \ << vals[os.kth(r - 1)] << nl;\n        } else {\n            // t == 5: smallest\
+    \ element >= x  (or 2e9+1 if none)\n            int r = os.rank(comp(x)); // count\
+    \ of elements with value < x\n            if (r >= os.size()) cout << (int)2e9\
+    \ + 1 << nl;\n            else cout << vals[os.kth(r)] << nl;\n        }\n   \
+    \ }\n}\n"
+  code: "#define PROBLEM \"https://judge.yosupo.jp/problem/ordered_set\"\n#include\
+    \ \"template\"\n#include \"ordered_set\"\n\nint main(){\n    IO();\n    int T\
+    \ = 1;\n    while (T--) solve();\n}\n\nvoid solve(){\n    int q; cin >> q;\n \
+    \   // Read all queries first for offline coordinate compression\n    vector<pair<int,int>>\
+    \ qs(q);\n    rep(i, q) cin >> qs[i].first >> qs[i].second;\n\n    // Collect\
+    \ all element values (types 0,1,3,4,5 use values; type 2 uses rank k)\n    vector<int>\
+    \ vals;\n    rep(i, q) if (qs[i].first != 2) vals.push_back(qs[i].second);\n \
+    \   sort(vals.begin(), vals.end()); vals.erase(unique(vals.begin(), vals.end()),\
+    \ vals.end());\n    int m = (int)vals.size();\n\n    auto comp = [&](int x) ->\
+    \ int {\n        return (int)(lower_bound(vals.begin(), vals.end(), x) - vals.begin());\n\
+    \    };\n\n    ordered_set os(m);\n    rep(i, q){\n        int t = qs[i].first,\
+    \ x = qs[i].second;\n        if (t == 0){\n            os.insert(comp(x));\n \
+    \       } else if (t == 1){\n            os.erase(comp(x));\n        } else if\
+    \ (t == 2){\n            // k-th smallest (0-indexed)\n            cout << vals[os.kth(x)]\
+    \ << nl;\n        } else if (t == 3){\n            // count of elements strictly\
+    \ less than x\n            cout << os.rank(comp(x)) << nl;\n        } else if\
+    \ (t == 4){\n            // largest element <= x  (or 0 if none)\n           \
+    \ int r = os.rank(comp(x) + 1); // count of elements with value <= x\n       \
+    \     if (r == 0) cout << 0 << nl;\n            else cout << vals[os.kth(r - 1)]\
+    \ << nl;\n        } else {\n            // t == 5: smallest element >= x  (or\
+    \ 2e9+1 if none)\n            int r = os.rank(comp(x)); // count of elements with\
+    \ value < x\n            if (r >= os.size()) cout << (int)2e9 + 1 << nl;\n   \
+    \         else cout << vals[os.kth(r)] << nl;\n        }\n    }\n}\n"
   dependsOn:
   - utility/template.hpp
-  - structure/unionfind.hpp
+  - structure/ordered_set.hpp
   isVerificationFile: true
-  path: verify/library_checker_unionfind.test.cpp
+  path: verify/library_checker_ordered_set.test.cpp
   requiredBy: []
-  timestamp: '2026-03-07 14:24:46+09:00'
-  verificationStatus: TEST_ACCEPTED
+  timestamp: '2026-03-09 22:49:24+09:00'
+  verificationStatus: TEST_WRONG_ANSWER
   verifiedWith: []
-documentation_of: verify/library_checker_unionfind.test.cpp
+documentation_of: verify/library_checker_ordered_set.test.cpp
 layout: document
 redirect_from:
-- /verify/verify/library_checker_unionfind.test.cpp
-- /verify/verify/library_checker_unionfind.test.cpp.html
-title: verify/library_checker_unionfind.test.cpp
+- /verify/verify/library_checker_ordered_set.test.cpp
+- /verify/verify/library_checker_ordered_set.test.cpp.html
+title: verify/library_checker_ordered_set.test.cpp
 ---

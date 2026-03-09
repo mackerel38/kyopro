@@ -2,8 +2,8 @@
 data:
   _extendedDependsOn:
   - icon: ':heavy_check_mark:'
-    path: structure/unionfind.hpp
-    title: structure/unionfind.hpp
+    path: structure/wavelet_matrix.hpp
+    title: structure/wavelet_matrix.hpp
   - icon: ':question:'
     path: utility/template.hpp
     title: utility/template.hpp
@@ -14,11 +14,11 @@ data:
   _verificationStatusIcon: ':heavy_check_mark:'
   attributes:
     '*NOT_SPECIAL_COMMENTS*': ''
-    PROBLEM: https://judge.yosupo.jp/problem/unionfind
+    PROBLEM: https://judge.yosupo.jp/problem/range_kth_smallest
     links:
-    - https://judge.yosupo.jp/problem/unionfind
-  bundledCode: "#line 1 \"verify/library_checker_unionfind.test.cpp\"\n#define PROBLEM\
-    \ \"https://judge.yosupo.jp/problem/unionfind\"\n#line 2 \"utility/template.hpp\"\
+    - https://judge.yosupo.jp/problem/range_kth_smallest
+  bundledCode: "#line 1 \"verify/library_checker_range_kth_smallest.test.cpp\"\n#define\
+    \ PROBLEM \"https://judge.yosupo.jp/problem/range_kth_smallest\"\n#line 2 \"utility/template.hpp\"\
     \n#ifdef poe\n#define debug(x) cerr << #x << \": \" << x << '\\n'\n#else\n#define\
     \ debug(x)\n#endif\n\n#include <bits/stdc++.h>\nusing namespace std;\n\nusing\
     \ uint = unsigned int;\nusing ll = long long;\nusing ull = unsigned long long;\n\
@@ -154,46 +154,104 @@ data:
     constexpr long double eps = 1e-9;\nconst long double PI = acos(-1);\nconstexpr\
     \ long long mod = 998244353;\nconstexpr long long MOD = 1000000007;\n\ninline\
     \ void IO() {\n    ios::sync_with_stdio(false);\n    std::cin.tie(nullptr);\n\
-    }\n\nvoid solve();\n\n#line 3 \"structure/unionfind.hpp\"\nusing namespace std;\n\
-    \nstruct unionfind {\n    vector<int> data;\n\n    unionfind(int n) : data(n,\
-    \ -1) {}\n\n    int root(int k) { return data[k]<0 ? k : data[k] = root(data[k]);\
-    \ }\n    int operator[](int k) { return root(k); }\n\n    bool merge(int x, int\
-    \ y) {\n        if ((x = root(x)) == (y = root(y))) return false;\n        if\
-    \ (data[x] < data[y]) swap(x, y);\n        data[y] += data[x];\n        data[x]\
-    \ = y;\n        return true;\n    }\n    template<class F>\n    bool merge(int\
-    \ x, int y, const F& f) {\n        if ((x = root(x)) == (y = root(y))) return\
-    \ false;\n        if (data[y] < data[x]) swap(x, y);\n        data[x] += data[y];\n\
-    \        data[y] = x;\n        f(x, y);\n        return true;\n    }\n\n    int\
-    \ size(int k) { return -data[root(k)]; }\n\n    bool same(int x, int y) { return\
-    \ root(x) == root(y); }\n\n    vector<vector<int>> groups() {\n        vector<vector<int>>\
-    \ mem(data.size());\n        for (int i=0; i<ssize(mem); ++i) mem[root(i)].emplace_back(i);\n\
-    \        vector<vector<int>> re;\n        for (int i=0; i<ssize(mem); ++i) if\
-    \ (!mem[i].empty()) re.emplace_back(mem[i]);\n        return re;\n    }\n\n  \
-    \  int components() const {\n        int cnt = 0;\n        for (auto& i : data)\
-    \ if (i < 0) cnt++;\n        return cnt;\n    }\n};\n\n#line 4 \"verify/library_checker_unionfind.test.cpp\"\
-    \n\nint main() {\n    IO();\n    int T = 1;\n    // cin >> T;\n    while (T--)\
-    \ solve();\n}\n\nvoid solve() {\n    int n, q; cin >> n >> q;\n    unionfind uf(n);\n\
-    \    rep(q) {\n        int t, u, v; cin >> t >> u >> v;\n        if (t == 0) uf.merge(u,\
-    \ v);\n        else cout << uf.same(u, v) << nl;\n    }\n}\n"
-  code: "#define PROBLEM \"https://judge.yosupo.jp/problem/unionfind\"\n#include \"\
-    template\"\n#include \"unionfind\"\n\nint main() {\n    IO();\n    int T = 1;\n\
-    \    // cin >> T;\n    while (T--) solve();\n}\n\nvoid solve() {\n    int n, q;\
-    \ cin >> n >> q;\n    unionfind uf(n);\n    rep(q) {\n        int t, u, v; cin\
-    \ >> t >> u >> v;\n        if (t == 0) uf.merge(u, v);\n        else cout << uf.same(u,\
-    \ v) << nl;\n    }\n}\n"
+    }\n\nvoid solve();\n\n#line 3 \"structure/wavelet_matrix.hpp\"\nusing namespace\
+    \ std;\n\n// Wavelet Matrix\n// Operations on a static sequence a[0..n)  of non-negative\
+    \ integers.\n// All values must be < (1 << B) after coordinate compression.\n\
+    //\n// O(n B) build,  O(B) per query  (B = number of bits, default 20)\n//\n//\
+    \ Queries:\n//   kth(l, r, k)              k-th (0-indexed) smallest in a[l..r)\n\
+    //   count(l, r, x)            number of occurrences of x in a[l..r)\n//   count_lt(l,\
+    \ r, x)         number of elements < x in a[l..r)\n//   range_freq(l, r, lo, hi)\
+    \  count of elements in [lo, hi) in a[l..r)\n\ntemplate <int B = 20>\nstruct wavelet_matrix\
+    \ {\n    // Succinct bit vector with rank\n    struct bv {\n        vector<uint32_t>\
+    \ blk;\n        vector<int> cum;\n        int n;\n        template <class F>\n\
+    \        void build(int sz, F get) {\n            n = sz;\n            blk.assign((n\
+    \ + 31) >> 5, 0);\n            cum.resize(blk.size() + 1, 0);\n            for\
+    \ (int i = 0; i < n; i++) if (get(i)) blk[i >> 5] |= 1u << (i & 31);\n       \
+    \     for (int i = 0; i < (int)blk.size(); i++)\n                cum[i+1] = cum[i]\
+    \ + __builtin_popcount(blk[i]);\n        }\n        // number of 1s in [0, i)\n\
+    \        int rank1(int i) const {\n            if (i <= 0) return 0;\n       \
+    \     return cum[i >> 5] + __builtin_popcount(blk[i >> 5] & ((1u << (i & 31))\
+    \ - 1));\n        }\n        int rank0(int i) const { return i - rank1(i); }\n\
+    \        int total1() const { return cum.back(); }\n    };\n\n    int n;\n   \
+    \ array<bv, B> bvs;\n    array<int, B> mid; // number of 0s at each level\n\n\
+    \    wavelet_matrix() = default;\n\n    // Build from vector. Values must be in\
+    \ [0, 2^B).\n    void build(vector<int> v) {\n        n = v.size();\n        for\
+    \ (int d = B - 1; d >= 0; d--) {\n            bvs[d].build(n, [&](int i){ return\
+    \ (v[i] >> d) & 1; });\n            mid[d] = bvs[d].rank0(n);\n            vector<int>\
+    \ a0, a1;\n            for (int x : v) ((x >> d) & 1 ? a1 : a0).push_back(x);\n\
+    \            v = a0; v.insert(v.end(), a1.begin(), a1.end());\n        }\n   \
+    \ }\n\n    pair<int,int> _down(int d, int l, int r, int bit) const {\n       \
+    \ int l0 = bvs[d].rank0(l), r0 = bvs[d].rank0(r);\n        if (bit == 0) return\
+    \ {l0, r0};\n        return {mid[d] + l - l0, mid[d] + r - r0};\n    }\n\n   \
+    \ // k-th (0-indexed) smallest in a[l..r)\n    int kth(int l, int r, int k) const\
+    \ {\n        int res = 0;\n        for (int d = B - 1; d >= 0; d--) {\n      \
+    \      int cnt0 = bvs[d].rank0(r) - bvs[d].rank0(l);\n            if (k < cnt0)\
+    \ { tie(l, r) = _down(d, l, r, 0); }\n            else { k -= cnt0; res |= (1\
+    \ << d); tie(l, r) = _down(d, l, r, 1); }\n        }\n        return res;\n  \
+    \  }\n\n    // number of elements < x in a[l..r)\n    int count_lt(int l, int\
+    \ r, int x) const {\n        int cnt = 0;\n        for (int d = B - 1; d >= 0;\
+    \ d--) {\n            int b = (x >> d) & 1;\n            if (b) cnt += bvs[d].rank0(r)\
+    \ - bvs[d].rank0(l);\n            tie(l, r) = _down(d, l, r, b);\n        }\n\
+    \        return cnt;\n    }\n\n    // number of occurrences of x in a[l..r)\n\
+    \    int count(int l, int r, int x) const {\n        for (int d = B - 1; d >=\
+    \ 0; d--)\n            tie(l, r) = _down(d, l, r, (x >> d) & 1);\n        return\
+    \ r - l;\n    }\n\n    // number of elements in [lo, hi) in a[l..r)\n    int range_freq(int\
+    \ l, int r, int lo, int hi) const {\n        return count_lt(l, r, hi) - count_lt(l,\
+    \ r, lo);\n    }\n};\n\n// Wavelet matrix with sum support  (O(B) sum_lt queries)\n\
+    // Stores prefix sums at each level of the wavelet matrix.\ntemplate <int B =\
+    \ 20>\nstruct wavelet_matrix_sum : wavelet_matrix<B> {\n    using base = wavelet_matrix<B>;\n\
+    \    array<vector<long long>, B> lpsum;\n\n    void build(vector<int> v) {\n \
+    \       base::build(v);\n        int n = v.size();\n        for (int d = B - 1;\
+    \ d >= 0; d--) {\n            lpsum[d].resize(n + 1, 0);\n            vector<int>\
+    \ a0, a1;\n            for (int x : v) ((x >> d) & 1 ? a1 : a0).push_back(x);\n\
+    \            for (int i = 0; i < (int)a0.size(); i++) lpsum[d][i+1] = lpsum[d][i]\
+    \ + a0[i];\n            int off = a0.size();\n            for (int i = 0; i <\
+    \ (int)a1.size(); i++) lpsum[d][off+i+1] = lpsum[d][off+i] + a1[i];\n        \
+    \    v = a0; v.insert(v.end(), a1.begin(), a1.end());\n        }\n    }\n\n  \
+    \  // sum of elements < x in a[l..r)  O(B)\n    long long sum_lt(int l, int r,\
+    \ int x) const {\n        long long s = 0;\n        int cl = l, cr = r;\n    \
+    \    for (int d = B - 1; d >= 0; d--) {\n            int b = (x >> d) & 1;\n \
+    \           int l0 = base::bvs[d].rank0(cl), r0 = base::bvs[d].rank0(cr);\n  \
+    \          if (b) {\n                s += lpsum[d][r0] - lpsum[d][l0];\n     \
+    \           cl = base::mid[d] + (cl - l0);\n                cr = base::mid[d]\
+    \ + (cr - r0);\n            } else {\n                cl = l0; cr = r0;\n    \
+    \        }\n        }\n        return s;\n    }\n\n    // sum of elements in [lo,\
+    \ hi) in a[l..r)\n    long long range_sum(int l, int r, int lo, int hi) const\
+    \ {\n        return sum_lt(l, r, hi) - sum_lt(l, r, lo);\n    }\n};\n#line 4 \"\
+    verify/library_checker_range_kth_smallest.test.cpp\"\n\nint main(){\n    IO();\n\
+    \    int T = 1;\n    while (T--) solve();\n}\n\nvoid solve(){\n    int n, q; cin\
+    \ >> n >> q;\n    vector<int> a(n);\n    rep(i, n) cin >> a[i];\n\n    // Coordinate\
+    \ compress (values up to ~10^9)\n    vector<int> vals = a;\n    sort(vals.begin(),\
+    \ vals.end()); vals.erase(unique(vals.begin(), vals.end()), vals.end());\n   \
+    \ vector<int> ca(n);\n    rep(i, n) ca[i] = (int)(lower_bound(vals.begin(), vals.end(),\
+    \ a[i]) - vals.begin());\n\n    // Compressed values fit in [0, n) \u2282 [0,\
+    \ 2^20), so B=20 is sufficient for n<=10^6\n    wavelet_matrix<20> wm;\n    wm.build(ca);\n\
+    \n    rep(q){\n        int l, r, k; cin >> l >> r >> k;\n        cout << vals[wm.kth(l,\
+    \ r, k)] << nl;\n    }\n}\n"
+  code: "#define PROBLEM \"https://judge.yosupo.jp/problem/range_kth_smallest\"\n\
+    #include \"template\"\n#include \"wavelet_matrix\"\n\nint main(){\n    IO();\n\
+    \    int T = 1;\n    while (T--) solve();\n}\n\nvoid solve(){\n    int n, q; cin\
+    \ >> n >> q;\n    vector<int> a(n);\n    rep(i, n) cin >> a[i];\n\n    // Coordinate\
+    \ compress (values up to ~10^9)\n    vector<int> vals = a;\n    sort(vals.begin(),\
+    \ vals.end()); vals.erase(unique(vals.begin(), vals.end()), vals.end());\n   \
+    \ vector<int> ca(n);\n    rep(i, n) ca[i] = (int)(lower_bound(vals.begin(), vals.end(),\
+    \ a[i]) - vals.begin());\n\n    // Compressed values fit in [0, n) \u2282 [0,\
+    \ 2^20), so B=20 is sufficient for n<=10^6\n    wavelet_matrix<20> wm;\n    wm.build(ca);\n\
+    \n    rep(q){\n        int l, r, k; cin >> l >> r >> k;\n        cout << vals[wm.kth(l,\
+    \ r, k)] << nl;\n    }\n}\n"
   dependsOn:
   - utility/template.hpp
-  - structure/unionfind.hpp
+  - structure/wavelet_matrix.hpp
   isVerificationFile: true
-  path: verify/library_checker_unionfind.test.cpp
+  path: verify/library_checker_range_kth_smallest.test.cpp
   requiredBy: []
-  timestamp: '2026-03-07 14:24:46+09:00'
+  timestamp: '2026-03-09 22:49:24+09:00'
   verificationStatus: TEST_ACCEPTED
   verifiedWith: []
-documentation_of: verify/library_checker_unionfind.test.cpp
+documentation_of: verify/library_checker_range_kth_smallest.test.cpp
 layout: document
 redirect_from:
-- /verify/verify/library_checker_unionfind.test.cpp
-- /verify/verify/library_checker_unionfind.test.cpp.html
-title: verify/library_checker_unionfind.test.cpp
+- /verify/verify/library_checker_range_kth_smallest.test.cpp
+- /verify/verify/library_checker_range_kth_smallest.test.cpp.html
+title: verify/library_checker_range_kth_smallest.test.cpp
 ---

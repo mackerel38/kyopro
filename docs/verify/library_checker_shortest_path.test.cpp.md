@@ -2,8 +2,11 @@
 data:
   _extendedDependsOn:
   - icon: ':heavy_check_mark:'
-    path: structure/unionfind.hpp
-    title: structure/unionfind.hpp
+    path: graph/dijkstra.hpp
+    title: graph/dijkstra.hpp
+  - icon: ':heavy_check_mark:'
+    path: graph/graphtemplate.hpp
+    title: graph/graphtemplate.hpp
   - icon: ':question:'
     path: utility/template.hpp
     title: utility/template.hpp
@@ -14,11 +17,11 @@ data:
   _verificationStatusIcon: ':heavy_check_mark:'
   attributes:
     '*NOT_SPECIAL_COMMENTS*': ''
-    PROBLEM: https://judge.yosupo.jp/problem/unionfind
+    PROBLEM: https://judge.yosupo.jp/problem/shortest_path
     links:
-    - https://judge.yosupo.jp/problem/unionfind
-  bundledCode: "#line 1 \"verify/library_checker_unionfind.test.cpp\"\n#define PROBLEM\
-    \ \"https://judge.yosupo.jp/problem/unionfind\"\n#line 2 \"utility/template.hpp\"\
+    - https://judge.yosupo.jp/problem/shortest_path
+  bundledCode: "#line 1 \"verify/library_checker_shortest_path.test.cpp\"\n#define\
+    \ PROBLEM \"https://judge.yosupo.jp/problem/shortest_path\"\n#line 2 \"utility/template.hpp\"\
     \n#ifdef poe\n#define debug(x) cerr << #x << \": \" << x << '\\n'\n#else\n#define\
     \ debug(x)\n#endif\n\n#include <bits/stdc++.h>\nusing namespace std;\n\nusing\
     \ uint = unsigned int;\nusing ll = long long;\nusing ull = unsigned long long;\n\
@@ -154,46 +157,98 @@ data:
     constexpr long double eps = 1e-9;\nconst long double PI = acos(-1);\nconstexpr\
     \ long long mod = 998244353;\nconstexpr long long MOD = 1000000007;\n\ninline\
     \ void IO() {\n    ios::sync_with_stdio(false);\n    std::cin.tie(nullptr);\n\
-    }\n\nvoid solve();\n\n#line 3 \"structure/unionfind.hpp\"\nusing namespace std;\n\
-    \nstruct unionfind {\n    vector<int> data;\n\n    unionfind(int n) : data(n,\
-    \ -1) {}\n\n    int root(int k) { return data[k]<0 ? k : data[k] = root(data[k]);\
-    \ }\n    int operator[](int k) { return root(k); }\n\n    bool merge(int x, int\
-    \ y) {\n        if ((x = root(x)) == (y = root(y))) return false;\n        if\
-    \ (data[x] < data[y]) swap(x, y);\n        data[y] += data[x];\n        data[x]\
-    \ = y;\n        return true;\n    }\n    template<class F>\n    bool merge(int\
-    \ x, int y, const F& f) {\n        if ((x = root(x)) == (y = root(y))) return\
-    \ false;\n        if (data[y] < data[x]) swap(x, y);\n        data[x] += data[y];\n\
-    \        data[y] = x;\n        f(x, y);\n        return true;\n    }\n\n    int\
-    \ size(int k) { return -data[root(k)]; }\n\n    bool same(int x, int y) { return\
-    \ root(x) == root(y); }\n\n    vector<vector<int>> groups() {\n        vector<vector<int>>\
-    \ mem(data.size());\n        for (int i=0; i<ssize(mem); ++i) mem[root(i)].emplace_back(i);\n\
-    \        vector<vector<int>> re;\n        for (int i=0; i<ssize(mem); ++i) if\
-    \ (!mem[i].empty()) re.emplace_back(mem[i]);\n        return re;\n    }\n\n  \
-    \  int components() const {\n        int cnt = 0;\n        for (auto& i : data)\
-    \ if (i < 0) cnt++;\n        return cnt;\n    }\n};\n\n#line 4 \"verify/library_checker_unionfind.test.cpp\"\
-    \n\nint main() {\n    IO();\n    int T = 1;\n    // cin >> T;\n    while (T--)\
-    \ solve();\n}\n\nvoid solve() {\n    int n, q; cin >> n >> q;\n    unionfind uf(n);\n\
-    \    rep(q) {\n        int t, u, v; cin >> t >> u >> v;\n        if (t == 0) uf.merge(u,\
-    \ v);\n        else cout << uf.same(u, v) << nl;\n    }\n}\n"
-  code: "#define PROBLEM \"https://judge.yosupo.jp/problem/unionfind\"\n#include \"\
-    template\"\n#include \"unionfind\"\n\nint main() {\n    IO();\n    int T = 1;\n\
-    \    // cin >> T;\n    while (T--) solve();\n}\n\nvoid solve() {\n    int n, q;\
-    \ cin >> n >> q;\n    unionfind uf(n);\n    rep(q) {\n        int t, u, v; cin\
-    \ >> t >> u >> v;\n        if (t == 0) uf.merge(u, v);\n        else cout << uf.same(u,\
-    \ v) << nl;\n    }\n}\n"
+    }\n\nvoid solve();\n\n#line 3 \"graph/graphtemplate.hpp\"\nusing namespace std;\n\
+    // \u8FBA\u306E\u69CB\u9020\u4F53 edge(from, to, cost, id)\ntemplate<class T =\
+    \ int>\nstruct edge {\n    int from, to;\n    T cost;\n    int id;\n};\n// \u9802\
+    \u70B9\u306E\u69CB\u9020\u4F53 vector<edge<T>>\ntemplate<class T = int>\nusing\
+    \ edges = vector<edge<T>>;\n// \u30B0\u30E9\u30D5\u306E\u69CB\u9020\u4F53 graph<T,\
+    \ directed, weighted>\ntemplate <class T = int, bool directed = false, bool weighted\
+    \ = false>\nstruct graph {\n    bool isdirected, isweighted;\n    edges<T> _edges;\n\
+    \    vector<edges<T>> data;\n    T sumcost;\n    graph() = default;\n    // \u9802\
+    \u70B9\u6570 n \u306E\u30B0\u30E9\u30D5\u3092\u4F5C\u6210\u3059\u308B\n    graph(int\
+    \ n) : isdirected(directed), isweighted(weighted), data(n), sumcost(T{}) {}\n\
+    \    // from \u304B\u3089 to \u3078\u8FBA\u3092\u8FFD\u52A0\u3059\u308B\n    void\
+    \ add_edge(int from, int to, T cost = 1, int id = -1) {\n        if (id == -1)\
+    \ id = _edges.size();\n        data[from].push_back(edge<T>{from, to, cost, id});\n\
+    \        _edges.push_back(edge<T>{from, to, cost, id});\n        if (!isdirected)\
+    \ {\n            data[to].push_back(edge<T>{to, from, cost, id});\n        }\n\
+    \        sumcost += cost;\n    }\n    // \u8FBA\u3092\u8FFD\u52A0\u3059\u308B\n\
+    \    void add_edge(edge<T> _e) {\n        add_edge(_e.from, _e.to, _e.cost, _e.id);\n\
+    \    }\n    // \u6A19\u6E96\u5165\u529B\u304B\u3089\u8FBA\u3092\u8AAD\u307F\u8FBC\
+    \u3080\n    void read(int m, int indexed = 1) {\n        for (int i=0; i<m; i++)\
+    \ {\n            int from, to;\n            T cost = 1;\n            cin >> from\
+    \ >> to;\n            if (isweighted) cin >> cost;\n            add_edge(from\
+    \ - indexed, to - indexed, cost);\n        }\n    }\n    // \u9802\u70B9\u6570\
+    \u3092\u8FD4\u3059\n    int size() {\n        return data.size();\n    }\n   \
+    \ // \u9802\u70B9\u3092\u8FD4\u3059\n    edges<T> operator[](int k) {\n      \
+    \  return data[k];\n    }\n    // \u30D1\u30B9\u3092\u9802\u70B9\u306B\u5909\u63DB\
+    \u3059\u308B\n    vector<int> path_to_vertex(edges<T>& _e) {\n        vector<int>\
+    \ re;\n        if (_e.size() == 0) {\n            return re;\n        }\n    \
+    \    if (_e.size() == 1) {\n            re.push_back(_e[0].from);\n          \
+    \  re.push_back(_e[0].to);\n            return re;\n        }\n        int x=_e[0].from,y=_e[0].to;\n\
+    \        if (x==_e[1].to || x == _e[1].from) swap(x, y);\n        re.push_back(x);\n\
+    \        for (int i=1; i<(int)_e.size(); i++) {\n            re.push_back(y);\n\
+    \            x = _e[i].to;\n            if (x == y) x = _e[i].from;\n        \
+    \    swap(x, y);\n        }\n        return re;\n    }\n    // \u9802\u70B9\u3092\
+    \u30D1\u30B9\u306B\u5909\u63DB\u3059\u308B\n    edges<T> vertex_to_path(vector<int>&\
+    \ v) {\n        edges<T> re;\n        for (int i=0; i+1<(int)v.size(); i++) {\n\
+    \            for (auto& _e : data[v[i]]) {\n                if (_e.to == v[i+1])\
+    \ {\n                    re.push_back(_e);\n                    break;\n     \
+    \           }\n            }\n        }\n        return re;\n    }\n};\n#line\
+    \ 3 \"graph/dijkstra.hpp\"\n\n// Dijkstra: returns shortest distances from src\n\
+    // Use: graph<T, directed, true> (weighted=true)\ntemplate <class T, bool directed>\n\
+    vector<T> dijkstra(graph<T, directed, true>& g, int src) {\n    int n = g.size();\n\
+    \    const T INF = numeric_limits<T>::max() / 2;\n    vector<T> dist(n, INF);\n\
+    \    priority_queue<pair<T,int>, vector<pair<T,int>>, greater<pair<T,int>>> pq;\n\
+    \    dist[src] = T{};\n    pq.push({T{}, src});\n    while (!pq.empty()) {\n \
+    \       auto [d, v] = pq.top(); pq.pop();\n        if (dist[v] < d) continue;\n\
+    \        for (auto& e : g[v]) {\n            if (dist[v] + e.cost < dist[e.to])\
+    \ {\n                dist[e.to] = dist[v] + e.cost;\n                pq.push({dist[e.to],\
+    \ e.to});\n            }\n        }\n    }\n    return dist;\n}\n\n// Dijkstra\
+    \ with prev edge for path reconstruction\ntemplate <class T, bool directed>\n\
+    pair<vector<T>, vector<int>> dijkstra_prev(graph<T, directed, true>& g, int src)\
+    \ {\n    int n = g.size();\n    const T INF = numeric_limits<T>::max() / 2;\n\
+    \    vector<T> dist(n, INF);\n    vector<int> prev(n, -1);\n    priority_queue<pair<T,int>,\
+    \ vector<pair<T,int>>, greater<pair<T,int>>> pq;\n    dist[src] = T{};\n    pq.push({T{},\
+    \ src});\n    while (!pq.empty()) {\n        auto [d, v] = pq.top(); pq.pop();\n\
+    \        if (dist[v] < d) continue;\n        for (auto& e : g[v]) {\n        \
+    \    if (dist[v] + e.cost < dist[e.to]) {\n                dist[e.to] = dist[v]\
+    \ + e.cost;\n                prev[e.to] = v;\n                pq.push({dist[e.to],\
+    \ e.to});\n            }\n        }\n    }\n    return {dist, prev};\n}\n\n//\
+    \ Restore path from src to dst using prev array\nvector<int> restore_path(const\
+    \ vector<int>& prev, int dst) {\n    vector<int> path;\n    for (int v = dst;\
+    \ v != -1; v = prev[v]) path.push_back(v);\n    reverse(path.begin(), path.end());\n\
+    \    return path;\n}\n#line 4 \"verify/library_checker_shortest_path.test.cpp\"\
+    \n\nint main() {\n    IO();\n    int T = 1;\n    while (T--) solve();\n}\n\nvoid\
+    \ solve() {\n    int n, m, s, t; cin >> n >> m >> s >> t;\n    graph<ll, true,\
+    \ true> g(n);\n    g.read(m, 0);\n    auto [dist, prev] = dijkstra_prev(g, s);\n\
+    \    const ll INF = numeric_limits<ll>::max() / 2;\n    if (dist[t] >= INF) {\n\
+    \        cout << -1 << nl;\n        return;\n    }\n    auto path = restore_path(prev,\
+    \ t);\n    cout << dist[t] << sp << (int)path.size() - 1 << nl;\n    rep(i, (int)path.size()\
+    \ - 1) {\n        cout << path[i] << sp << path[i + 1] << nl;\n    }\n}\n"
+  code: "#define PROBLEM \"https://judge.yosupo.jp/problem/shortest_path\"\n#include\
+    \ \"template\"\n#include \"dijkstra\"\n\nint main() {\n    IO();\n    int T =\
+    \ 1;\n    while (T--) solve();\n}\n\nvoid solve() {\n    int n, m, s, t; cin >>\
+    \ n >> m >> s >> t;\n    graph<ll, true, true> g(n);\n    g.read(m, 0);\n    auto\
+    \ [dist, prev] = dijkstra_prev(g, s);\n    const ll INF = numeric_limits<ll>::max()\
+    \ / 2;\n    if (dist[t] >= INF) {\n        cout << -1 << nl;\n        return;\n\
+    \    }\n    auto path = restore_path(prev, t);\n    cout << dist[t] << sp << (int)path.size()\
+    \ - 1 << nl;\n    rep(i, (int)path.size() - 1) {\n        cout << path[i] << sp\
+    \ << path[i + 1] << nl;\n    }\n}\n"
   dependsOn:
   - utility/template.hpp
-  - structure/unionfind.hpp
+  - graph/dijkstra.hpp
+  - graph/graphtemplate.hpp
   isVerificationFile: true
-  path: verify/library_checker_unionfind.test.cpp
+  path: verify/library_checker_shortest_path.test.cpp
   requiredBy: []
-  timestamp: '2026-03-07 14:24:46+09:00'
+  timestamp: '2026-03-09 22:49:24+09:00'
   verificationStatus: TEST_ACCEPTED
   verifiedWith: []
-documentation_of: verify/library_checker_unionfind.test.cpp
+documentation_of: verify/library_checker_shortest_path.test.cpp
 layout: document
 redirect_from:
-- /verify/verify/library_checker_unionfind.test.cpp
-- /verify/verify/library_checker_unionfind.test.cpp.html
-title: verify/library_checker_unionfind.test.cpp
+- /verify/verify/library_checker_shortest_path.test.cpp
+- /verify/verify/library_checker_shortest_path.test.cpp.html
+title: verify/library_checker_shortest_path.test.cpp
 ---

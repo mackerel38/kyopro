@@ -1,24 +1,24 @@
 ---
 data:
   _extendedDependsOn:
-  - icon: ':heavy_check_mark:'
-    path: structure/unionfind.hpp
-    title: structure/unionfind.hpp
+  - icon: ':x:'
+    path: structure/binary_trie.hpp
+    title: structure/binary_trie.hpp
   - icon: ':question:'
     path: utility/template.hpp
     title: utility/template.hpp
   _extendedRequiredBy: []
   _extendedVerifiedWith: []
-  _isVerificationFailed: false
+  _isVerificationFailed: true
   _pathExtension: cpp
-  _verificationStatusIcon: ':heavy_check_mark:'
+  _verificationStatusIcon: ':x:'
   attributes:
     '*NOT_SPECIAL_COMMENTS*': ''
-    PROBLEM: https://judge.yosupo.jp/problem/unionfind
+    PROBLEM: https://judge.yosupo.jp/problem/set_xor_min
     links:
-    - https://judge.yosupo.jp/problem/unionfind
-  bundledCode: "#line 1 \"verify/library_checker_unionfind.test.cpp\"\n#define PROBLEM\
-    \ \"https://judge.yosupo.jp/problem/unionfind\"\n#line 2 \"utility/template.hpp\"\
+    - https://judge.yosupo.jp/problem/set_xor_min
+  bundledCode: "#line 1 \"verify/library_checker_set_xor_min.test.cpp\"\n#define PROBLEM\
+    \ \"https://judge.yosupo.jp/problem/set_xor_min\"\n#line 2 \"utility/template.hpp\"\
     \n#ifdef poe\n#define debug(x) cerr << #x << \": \" << x << '\\n'\n#else\n#define\
     \ debug(x)\n#endif\n\n#include <bits/stdc++.h>\nusing namespace std;\n\nusing\
     \ uint = unsigned int;\nusing ll = long long;\nusing ull = unsigned long long;\n\
@@ -154,46 +154,66 @@ data:
     constexpr long double eps = 1e-9;\nconst long double PI = acos(-1);\nconstexpr\
     \ long long mod = 998244353;\nconstexpr long long MOD = 1000000007;\n\ninline\
     \ void IO() {\n    ios::sync_with_stdio(false);\n    std::cin.tie(nullptr);\n\
-    }\n\nvoid solve();\n\n#line 3 \"structure/unionfind.hpp\"\nusing namespace std;\n\
-    \nstruct unionfind {\n    vector<int> data;\n\n    unionfind(int n) : data(n,\
-    \ -1) {}\n\n    int root(int k) { return data[k]<0 ? k : data[k] = root(data[k]);\
-    \ }\n    int operator[](int k) { return root(k); }\n\n    bool merge(int x, int\
-    \ y) {\n        if ((x = root(x)) == (y = root(y))) return false;\n        if\
-    \ (data[x] < data[y]) swap(x, y);\n        data[y] += data[x];\n        data[x]\
-    \ = y;\n        return true;\n    }\n    template<class F>\n    bool merge(int\
-    \ x, int y, const F& f) {\n        if ((x = root(x)) == (y = root(y))) return\
-    \ false;\n        if (data[y] < data[x]) swap(x, y);\n        data[x] += data[y];\n\
-    \        data[y] = x;\n        f(x, y);\n        return true;\n    }\n\n    int\
-    \ size(int k) { return -data[root(k)]; }\n\n    bool same(int x, int y) { return\
-    \ root(x) == root(y); }\n\n    vector<vector<int>> groups() {\n        vector<vector<int>>\
-    \ mem(data.size());\n        for (int i=0; i<ssize(mem); ++i) mem[root(i)].emplace_back(i);\n\
-    \        vector<vector<int>> re;\n        for (int i=0; i<ssize(mem); ++i) if\
-    \ (!mem[i].empty()) re.emplace_back(mem[i]);\n        return re;\n    }\n\n  \
-    \  int components() const {\n        int cnt = 0;\n        for (auto& i : data)\
-    \ if (i < 0) cnt++;\n        return cnt;\n    }\n};\n\n#line 4 \"verify/library_checker_unionfind.test.cpp\"\
-    \n\nint main() {\n    IO();\n    int T = 1;\n    // cin >> T;\n    while (T--)\
-    \ solve();\n}\n\nvoid solve() {\n    int n, q; cin >> n >> q;\n    unionfind uf(n);\n\
-    \    rep(q) {\n        int t, u, v; cin >> t >> u >> v;\n        if (t == 0) uf.merge(u,\
-    \ v);\n        else cout << uf.same(u, v) << nl;\n    }\n}\n"
-  code: "#define PROBLEM \"https://judge.yosupo.jp/problem/unionfind\"\n#include \"\
-    template\"\n#include \"unionfind\"\n\nint main() {\n    IO();\n    int T = 1;\n\
-    \    // cin >> T;\n    while (T--) solve();\n}\n\nvoid solve() {\n    int n, q;\
-    \ cin >> n >> q;\n    unionfind uf(n);\n    rep(q) {\n        int t, u, v; cin\
-    \ >> t >> u >> v;\n        if (t == 0) uf.merge(u, v);\n        else cout << uf.same(u,\
-    \ v) << nl;\n    }\n}\n"
+    }\n\nvoid solve();\n\n#line 3 \"structure/binary_trie.hpp\"\nusing namespace std;\n\
+    \n// Binary trie  (non-negative integers, B-bit keys)\n// Operations in O(B):\n\
+    //   insert(x), erase(x)\n//   count(x)     -- number of x stored\n//   size()\
+    \       -- total count\n//   min_element()  -- minimum stored value\n//   max_element()\
+    \  -- maximum stored value\n//   xor_min(x)   -- min(v XOR x) over all stored\
+    \ v  (\"set_xor_min\" problem)\n//   kth(k)       -- k-th (0-indexed) smallest\n\
+    //   lower_bound(x) -- count of elements < x\n\ntemplate <int B = 30>\nstruct\
+    \ binary_trie {\n    struct Node {\n        int ch[2] = {-1, -1};\n        int\
+    \ cnt = 0;\n    };\n    vector<Node> nd;\n\n    binary_trie() { nd.push_back({});\
+    \ } // root = 0\n\n    int _new() { nd.push_back({}); return nd.size() - 1; }\n\
+    \n    void insert(int x, int delta = 1) {\n        int v = 0;\n        nd[0].cnt\
+    \ += delta;\n        for (int i = B - 1; i >= 0; i--) {\n            int b = (x\
+    \ >> i) & 1;\n            if (nd[v].ch[b] == -1) nd[v].ch[b] = _new();\n     \
+    \       v = nd[v].ch[b];\n            nd[v].cnt += delta;\n        }\n    }\n\
+    \    void erase(int x) { insert(x, -1); }\n\n    int count(int x) const {\n  \
+    \      int v = 0;\n        for (int i = B - 1; i >= 0; i--) {\n            int\
+    \ b = (x >> i) & 1;\n            if (nd[v].ch[b] == -1) return 0;\n          \
+    \  v = nd[v].ch[b];\n        }\n        return nd[v].cnt;\n    }\n    int size()\
+    \ const { return nd[0].cnt; }\n    bool empty() const { return nd[0].cnt == 0;\
+    \ }\n\n    // k-th (0-indexed) smallest\n    int kth(int k) const {\n        assert(0\
+    \ <= k && k < size());\n        int v = 0, res = 0;\n        for (int i = B -\
+    \ 1; i >= 0; i--) {\n            int l = nd[v].ch[0], lc = (l == -1 ? 0 : nd[l].cnt);\n\
+    \            if (k < lc) { v = l; }\n            else { k -= lc; res |= (1 <<\
+    \ i); v = nd[v].ch[1]; }\n        }\n        return res;\n    }\n    int min_element()\
+    \ const { return kth(0); }\n    int max_element() const { return kth(size() -\
+    \ 1); }\n\n    // min XOR with x\n    int xor_min(int x) const {\n        assert(!empty());\n\
+    \        int v = 0, res = 0;\n        for (int i = B - 1; i >= 0; i--) {\n   \
+    \         int b = (x >> i) & 1;\n            int want = b; // prefer same bit\
+    \ => XOR becomes 0\n            if (nd[v].ch[want] == -1 || nd[nd[v].ch[want]].cnt\
+    \ == 0) want ^= 1;\n            res |= ((want ^ b) << i);\n            v = nd[v].ch[want];\n\
+    \        }\n        return res;\n    }\n\n    // number of elements < x\n    int\
+    \ lower_bound(int x) const {\n        int v = 0, cnt = 0;\n        for (int i\
+    \ = B - 1; i >= 0; i--) {\n            int b = (x >> i) & 1;\n            if (b\
+    \ == 1) {\n                int l = nd[v].ch[0];\n                if (l != -1)\
+    \ cnt += nd[l].cnt;\n            }\n            if (nd[v].ch[b] == -1) break;\n\
+    \            v = nd[v].ch[b];\n        }\n        return cnt;\n    }\n};\n#line\
+    \ 4 \"verify/library_checker_set_xor_min.test.cpp\"\n\nint main(){\n    IO();\n\
+    \    int T = 1;\n    while (T--) solve();\n}\n\nvoid solve(){\n    int q; cin\
+    \ >> q;\n    binary_trie<30> bt;\n    rep(q){\n        int t, x; cin >> t >> x;\n\
+    \        if (t == 0)      bt.insert(x);\n        else if (t == 1) bt.erase(x);\n\
+    \        else             cout << bt.xor_min(x) << nl;\n    }\n}\n"
+  code: "#define PROBLEM \"https://judge.yosupo.jp/problem/set_xor_min\"\n#include\
+    \ \"template\"\n#include \"binary_trie\"\n\nint main(){\n    IO();\n    int T\
+    \ = 1;\n    while (T--) solve();\n}\n\nvoid solve(){\n    int q; cin >> q;\n \
+    \   binary_trie<30> bt;\n    rep(q){\n        int t, x; cin >> t >> x;\n     \
+    \   if (t == 0)      bt.insert(x);\n        else if (t == 1) bt.erase(x);\n  \
+    \      else             cout << bt.xor_min(x) << nl;\n    }\n}\n"
   dependsOn:
   - utility/template.hpp
-  - structure/unionfind.hpp
+  - structure/binary_trie.hpp
   isVerificationFile: true
-  path: verify/library_checker_unionfind.test.cpp
+  path: verify/library_checker_set_xor_min.test.cpp
   requiredBy: []
-  timestamp: '2026-03-07 14:24:46+09:00'
-  verificationStatus: TEST_ACCEPTED
+  timestamp: '2026-03-09 22:49:24+09:00'
+  verificationStatus: TEST_WRONG_ANSWER
   verifiedWith: []
-documentation_of: verify/library_checker_unionfind.test.cpp
+documentation_of: verify/library_checker_set_xor_min.test.cpp
 layout: document
 redirect_from:
-- /verify/verify/library_checker_unionfind.test.cpp
-- /verify/verify/library_checker_unionfind.test.cpp.html
-title: verify/library_checker_unionfind.test.cpp
+- /verify/verify/library_checker_set_xor_min.test.cpp
+- /verify/verify/library_checker_set_xor_min.test.cpp.html
+title: verify/library_checker_set_xor_min.test.cpp
 ---

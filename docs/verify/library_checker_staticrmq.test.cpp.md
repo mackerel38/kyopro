@@ -2,8 +2,8 @@
 data:
   _extendedDependsOn:
   - icon: ':heavy_check_mark:'
-    path: structure/unionfind.hpp
-    title: structure/unionfind.hpp
+    path: structure/sparse_table.hpp
+    title: structure/sparse_table.hpp
   - icon: ':question:'
     path: utility/template.hpp
     title: utility/template.hpp
@@ -14,11 +14,11 @@ data:
   _verificationStatusIcon: ':heavy_check_mark:'
   attributes:
     '*NOT_SPECIAL_COMMENTS*': ''
-    PROBLEM: https://judge.yosupo.jp/problem/unionfind
+    PROBLEM: https://judge.yosupo.jp/problem/staticrmq
     links:
-    - https://judge.yosupo.jp/problem/unionfind
-  bundledCode: "#line 1 \"verify/library_checker_unionfind.test.cpp\"\n#define PROBLEM\
-    \ \"https://judge.yosupo.jp/problem/unionfind\"\n#line 2 \"utility/template.hpp\"\
+    - https://judge.yosupo.jp/problem/staticrmq
+  bundledCode: "#line 1 \"verify/library_checker_staticrmq.test.cpp\"\n#define PROBLEM\
+    \ \"https://judge.yosupo.jp/problem/staticrmq\"\n#line 2 \"utility/template.hpp\"\
     \n#ifdef poe\n#define debug(x) cerr << #x << \": \" << x << '\\n'\n#else\n#define\
     \ debug(x)\n#endif\n\n#include <bits/stdc++.h>\nusing namespace std;\n\nusing\
     \ uint = unsigned int;\nusing ll = long long;\nusing ull = unsigned long long;\n\
@@ -154,46 +154,44 @@ data:
     constexpr long double eps = 1e-9;\nconst long double PI = acos(-1);\nconstexpr\
     \ long long mod = 998244353;\nconstexpr long long MOD = 1000000007;\n\ninline\
     \ void IO() {\n    ios::sync_with_stdio(false);\n    std::cin.tie(nullptr);\n\
-    }\n\nvoid solve();\n\n#line 3 \"structure/unionfind.hpp\"\nusing namespace std;\n\
-    \nstruct unionfind {\n    vector<int> data;\n\n    unionfind(int n) : data(n,\
-    \ -1) {}\n\n    int root(int k) { return data[k]<0 ? k : data[k] = root(data[k]);\
-    \ }\n    int operator[](int k) { return root(k); }\n\n    bool merge(int x, int\
-    \ y) {\n        if ((x = root(x)) == (y = root(y))) return false;\n        if\
-    \ (data[x] < data[y]) swap(x, y);\n        data[y] += data[x];\n        data[x]\
-    \ = y;\n        return true;\n    }\n    template<class F>\n    bool merge(int\
-    \ x, int y, const F& f) {\n        if ((x = root(x)) == (y = root(y))) return\
-    \ false;\n        if (data[y] < data[x]) swap(x, y);\n        data[x] += data[y];\n\
-    \        data[y] = x;\n        f(x, y);\n        return true;\n    }\n\n    int\
-    \ size(int k) { return -data[root(k)]; }\n\n    bool same(int x, int y) { return\
-    \ root(x) == root(y); }\n\n    vector<vector<int>> groups() {\n        vector<vector<int>>\
-    \ mem(data.size());\n        for (int i=0; i<ssize(mem); ++i) mem[root(i)].emplace_back(i);\n\
-    \        vector<vector<int>> re;\n        for (int i=0; i<ssize(mem); ++i) if\
-    \ (!mem[i].empty()) re.emplace_back(mem[i]);\n        return re;\n    }\n\n  \
-    \  int components() const {\n        int cnt = 0;\n        for (auto& i : data)\
-    \ if (i < 0) cnt++;\n        return cnt;\n    }\n};\n\n#line 4 \"verify/library_checker_unionfind.test.cpp\"\
-    \n\nint main() {\n    IO();\n    int T = 1;\n    // cin >> T;\n    while (T--)\
-    \ solve();\n}\n\nvoid solve() {\n    int n, q; cin >> n >> q;\n    unionfind uf(n);\n\
-    \    rep(q) {\n        int t, u, v; cin >> t >> u >> v;\n        if (t == 0) uf.merge(u,\
-    \ v);\n        else cout << uf.same(u, v) << nl;\n    }\n}\n"
-  code: "#define PROBLEM \"https://judge.yosupo.jp/problem/unionfind\"\n#include \"\
-    template\"\n#include \"unionfind\"\n\nint main() {\n    IO();\n    int T = 1;\n\
-    \    // cin >> T;\n    while (T--) solve();\n}\n\nvoid solve() {\n    int n, q;\
-    \ cin >> n >> q;\n    unionfind uf(n);\n    rep(q) {\n        int t, u, v; cin\
-    \ >> t >> u >> v;\n        if (t == 0) uf.merge(u, v);\n        else cout << uf.same(u,\
-    \ v) << nl;\n    }\n}\n"
+    }\n\nvoid solve();\n\n#line 3 \"structure/sparse_table.hpp\"\nusing namespace\
+    \ std;\n\n// Sparse Table  O(n log n) build, O(1) query\n// op must be IDEMPOTENT:\
+    \ op(x, x) == x  (e.g. min, max, gcd)\ntemplate <class S, auto op>\nstruct sparse_table\
+    \ {\n    vector<vector<S>> d;\n    vector<int> lg;\n\n    sparse_table() = default;\n\
+    \    sparse_table(const vector<S>& v) { build(v); }\n\n    void build(const vector<S>&\
+    \ v) {\n        int n = v.size();\n        lg.assign(n + 1, 0);\n        for (int\
+    \ i = 2; i <= n; i++) lg[i] = lg[i >> 1] + 1;\n        int k = lg[n] + 1;\n  \
+    \      d.assign(k, vector<S>(n));\n        d[0] = v;\n        for (int j = 1;\
+    \ j < k; j++)\n            for (int i = 0; i + (1 << j) <= n; i++)\n         \
+    \       d[j][i] = op(d[j-1][i], d[j-1][i + (1 << (j-1))]);\n    }\n\n    // query\
+    \ [l, r)  (0-indexed, half-open)\n    S query(int l, int r) const {\n        int\
+    \ k = lg[r - l];\n        return op(d[k][l], d[k][r - (1 << k)]);\n    }\n};\n\
+    #line 4 \"verify/library_checker_staticrmq.test.cpp\"\n\nconst auto rmq_op = [](int\
+    \ a, int b){ return min(a, b); };\n\nint main(){\n    IO();\n    int T = 1;\n\
+    \    while (T--) solve();\n}\n\nvoid solve(){\n    int n, q; cin >> n >> q;\n\
+    \    vector<int> a(n);\n    rep(i, n) cin >> a[i];\n    sparse_table<int, rmq_op>\
+    \ st(a);\n    rep(q){\n        int l, r; cin >> l >> r;\n        cout << st.query(l,\
+    \ r) << nl;\n    }\n}\n"
+  code: "#define PROBLEM \"https://judge.yosupo.jp/problem/staticrmq\"\n#include \"\
+    template\"\n#include \"sparse_table\"\n\nconst auto rmq_op = [](int a, int b){\
+    \ return min(a, b); };\n\nint main(){\n    IO();\n    int T = 1;\n    while (T--)\
+    \ solve();\n}\n\nvoid solve(){\n    int n, q; cin >> n >> q;\n    vector<int>\
+    \ a(n);\n    rep(i, n) cin >> a[i];\n    sparse_table<int, rmq_op> st(a);\n  \
+    \  rep(q){\n        int l, r; cin >> l >> r;\n        cout << st.query(l, r) <<\
+    \ nl;\n    }\n}\n"
   dependsOn:
   - utility/template.hpp
-  - structure/unionfind.hpp
+  - structure/sparse_table.hpp
   isVerificationFile: true
-  path: verify/library_checker_unionfind.test.cpp
+  path: verify/library_checker_staticrmq.test.cpp
   requiredBy: []
-  timestamp: '2026-03-07 14:24:46+09:00'
+  timestamp: '2026-03-09 22:49:24+09:00'
   verificationStatus: TEST_ACCEPTED
   verifiedWith: []
-documentation_of: verify/library_checker_unionfind.test.cpp
+documentation_of: verify/library_checker_staticrmq.test.cpp
 layout: document
 redirect_from:
-- /verify/verify/library_checker_unionfind.test.cpp
-- /verify/verify/library_checker_unionfind.test.cpp.html
-title: verify/library_checker_unionfind.test.cpp
+- /verify/verify/library_checker_staticrmq.test.cpp
+- /verify/verify/library_checker_staticrmq.test.cpp.html
+title: verify/library_checker_staticrmq.test.cpp
 ---
