@@ -31,58 +31,53 @@ data:
     \    //   precondition (from _chmin): smax_v[k] < x < max_v[k]\n    void push_chmin(int\
     \ k, ll x) {\n        sm[k] -= (max_v[k] - x) * max_c[k];\n        if (max_v[k]\
     \ == min_v[k]) {\n            // all values equal: both max and min become x\n\
-    \            max_v[k] = min_v[k] = x;\n        } else {\n            // smax_v[k]\
-    \ < x (precondition), so smax_v is unchanged.\n            // min_v needs updating\
-    \ only when it equals old max_v.\n            if (smax_v[k] == min_v[k]) min_v[k]\
-    \ = x;\n            max_v[k] = x;\n        }\n        if (lval[k] != LINF && lval[k]\
-    \ > x) lval[k] = x;\n    }\n    // push_chmax: clamp current min up to x\n   \
-    \ //   precondition (from _chmax): smin_v[k] > x > min_v[k]\n    void push_chmax(int\
-    \ k, ll x) {\n        sm[k] += (x - min_v[k]) * min_c[k];\n        if (max_v[k]\
-    \ == min_v[k]) {\n            // all values equal: both max and min become x\n\
-    \            max_v[k] = min_v[k] = x;\n        } else {\n            // smin_v[k]\
-    \ > x (precondition), so smin_v is unchanged.\n            // max_v needs updating\
-    \ only when it equals old min_v.\n            if (smin_v[k] == max_v[k]) max_v[k]\
-    \ = x;\n            min_v[k] = x;\n        }\n        if (lval[k] != LINF && lval[k]\
-    \ < x) lval[k] = x;\n    }\n\n    // pull: recompute node k from its children\n\
-    \    void pull(int k) {\n        int l = 2*k, r = 2*k+1;\n        sm[k] = sm[l]\
-    \ + sm[r];\n        // max info\n        if      (max_v[l] < max_v[r]) { max_v[k]=max_v[r];\
-    \ max_c[k]=max_c[r]; smax_v[k]=max(max_v[l], smax_v[r]); }\n        else if (max_v[l]\
-    \ > max_v[r]) { max_v[k]=max_v[l]; max_c[k]=max_c[l]; smax_v[k]=max(smax_v[l],\
-    \ max_v[r]); }\n        else                          { max_v[k]=max_v[l]; max_c[k]=max_c[l]+max_c[r];\
-    \ smax_v[k]=max(smax_v[l], smax_v[r]); }\n        // min info\n        if    \
-    \  (min_v[l] < min_v[r]) { min_v[k]=min_v[l]; min_c[k]=min_c[l]; smin_v[k]=min(smin_v[l],\
-    \ min_v[r]); }\n        else if (min_v[l] > min_v[r]) { min_v[k]=min_v[r]; min_c[k]=min_c[r];\
-    \ smin_v[k]=min(min_v[l], smin_v[r]); }\n        else                        \
-    \  { min_v[k]=min_v[l]; min_c[k]=min_c[l]+min_c[r]; smin_v[k]=min(smin_v[l], smin_v[r]);\
-    \ }\n    }\n\n    // push: propagate lazy values to children\n    void push(int\
-    \ k) {\n        if (k >= n0) return;\n        if (lval[k] != LINF) {\n       \
-    \     setall(2*k, lval[k]); setall(2*k+1, lval[k]);\n            lval[k] = LINF;\
-    \ ladd[k] = 0;\n            return;\n        }\n        if (ladd[k] != 0) {\n\
-    \            addall(2*k, ladd[k]); addall(2*k+1, ladd[k]);\n            ladd[k]\
-    \ = 0;\n        }\n        if (max_v[k] < max_v[2*k])   push_chmin(2*k,   max_v[k]);\n\
-    \        if (min_v[2*k] < min_v[k])   push_chmax(2*k,   min_v[k]);\n        if\
-    \ (max_v[k] < max_v[2*k+1]) push_chmin(2*k+1, max_v[k]);\n        if (min_v[2*k+1]\
-    \ < min_v[k]) push_chmax(2*k+1, min_v[k]);\n    }\n\n    void _chmin(ll x, int\
-    \ a, int b, int k, int l, int r) {\n        if (b <= l || r <= a || max_v[k] <=\
-    \ x) return;\n        if (a <= l && r <= b && smax_v[k] < x) { push_chmin(k, x);\
-    \ return; }\n        push(k); int m = (l+r)/2;\n        _chmin(x,a,b,2*k,l,m);\
-    \ _chmin(x,a,b,2*k+1,m,r); pull(k);\n    }\n    void _chmax(ll x, int a, int b,\
-    \ int k, int l, int r) {\n        if (b <= l || r <= a || x <= min_v[k]) return;\n\
-    \        if (a <= l && r <= b && x < smin_v[k]) { push_chmax(k, x); return; }\n\
-    \        push(k); int m = (l+r)/2;\n        _chmax(x,a,b,2*k,l,m); _chmax(x,a,b,2*k+1,m,r);\
-    \ pull(k);\n    }\n    void _add(ll x, int a, int b, int k, int l, int r) {\n\
-    \        if (b <= l || r <= a) return;\n        if (a <= l && r <= b) { addall(k,\
-    \ x); return; }\n        push(k); int m = (l+r)/2;\n        _add(x,a,b,2*k,l,m);\
-    \ _add(x,a,b,2*k+1,m,r); pull(k);\n    }\n    void _set(ll x, int a, int b, int\
-    \ k, int l, int r) {\n        if (b <= l || r <= a) return;\n        if (a <=\
-    \ l && r <= b) { setall(k, x); return; }\n        push(k); int m = (l+r)/2;\n\
-    \        _set(x,a,b,2*k,l,m); _set(x,a,b,2*k+1,m,r); pull(k);\n    }\n    ll _qmax(int\
-    \ a, int b, int k, int l, int r) {\n        if (b <= l || r <= a) return -LINF;\n\
-    \        if (a <= l && r <= b) return max_v[k];\n        push(k); int m = (l+r)/2;\n\
-    \        return max(_qmax(a,b,2*k,l,m), _qmax(a,b,2*k+1,m,r));\n    }\n    ll\
-    \ _qmin(int a, int b, int k, int l, int r) {\n        if (b <= l || r <= a) return\
-    \ LINF;\n        if (a <= l && r <= b) return min_v[k];\n        push(k); int\
-    \ m = (l+r)/2;\n        return min(_qmin(a,b,2*k,l,m), _qmin(a,b,2*k+1,m,r));\n\
+    \            max_v[k] = min_v[k] = x;\n        } else {\n            max_v[k]\
+    \ = x;\n        }\n        if (lval[k] != LINF && lval[k] > x) lval[k] = x;\n\
+    \    }\n    // push_chmax: clamp current min up to x\n    //   precondition (from\
+    \ _chmax): smin_v[k] > x > min_v[k]\n    void push_chmax(int k, ll x) {\n    \
+    \    sm[k] += (x - min_v[k]) * min_c[k];\n        if (max_v[k] == min_v[k]) {\n\
+    \            // all values equal: both max and min become x\n            max_v[k]\
+    \ = min_v[k] = x;\n        } else {\n            min_v[k] = x;\n        }\n  \
+    \      if (lval[k] != LINF && lval[k] < x) lval[k] = x;\n    }\n\n    // pull:\
+    \ recompute node k from its children\n    void pull(int k) {\n        int l =\
+    \ 2*k, r = 2*k+1;\n        sm[k] = sm[l] + sm[r];\n        // max info\n     \
+    \   if      (max_v[l] < max_v[r]) { max_v[k]=max_v[r]; max_c[k]=max_c[r]; smax_v[k]=max(max_v[l],\
+    \ smax_v[r]); }\n        else if (max_v[l] > max_v[r]) { max_v[k]=max_v[l]; max_c[k]=max_c[l];\
+    \ smax_v[k]=max(smax_v[l], max_v[r]); }\n        else                        \
+    \  { max_v[k]=max_v[l]; max_c[k]=max_c[l]+max_c[r]; smax_v[k]=max(smax_v[l], smax_v[r]);\
+    \ }\n        // min info\n        if      (min_v[l] < min_v[r]) { min_v[k]=min_v[l];\
+    \ min_c[k]=min_c[l]; smin_v[k]=min(smin_v[l], min_v[r]); }\n        else if (min_v[l]\
+    \ > min_v[r]) { min_v[k]=min_v[r]; min_c[k]=min_c[r]; smin_v[k]=min(min_v[l],\
+    \ smin_v[r]); }\n        else                          { min_v[k]=min_v[l]; min_c[k]=min_c[l]+min_c[r];\
+    \ smin_v[k]=min(smin_v[l], smin_v[r]); }\n    }\n\n    // push: propagate lazy\
+    \ values to children\n    void push(int k) {\n        if (k >= n0) return;\n \
+    \       if (lval[k] != LINF) {\n            setall(2*k, lval[k]); setall(2*k+1,\
+    \ lval[k]);\n            lval[k] = LINF; ladd[k] = 0;\n            return;\n \
+    \       }\n        if (ladd[k] != 0) {\n            addall(2*k, ladd[k]); addall(2*k+1,\
+    \ ladd[k]);\n            ladd[k] = 0;\n        }\n        if (max_v[k] < max_v[2*k])\
+    \   push_chmin(2*k,   max_v[k]);\n        if (min_v[2*k] < min_v[k])   push_chmax(2*k,\
+    \   min_v[k]);\n        if (max_v[k] < max_v[2*k+1]) push_chmin(2*k+1, max_v[k]);\n\
+    \        if (min_v[2*k+1] < min_v[k]) push_chmax(2*k+1, min_v[k]);\n    }\n\n\
+    \    void _chmin(ll x, int a, int b, int k, int l, int r) {\n        if (b <=\
+    \ l || r <= a || max_v[k] <= x) return;\n        if (a <= l && r <= b && smax_v[k]\
+    \ < x) { push_chmin(k, x); return; }\n        push(k); int m = (l+r)/2;\n    \
+    \    _chmin(x,a,b,2*k,l,m); _chmin(x,a,b,2*k+1,m,r); pull(k);\n    }\n    void\
+    \ _chmax(ll x, int a, int b, int k, int l, int r) {\n        if (b <= l || r <=\
+    \ a || x <= min_v[k]) return;\n        if (a <= l && r <= b && x < smin_v[k])\
+    \ { push_chmax(k, x); return; }\n        push(k); int m = (l+r)/2;\n        _chmax(x,a,b,2*k,l,m);\
+    \ _chmax(x,a,b,2*k+1,m,r); pull(k);\n    }\n    void _add(ll x, int a, int b,\
+    \ int k, int l, int r) {\n        if (b <= l || r <= a) return;\n        if (a\
+    \ <= l && r <= b) { addall(k, x); return; }\n        push(k); int m = (l+r)/2;\n\
+    \        _add(x,a,b,2*k,l,m); _add(x,a,b,2*k+1,m,r); pull(k);\n    }\n    void\
+    \ _set(ll x, int a, int b, int k, int l, int r) {\n        if (b <= l || r <=\
+    \ a) return;\n        if (a <= l && r <= b) { setall(k, x); return; }\n      \
+    \  push(k); int m = (l+r)/2;\n        _set(x,a,b,2*k,l,m); _set(x,a,b,2*k+1,m,r);\
+    \ pull(k);\n    }\n    ll _qmax(int a, int b, int k, int l, int r) {\n       \
+    \ if (b <= l || r <= a) return -LINF;\n        if (a <= l && r <= b) return max_v[k];\n\
+    \        push(k); int m = (l+r)/2;\n        return max(_qmax(a,b,2*k,l,m), _qmax(a,b,2*k+1,m,r));\n\
+    \    }\n    ll _qmin(int a, int b, int k, int l, int r) {\n        if (b <= l\
+    \ || r <= a) return LINF;\n        if (a <= l && r <= b) return min_v[k];\n  \
+    \      push(k); int m = (l+r)/2;\n        return min(_qmin(a,b,2*k,l,m), _qmin(a,b,2*k+1,m,r));\n\
     \    }\n    ll _qsum(int a, int b, int k, int l, int r) {\n        if (b <= l\
     \ || r <= a) return 0;\n        if (a <= l && r <= b) return sm[k];\n        push(k);\
     \ int m = (l+r)/2;\n        return _qsum(a,b,2*k,l,m) + _qsum(a,b,2*k+1,m,r);\n\
@@ -129,58 +124,53 @@ data:
     \ (from _chmin): smax_v[k] < x < max_v[k]\n    void push_chmin(int k, ll x) {\n\
     \        sm[k] -= (max_v[k] - x) * max_c[k];\n        if (max_v[k] == min_v[k])\
     \ {\n            // all values equal: both max and min become x\n            max_v[k]\
-    \ = min_v[k] = x;\n        } else {\n            // smax_v[k] < x (precondition),\
-    \ so smax_v is unchanged.\n            // min_v needs updating only when it equals\
-    \ old max_v.\n            if (smax_v[k] == min_v[k]) min_v[k] = x;\n         \
-    \   max_v[k] = x;\n        }\n        if (lval[k] != LINF && lval[k] > x) lval[k]\
-    \ = x;\n    }\n    // push_chmax: clamp current min up to x\n    //   precondition\
-    \ (from _chmax): smin_v[k] > x > min_v[k]\n    void push_chmax(int k, ll x) {\n\
-    \        sm[k] += (x - min_v[k]) * min_c[k];\n        if (max_v[k] == min_v[k])\
-    \ {\n            // all values equal: both max and min become x\n            max_v[k]\
-    \ = min_v[k] = x;\n        } else {\n            // smin_v[k] > x (precondition),\
-    \ so smin_v is unchanged.\n            // max_v needs updating only when it equals\
-    \ old min_v.\n            if (smin_v[k] == max_v[k]) max_v[k] = x;\n         \
-    \   min_v[k] = x;\n        }\n        if (lval[k] != LINF && lval[k] < x) lval[k]\
-    \ = x;\n    }\n\n    // pull: recompute node k from its children\n    void pull(int\
-    \ k) {\n        int l = 2*k, r = 2*k+1;\n        sm[k] = sm[l] + sm[r];\n    \
-    \    // max info\n        if      (max_v[l] < max_v[r]) { max_v[k]=max_v[r]; max_c[k]=max_c[r];\
-    \ smax_v[k]=max(max_v[l], smax_v[r]); }\n        else if (max_v[l] > max_v[r])\
-    \ { max_v[k]=max_v[l]; max_c[k]=max_c[l]; smax_v[k]=max(smax_v[l], max_v[r]);\
-    \ }\n        else                          { max_v[k]=max_v[l]; max_c[k]=max_c[l]+max_c[r];\
-    \ smax_v[k]=max(smax_v[l], smax_v[r]); }\n        // min info\n        if    \
-    \  (min_v[l] < min_v[r]) { min_v[k]=min_v[l]; min_c[k]=min_c[l]; smin_v[k]=min(smin_v[l],\
-    \ min_v[r]); }\n        else if (min_v[l] > min_v[r]) { min_v[k]=min_v[r]; min_c[k]=min_c[r];\
-    \ smin_v[k]=min(min_v[l], smin_v[r]); }\n        else                        \
-    \  { min_v[k]=min_v[l]; min_c[k]=min_c[l]+min_c[r]; smin_v[k]=min(smin_v[l], smin_v[r]);\
-    \ }\n    }\n\n    // push: propagate lazy values to children\n    void push(int\
-    \ k) {\n        if (k >= n0) return;\n        if (lval[k] != LINF) {\n       \
-    \     setall(2*k, lval[k]); setall(2*k+1, lval[k]);\n            lval[k] = LINF;\
-    \ ladd[k] = 0;\n            return;\n        }\n        if (ladd[k] != 0) {\n\
-    \            addall(2*k, ladd[k]); addall(2*k+1, ladd[k]);\n            ladd[k]\
-    \ = 0;\n        }\n        if (max_v[k] < max_v[2*k])   push_chmin(2*k,   max_v[k]);\n\
-    \        if (min_v[2*k] < min_v[k])   push_chmax(2*k,   min_v[k]);\n        if\
-    \ (max_v[k] < max_v[2*k+1]) push_chmin(2*k+1, max_v[k]);\n        if (min_v[2*k+1]\
-    \ < min_v[k]) push_chmax(2*k+1, min_v[k]);\n    }\n\n    void _chmin(ll x, int\
-    \ a, int b, int k, int l, int r) {\n        if (b <= l || r <= a || max_v[k] <=\
-    \ x) return;\n        if (a <= l && r <= b && smax_v[k] < x) { push_chmin(k, x);\
-    \ return; }\n        push(k); int m = (l+r)/2;\n        _chmin(x,a,b,2*k,l,m);\
-    \ _chmin(x,a,b,2*k+1,m,r); pull(k);\n    }\n    void _chmax(ll x, int a, int b,\
-    \ int k, int l, int r) {\n        if (b <= l || r <= a || x <= min_v[k]) return;\n\
-    \        if (a <= l && r <= b && x < smin_v[k]) { push_chmax(k, x); return; }\n\
-    \        push(k); int m = (l+r)/2;\n        _chmax(x,a,b,2*k,l,m); _chmax(x,a,b,2*k+1,m,r);\
-    \ pull(k);\n    }\n    void _add(ll x, int a, int b, int k, int l, int r) {\n\
-    \        if (b <= l || r <= a) return;\n        if (a <= l && r <= b) { addall(k,\
-    \ x); return; }\n        push(k); int m = (l+r)/2;\n        _add(x,a,b,2*k,l,m);\
-    \ _add(x,a,b,2*k+1,m,r); pull(k);\n    }\n    void _set(ll x, int a, int b, int\
-    \ k, int l, int r) {\n        if (b <= l || r <= a) return;\n        if (a <=\
-    \ l && r <= b) { setall(k, x); return; }\n        push(k); int m = (l+r)/2;\n\
-    \        _set(x,a,b,2*k,l,m); _set(x,a,b,2*k+1,m,r); pull(k);\n    }\n    ll _qmax(int\
-    \ a, int b, int k, int l, int r) {\n        if (b <= l || r <= a) return -LINF;\n\
-    \        if (a <= l && r <= b) return max_v[k];\n        push(k); int m = (l+r)/2;\n\
-    \        return max(_qmax(a,b,2*k,l,m), _qmax(a,b,2*k+1,m,r));\n    }\n    ll\
-    \ _qmin(int a, int b, int k, int l, int r) {\n        if (b <= l || r <= a) return\
-    \ LINF;\n        if (a <= l && r <= b) return min_v[k];\n        push(k); int\
-    \ m = (l+r)/2;\n        return min(_qmin(a,b,2*k,l,m), _qmin(a,b,2*k+1,m,r));\n\
+    \ = min_v[k] = x;\n        } else {\n            max_v[k] = x;\n        }\n  \
+    \      if (lval[k] != LINF && lval[k] > x) lval[k] = x;\n    }\n    // push_chmax:\
+    \ clamp current min up to x\n    //   precondition (from _chmax): smin_v[k] >\
+    \ x > min_v[k]\n    void push_chmax(int k, ll x) {\n        sm[k] += (x - min_v[k])\
+    \ * min_c[k];\n        if (max_v[k] == min_v[k]) {\n            // all values\
+    \ equal: both max and min become x\n            max_v[k] = min_v[k] = x;\n   \
+    \     } else {\n            min_v[k] = x;\n        }\n        if (lval[k] != LINF\
+    \ && lval[k] < x) lval[k] = x;\n    }\n\n    // pull: recompute node k from its\
+    \ children\n    void pull(int k) {\n        int l = 2*k, r = 2*k+1;\n        sm[k]\
+    \ = sm[l] + sm[r];\n        // max info\n        if      (max_v[l] < max_v[r])\
+    \ { max_v[k]=max_v[r]; max_c[k]=max_c[r]; smax_v[k]=max(max_v[l], smax_v[r]);\
+    \ }\n        else if (max_v[l] > max_v[r]) { max_v[k]=max_v[l]; max_c[k]=max_c[l];\
+    \ smax_v[k]=max(smax_v[l], max_v[r]); }\n        else                        \
+    \  { max_v[k]=max_v[l]; max_c[k]=max_c[l]+max_c[r]; smax_v[k]=max(smax_v[l], smax_v[r]);\
+    \ }\n        // min info\n        if      (min_v[l] < min_v[r]) { min_v[k]=min_v[l];\
+    \ min_c[k]=min_c[l]; smin_v[k]=min(smin_v[l], min_v[r]); }\n        else if (min_v[l]\
+    \ > min_v[r]) { min_v[k]=min_v[r]; min_c[k]=min_c[r]; smin_v[k]=min(min_v[l],\
+    \ smin_v[r]); }\n        else                          { min_v[k]=min_v[l]; min_c[k]=min_c[l]+min_c[r];\
+    \ smin_v[k]=min(smin_v[l], smin_v[r]); }\n    }\n\n    // push: propagate lazy\
+    \ values to children\n    void push(int k) {\n        if (k >= n0) return;\n \
+    \       if (lval[k] != LINF) {\n            setall(2*k, lval[k]); setall(2*k+1,\
+    \ lval[k]);\n            lval[k] = LINF; ladd[k] = 0;\n            return;\n \
+    \       }\n        if (ladd[k] != 0) {\n            addall(2*k, ladd[k]); addall(2*k+1,\
+    \ ladd[k]);\n            ladd[k] = 0;\n        }\n        if (max_v[k] < max_v[2*k])\
+    \   push_chmin(2*k,   max_v[k]);\n        if (min_v[2*k] < min_v[k])   push_chmax(2*k,\
+    \   min_v[k]);\n        if (max_v[k] < max_v[2*k+1]) push_chmin(2*k+1, max_v[k]);\n\
+    \        if (min_v[2*k+1] < min_v[k]) push_chmax(2*k+1, min_v[k]);\n    }\n\n\
+    \    void _chmin(ll x, int a, int b, int k, int l, int r) {\n        if (b <=\
+    \ l || r <= a || max_v[k] <= x) return;\n        if (a <= l && r <= b && smax_v[k]\
+    \ < x) { push_chmin(k, x); return; }\n        push(k); int m = (l+r)/2;\n    \
+    \    _chmin(x,a,b,2*k,l,m); _chmin(x,a,b,2*k+1,m,r); pull(k);\n    }\n    void\
+    \ _chmax(ll x, int a, int b, int k, int l, int r) {\n        if (b <= l || r <=\
+    \ a || x <= min_v[k]) return;\n        if (a <= l && r <= b && x < smin_v[k])\
+    \ { push_chmax(k, x); return; }\n        push(k); int m = (l+r)/2;\n        _chmax(x,a,b,2*k,l,m);\
+    \ _chmax(x,a,b,2*k+1,m,r); pull(k);\n    }\n    void _add(ll x, int a, int b,\
+    \ int k, int l, int r) {\n        if (b <= l || r <= a) return;\n        if (a\
+    \ <= l && r <= b) { addall(k, x); return; }\n        push(k); int m = (l+r)/2;\n\
+    \        _add(x,a,b,2*k,l,m); _add(x,a,b,2*k+1,m,r); pull(k);\n    }\n    void\
+    \ _set(ll x, int a, int b, int k, int l, int r) {\n        if (b <= l || r <=\
+    \ a) return;\n        if (a <= l && r <= b) { setall(k, x); return; }\n      \
+    \  push(k); int m = (l+r)/2;\n        _set(x,a,b,2*k,l,m); _set(x,a,b,2*k+1,m,r);\
+    \ pull(k);\n    }\n    ll _qmax(int a, int b, int k, int l, int r) {\n       \
+    \ if (b <= l || r <= a) return -LINF;\n        if (a <= l && r <= b) return max_v[k];\n\
+    \        push(k); int m = (l+r)/2;\n        return max(_qmax(a,b,2*k,l,m), _qmax(a,b,2*k+1,m,r));\n\
+    \    }\n    ll _qmin(int a, int b, int k, int l, int r) {\n        if (b <= l\
+    \ || r <= a) return LINF;\n        if (a <= l && r <= b) return min_v[k];\n  \
+    \      push(k); int m = (l+r)/2;\n        return min(_qmin(a,b,2*k,l,m), _qmin(a,b,2*k+1,m,r));\n\
     \    }\n    ll _qsum(int a, int b, int k, int l, int r) {\n        if (b <= l\
     \ || r <= a) return 0;\n        if (a <= l && r <= b) return sm[k];\n        push(k);\
     \ int m = (l+r)/2;\n        return _qsum(a,b,2*k,l,m) + _qsum(a,b,2*k+1,m,r);\n\
@@ -208,7 +198,7 @@ data:
   isVerificationFile: false
   path: structure/segtree_beats.hpp
   requiredBy: []
-  timestamp: '2026-03-10 03:22:29+09:00'
+  timestamp: '2026-03-10 03:37:27+09:00'
   verificationStatus: LIBRARY_NO_TESTS
   verifiedWith: []
 documentation_of: structure/segtree_beats.hpp

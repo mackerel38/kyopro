@@ -52,9 +52,6 @@ struct segtree_beats {
             // all values equal: both max and min become x
             max_v[k] = min_v[k] = x;
         } else {
-            // smax_v[k] < x (precondition), so smax_v is unchanged.
-            // min_v needs updating only when it equals old max_v.
-            if (smax_v[k] == min_v[k]) min_v[k] = x;
             max_v[k] = x;
         }
         if (lval[k] != LINF && lval[k] > x) lval[k] = x;
@@ -67,9 +64,6 @@ struct segtree_beats {
             // all values equal: both max and min become x
             max_v[k] = min_v[k] = x;
         } else {
-            // smin_v[k] > x (precondition), so smin_v is unchanged.
-            // max_v needs updating only when it equals old min_v.
-            if (smin_v[k] == max_v[k]) max_v[k] = x;
             min_v[k] = x;
         }
         if (lval[k] != LINF && lval[k] < x) lval[k] = x;
