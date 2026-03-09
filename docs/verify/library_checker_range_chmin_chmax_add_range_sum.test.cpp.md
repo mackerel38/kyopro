@@ -155,128 +155,112 @@ data:
     \ long long mod = 998244353;\nconstexpr long long MOD = 1000000007;\n\ninline\
     \ void IO() {\n    ios::sync_with_stdio(false);\n    std::cin.tie(nullptr);\n\
     }\n\nvoid solve();\n\n#line 3 \"structure/segment_beats.hpp\"\nusing namespace\
-    \ std;\n\n// Segment Beats (Ji Driver Segmentation)\n// Supports:\n//   range\
-    \ chmin   : for i in [l,r), a[i] = min(a[i], v)\n//   range chmax   : for i in\
-    \ [l,r), a[i] = max(a[i], v)\n//   range add     : for i in [l,r), a[i] += v\n\
-    //   range sum     : sum of a[l..r)\n//   range min/max : min/max of a[l..r)\n\
-    //\n// Amortized O((n + q) log^2 n) time.\n//\n// Reference: Ji (2016), \"Chtholly\
-    \ Tree\" style lazy propagation.\n\nstruct segment_beats {\n    struct Node {\n\
-    \        long long sum;\n        long long mx, mx2; int mxc;  // max, 2nd max,\
-    \ count of max\n        long long mn, mn2; int mnc;  // min, 2nd min, count of\
-    \ min\n        long long lazy_add;\n        long long lazy_chmin, lazy_chmax;\
-    \ // pending clamp targets\n    };\n\n    int n;\n    vector<Node> t;\n\n    void\
-    \ _init(Node& nd, long long v) {\n        nd.sum = v; nd.mx = v; nd.mx2 = LLONG_MIN;\
-    \ nd.mxc = 1;\n        nd.mn = v; nd.mn2 = LLONG_MAX; nd.mnc = 1;\n        nd.lazy_add\
-    \ = 0; nd.lazy_chmin = LLONG_MAX; nd.lazy_chmax = LLONG_MIN;\n    }\n\n    void\
-    \ _pull(int v) {\n        auto &L = t[2*v], &R = t[2*v+1], &N = t[v];\n      \
-    \  N.sum = L.sum + R.sum;\n        // max\n        if (L.mx == R.mx) { N.mx =\
-    \ L.mx; N.mxc = L.mxc + R.mxc; N.mx2 = max(L.mx2, R.mx2); }\n        else if (L.mx\
-    \ > R.mx) { N.mx = L.mx; N.mxc = L.mxc; N.mx2 = max(L.mx2, R.mx); }\n        else\
-    \ { N.mx = R.mx; N.mxc = R.mxc; N.mx2 = max(L.mx, R.mx2); }\n        // min\n\
-    \        if (L.mn == R.mn) { N.mn = L.mn; N.mnc = L.mnc + R.mnc; N.mn2 = min(L.mn2,\
-    \ R.mn2); }\n        else if (L.mn < R.mn) { N.mn = L.mn; N.mnc = L.mnc; N.mn2\
-    \ = min(L.mn2, R.mn); }\n        else { N.mn = R.mn; N.mnc = R.mnc; N.mn2 = min(L.mn,\
-    \ R.mn2); }\n        N.lazy_add = 0; N.lazy_chmin = LLONG_MAX; N.lazy_chmax =\
-    \ LLONG_MIN;\n    }\n\n    void _apply_add(int v, long long val) {\n        t[v].sum\
-    \ += val * (/* node size */ 1); // corrected in _push\n        t[v].mx += val;\
-    \ if (t[v].mx2 != LLONG_MIN) t[v].mx2 += val;\n        t[v].mn += val; if (t[v].mn2\
-    \ != LLONG_MAX) t[v].mn2 += val;\n        if (t[v].lazy_chmin != LLONG_MAX) t[v].lazy_chmin\
-    \ += val;\n        if (t[v].lazy_chmax != LLONG_MIN) t[v].lazy_chmax += val;\n\
-    \        t[v].lazy_add += val;\n    }\n    void _apply_chmin(int v, long long\
-    \ val) {\n        if (val >= t[v].mx) return;\n        t[v].sum -= (long long)(t[v].mx\
-    \ - val) * t[v].mxc;\n        if (t[v].lazy_chmin != LLONG_MAX) t[v].lazy_chmin\
-    \ = min(t[v].lazy_chmin, val);\n        else t[v].lazy_chmin = val;\n        t[v].mx\
-    \ = val;\n    }\n    void _apply_chmax(int v, long long val) {\n        if (val\
-    \ <= t[v].mn) return;\n        t[v].sum += (long long)(val - t[v].mn) * t[v].mnc;\n\
-    \        if (t[v].lazy_chmax != LLONG_MIN) t[v].lazy_chmax = max(t[v].lazy_chmax,\
-    \ val);\n        else t[v].lazy_chmax = val;\n        t[v].mn = val;\n    }\n\n\
-    \    void _push(int v, int sz) {\n        int lsz = sz - sz / 2, rsz = sz / 2;\
-    \ // left child size, right child size\n        // correct lazy_add to account\
-    \ for node sizes\n        // Actually, we maintain sum correctly in apply; just\
-    \ propagate lazy\n        if (t[v].lazy_add) {\n            t[2*v].sum   += t[v].lazy_add\
-    \ * lsz;\n            t[2*v+1].sum += t[v].lazy_add * rsz;\n            _apply_add(2*v,\
-    \   t[v].lazy_add); t[2*v].sum   -= t[v].lazy_add * lsz;   // undo overcounting\n\
-    \            _apply_add(2*v+1, t[v].lazy_add); t[2*v+1].sum -= t[v].lazy_add *\
-    \ rsz;\n            // Actually rewrite with proper size-aware apply\n       \
-    \ }\n        // This simple approach has issues with sum tracking. Use size-aware\
-    \ nodes:\n        // See the rewritten version below.\n        (void)v; (void)sz;\n\
-    \    }\n\n    // --- Proper implementation with explicit size ---\n    // Rewrite\
-    \ using sz stored in node.\n\n    struct Node2 {\n        long long sum, add;\n\
-    \        long long mx, mx2, chmin; int mxcnt;\n        long long mn, mn2, chmax;\
-    \ int mncnt;\n        int sz;\n    };\n    vector<Node2> nd;\n\n    void _build(int\
-    \ v, int l, int r, const vector<long long>& a) {\n        nd[v].sz = r - l;\n\
-    \        nd[v].add = 0; nd[v].chmin = LLONG_MAX; nd[v].chmax = LLONG_MIN;\n  \
-    \      if (r - l == 1) {\n            nd[v].sum = a[l];\n            nd[v].mx\
-    \ = nd[v].mn = a[l];\n            nd[v].mx2 = LLONG_MIN; nd[v].mxcnt = 1;\n  \
-    \          nd[v].mn2 = LLONG_MAX; nd[v].mncnt = 1;\n            return;\n    \
-    \    }\n        int m = (l + r) / 2;\n        _build(2*v, l, m, a); _build(2*v+1,\
-    \ m, r, a);\n        _up(v);\n    }\n\n    void _up(int v) {\n        auto &L\
-    \ = nd[2*v], &R = nd[2*v+1], &N = nd[v];\n        N.sum = L.sum + R.sum;\n   \
-    \     if (L.mx == R.mx) { N.mx = L.mx; N.mxcnt = L.mxcnt + R.mxcnt; N.mx2 = max(L.mx2,\
-    \ R.mx2); }\n        else if (L.mx > R.mx) { N.mx = L.mx; N.mxcnt = L.mxcnt; N.mx2\
-    \ = max(L.mx2, R.mx); }\n        else { N.mx = R.mx; N.mxcnt = R.mxcnt; N.mx2\
-    \ = max(L.mx, R.mx2); }\n        if (L.mn == R.mn) { N.mn = L.mn; N.mncnt = L.mncnt\
-    \ + R.mncnt; N.mn2 = min(L.mn2, R.mn2); }\n        else if (L.mn < R.mn) { N.mn\
-    \ = L.mn; N.mncnt = L.mncnt; N.mn2 = min(L.mn2, R.mn); }\n        else { N.mn\
-    \ = R.mn; N.mncnt = R.mncnt; N.mn2 = min(L.mn, R.mn2); }\n    }\n\n    void _push_add(int\
-    \ v, long long val) {\n        nd[v].sum += val * nd[v].sz;\n        nd[v].mx\
-    \ += val; nd[v].mn += val;\n        if (nd[v].mx2 != LLONG_MIN) nd[v].mx2 += val;\n\
-    \        if (nd[v].mn2 != LLONG_MAX) nd[v].mn2 += val;\n        if (nd[v].chmin\
-    \ != LLONG_MAX) nd[v].chmin += val;\n        if (nd[v].chmax != LLONG_MIN) nd[v].chmax\
-    \ += val;\n        nd[v].add += val;\n    }\n    void _push_chmin(int v, long\
-    \ long val) {\n        if (val >= nd[v].mx) return;\n        nd[v].sum -= (nd[v].mx\
-    \ - val) * nd[v].mxcnt;\n        nd[v].chmin = (nd[v].chmin != LLONG_MAX) ? min(nd[v].chmin,\
-    \ val) : val;\n        nd[v].mx = val;\n    }\n    void _push_chmax(int v, long\
-    \ long val) {\n        if (val <= nd[v].mn) return;\n        nd[v].sum += (val\
-    \ - nd[v].mn) * nd[v].mncnt;\n        nd[v].chmax = (nd[v].chmax != LLONG_MIN)\
-    \ ? max(nd[v].chmax, val) : val;\n        nd[v].mn = val;\n    }\n    void _pushdown(int\
-    \ v) {\n        if (nd[v].add != 0) {\n            _push_add(2*v, nd[v].add);\
-    \ _push_add(2*v+1, nd[v].add);\n            nd[v].add = 0;\n        }\n      \
-    \  if (nd[v].chmin != LLONG_MAX) {\n            _push_chmin(2*v, nd[v].chmin);\
-    \ _push_chmin(2*v+1, nd[v].chmin);\n            nd[v].chmin = LLONG_MAX;\n   \
-    \     }\n        if (nd[v].chmax != LLONG_MIN) {\n            _push_chmax(2*v,\
-    \ nd[v].chmax); _push_chmax(2*v+1, nd[v].chmax);\n            nd[v].chmax = LLONG_MIN;\n\
-    \        }\n    }\n\n    // apply range add [l,r) += val, current node [nl,nr)\n\
-    \    void _add(int v, int nl, int nr, int l, int r, long long val) {\n       \
-    \ if (r <= nl || nr <= l) return;\n        if (l <= nl && nr <= r) { _push_add(v,\
-    \ val); return; }\n        _pushdown(v); int m = (nl + nr) / 2;\n        _add(2*v,\
-    \ nl, m, l, r, val); _add(2*v+1, m, nr, l, r, val); _up(v);\n    }\n    void _chmin(int\
-    \ v, int nl, int nr, int l, int r, long long val) {\n        if (r <= nl || nr\
-    \ <= l || val >= nd[v].mx) return;\n        if (l <= nl && nr <= r && val > nd[v].mx2)\
-    \ { _push_chmin(v, val); return; }\n        _pushdown(v); int m = (nl + nr) /\
-    \ 2;\n        _chmin(2*v, nl, m, l, r, val); _chmin(2*v+1, m, nr, l, r, val);\
-    \ _up(v);\n    }\n    void _chmax(int v, int nl, int nr, int l, int r, long long\
-    \ val) {\n        if (r <= nl || nr <= l || val <= nd[v].mn) return;\n       \
-    \ if (l <= nl && nr <= r && val < nd[v].mn2) { _push_chmax(v, val); return; }\n\
-    \        _pushdown(v); int m = (nl + nr) / 2;\n        _chmax(2*v, nl, m, l, r,\
-    \ val); _chmax(2*v+1, m, nr, l, r, val); _up(v);\n    }\n    long long _query_sum(int\
-    \ v, int nl, int nr, int l, int r) {\n        if (r <= nl || nr <= l) return 0;\n\
-    \        if (l <= nl && nr <= r) return nd[v].sum;\n        _pushdown(v); int\
-    \ m = (nl + nr) / 2;\n        return _query_sum(2*v, nl, m, l, r) + _query_sum(2*v+1,\
-    \ m, nr, l, r);\n    }\n    long long _query_min(int v, int nl, int nr, int l,\
-    \ int r) {\n        if (r <= nl || nr <= l) return LLONG_MAX;\n        if (l <=\
-    \ nl && nr <= r) return nd[v].mn;\n        _pushdown(v); int m = (nl + nr) / 2;\n\
-    \        return min(_query_min(2*v, nl, m, l, r), _query_min(2*v+1, m, nr, l,\
-    \ r));\n    }\n    long long _query_max(int v, int nl, int nr, int l, int r) {\n\
-    \        if (r <= nl || nr <= l) return LLONG_MIN;\n        if (l <= nl && nr\
-    \ <= r) return nd[v].mx;\n        _pushdown(v); int m = (nl + nr) / 2;\n     \
-    \   return max(_query_max(2*v, nl, m, l, r), _query_max(2*v+1, m, nr, l, r));\n\
-    \    }\n\npublic:\n    segment_beats() = default;\n    segment_beats(int n, long\
-    \ long init_val = 0)\n        : n(n), nd(4 * n) {\n        vector<long long> a(n,\
-    \ init_val);\n        _build(1, 0, n, a);\n    }\n    segment_beats(const vector<long\
-    \ long>& a)\n        : n(a.size()), nd(4 * a.size()) {\n        _build(1, 0, n,\
-    \ a);\n    }\n\n    void range_add  (int l, int r, long long v) { _add  (1, 0,\
-    \ n, l, r, v); }\n    void range_chmin(int l, int r, long long v) { _chmin(1,\
-    \ 0, n, l, r, v); }\n    void range_chmax(int l, int r, long long v) { _chmax(1,\
-    \ 0, n, l, r, v); }\n\n    long long query_sum(int l, int r) { return _query_sum(1,\
-    \ 0, n, l, r); }\n    long long query_min(int l, int r) { return _query_min(1,\
-    \ 0, n, l, r); }\n    long long query_max(int l, int r) { return _query_max(1,\
-    \ 0, n, l, r); }\n};\n#line 4 \"verify/library_checker_range_chmin_chmax_add_range_sum.test.cpp\"\
-    \n\nint main(){\n    IO();\n    int T = 1;\n    while (T--) solve();\n}\n\nvoid\
-    \ solve(){\n    int n, q; cin >> n >> q;\n    vector<ll> a(n);\n    rep(i, n)\
-    \ cin >> a[i];\n    segment_beats sb(a);\n    rep(q){\n        int t; cin >> t;\n\
-    \        if (t == 0){\n            // range chmin: a[i] = min(a[i], b) for i in\
-    \ [l, r)\n            int l, r; ll b; cin >> l >> r >> b;\n            sb.range_chmin(l,\
+    \ std;\n\n// Segment Beats (Ji Driver Segmentation)\n// Supports (all queries\
+    \ half-open [l, r)):\n//   range_chmin(l, r, x) : a[i] = min(a[i], x)\n//   range_chmax(l,\
+    \ r, x) : a[i] = max(a[i], x)\n//   range_add  (l, r, x) : a[i] += x\n//   range_set\
+    \  (l, r, x) : a[i] = x\n//   query_max  (l, r)    : max of a[l..r)\n//   query_min\
+    \  (l, r)    : min of a[l..r)\n//   query_sum  (l, r)    : sum of a[l..r)\n//\n\
+    // Amortized O((n + q) log^2 n).\n// Reference: https://tjkendev.github.io/procon-library/cpp/range_query/segment_tree_beats_2.html\n\
+    \nstruct segment_beats {\n    using ll = long long;\n    static constexpr ll LINF\
+    \ = 2e18;\n\n    int n, n0;\n    // max_v, smax_v: max value, strict 2nd-max value\
+    \ (-LINF if none)\n    // min_v, smin_v: min value, strict 2nd-min value (+LINF\
+    \ if none)\n    vector<ll> max_v, smax_v, min_v, smin_v, sm, sz, ladd, lval;\n\
+    \    vector<int> max_c, min_c;\n\n    // ---- leaf/node modifiers ----\n    //\
+    \ addall: add x to every element of node k\n    void addall(int k, ll x) {\n \
+    \       max_v[k] += x;\n        if (smax_v[k] != -LINF) smax_v[k] += x;\n    \
+    \    min_v[k] += x;\n        if (smin_v[k] !=  LINF) smin_v[k] += x;\n       \
+    \ sm[k] += sz[k] * x;\n        if (lval[k] != LINF) lval[k] += x;\n        else\
+    \                 ladd[k] += x;\n    }\n    // setall: set every element of node\
+    \ k to x\n    void setall(int k, ll x) {\n        max_v[k] = smax_v[k] = min_v[k]\
+    \ = smin_v[k] = x;\n        max_c[k] = min_c[k] = (int)sz[k];\n        sm[k] =\
+    \ sz[k] * x;\n        lval[k] = x; ladd[k] = 0;\n    }\n    // push_chmin: apply\
+    \ chmin(x) to node k, reducing its current max to x\n    //   precondition: smax_v[k]\
+    \ < x < max_v[k]\n    void push_chmin(int k, ll x) {\n        sm[k] -= (max_v[k]\
+    \ - x) * max_c[k];\n        if (max_v[k] == min_v[k]) min_v[k] = x;\n        if\
+    \ (max_v[k] == smin_v[k]) smin_v[k] = x;\n        max_v[k] = x;\n        if (lval[k]\
+    \ != LINF && lval[k] > x) lval[k] = x;\n    }\n    // push_chmax: apply chmax(x)\
+    \ to node k, raising its current min to x\n    //   precondition: smin_v[k] >\
+    \ x > min_v[k]\n    void push_chmax(int k, ll x) {\n        sm[k] += (x - min_v[k])\
+    \ * min_c[k];\n        if (max_v[k] == min_v[k]) max_v[k] = x;\n        if (smax_v[k]\
+    \ == min_v[k]) smax_v[k] = x;\n        min_v[k] = x;\n        if (lval[k] != LINF\
+    \ && lval[k] < x) lval[k] = x;\n    }\n\n    // pull: recompute node k from its\
+    \ children\n    void pull(int k) {\n        int l = 2*k, r = 2*k+1;\n        sm[k]\
+    \ = sm[l] + sm[r];\n        // max info\n        if      (max_v[l] < max_v[r])\
+    \ { max_v[k]=max_v[r]; max_c[k]=max_c[r]; smax_v[k]=max(max_v[l], smax_v[r]);\
+    \ }\n        else if (max_v[l] > max_v[r]) { max_v[k]=max_v[l]; max_c[k]=max_c[l];\
+    \ smax_v[k]=max(smax_v[l], max_v[r]); }\n        else                        \
+    \  { max_v[k]=max_v[l]; max_c[k]=max_c[l]+max_c[r]; smax_v[k]=max(smax_v[l], smax_v[r]);\
+    \ }\n        // min info\n        if      (min_v[l] < min_v[r]) { min_v[k]=min_v[l];\
+    \ min_c[k]=min_c[l]; smin_v[k]=min(smin_v[l], min_v[r]); }\n        else if (min_v[l]\
+    \ > min_v[r]) { min_v[k]=min_v[r]; min_c[k]=min_c[r]; smin_v[k]=min(min_v[l],\
+    \ smin_v[r]); }\n        else                          { min_v[k]=min_v[l]; min_c[k]=min_c[l]+min_c[r];\
+    \ smin_v[k]=min(smin_v[l], smin_v[r]); }\n    }\n\n    // push: propagate lazy\
+    \ values to children\n    void push(int k) {\n        if (k >= n0) return;  //\
+    \ leaf: nothing to push\n        if (lval[k] != LINF) {\n            setall(2*k,\
+    \ lval[k]); setall(2*k+1, lval[k]);\n            lval[k] = LINF; ladd[k] = 0;\n\
+    \            return;\n        }\n        if (ladd[k] != 0) {\n            addall(2*k,\
+    \ ladd[k]); addall(2*k+1, ladd[k]);\n            ladd[k] = 0;\n        }\n   \
+    \     // propagate chmin / chmax bounds\n        if (max_v[k] < max_v[2*k])  \
+    \ push_chmin(2*k,   max_v[k]);\n        if (min_v[2*k] < min_v[k])   push_chmax(2*k,\
+    \   min_v[k]);\n        if (max_v[k] < max_v[2*k+1]) push_chmin(2*k+1, max_v[k]);\n\
+    \        if (min_v[2*k+1] < min_v[k]) push_chmax(2*k+1, min_v[k]);\n    }\n\n\
+    \    // ---- range operations ----\n    void _chmin(ll x, int a, int b, int k,\
+    \ int l, int r) {\n        if (b <= l || r <= a || max_v[k] <= x) return;\n  \
+    \      if (a <= l && r <= b && smax_v[k] < x) { push_chmin(k, x); return; }\n\
+    \        push(k); int m = (l+r)/2;\n        _chmin(x,a,b,2*k,l,m); _chmin(x,a,b,2*k+1,m,r);\
+    \ pull(k);\n    }\n    void _chmax(ll x, int a, int b, int k, int l, int r) {\n\
+    \        if (b <= l || r <= a || x <= min_v[k]) return;\n        if (a <= l &&\
+    \ r <= b && x < smin_v[k]) { push_chmax(k, x); return; }\n        push(k); int\
+    \ m = (l+r)/2;\n        _chmax(x,a,b,2*k,l,m); _chmax(x,a,b,2*k+1,m,r); pull(k);\n\
+    \    }\n    void _add(ll x, int a, int b, int k, int l, int r) {\n        if (b\
+    \ <= l || r <= a) return;\n        if (a <= l && r <= b) { addall(k, x); return;\
+    \ }\n        push(k); int m = (l+r)/2;\n        _add(x,a,b,2*k,l,m); _add(x,a,b,2*k+1,m,r);\
+    \ pull(k);\n    }\n    void _set(ll x, int a, int b, int k, int l, int r) {\n\
+    \        if (b <= l || r <= a) return;\n        if (a <= l && r <= b) { setall(k,\
+    \ x); return; }\n        push(k); int m = (l+r)/2;\n        _set(x,a,b,2*k,l,m);\
+    \ _set(x,a,b,2*k+1,m,r); pull(k);\n    }\n    ll _qmax(int a, int b, int k, int\
+    \ l, int r) {\n        if (b <= l || r <= a) return -LINF;\n        if (a <= l\
+    \ && r <= b) return max_v[k];\n        push(k); int m = (l+r)/2;\n        return\
+    \ max(_qmax(a,b,2*k,l,m), _qmax(a,b,2*k+1,m,r));\n    }\n    ll _qmin(int a, int\
+    \ b, int k, int l, int r) {\n        if (b <= l || r <= a) return LINF;\n    \
+    \    if (a <= l && r <= b) return min_v[k];\n        push(k); int m = (l+r)/2;\n\
+    \        return min(_qmin(a,b,2*k,l,m), _qmin(a,b,2*k+1,m,r));\n    }\n    ll\
+    \ _qsum(int a, int b, int k, int l, int r) {\n        if (b <= l || r <= a) return\
+    \ 0;\n        if (a <= l && r <= b) return sm[k];\n        push(k); int m = (l+r)/2;\n\
+    \        return _qsum(a,b,2*k,l,m) + _qsum(a,b,2*k+1,m,r);\n    }\n\n    // ----\
+    \ construction ----\n    void _init(int n_, const ll* a) {\n        n = n_; n0\
+    \ = 1; while (n0 < n) n0 <<= 1;\n        int sz2 = 2 * n0 + 2;\n        max_v.assign(sz2,\
+    \ -LINF); smax_v.assign(sz2, -LINF); max_c.assign(sz2, 0);\n        min_v.assign(sz2,\
+    \  LINF); smin_v.assign(sz2,  LINF); min_c.assign(sz2, 0);\n        sm.assign(sz2,\
+    \ 0); sz.assign(sz2, 0);\n        ladd.assign(sz2, 0); lval.assign(sz2, LINF);\n\
+    \        // set sizes (sz[k] = number of REAL elements covered)\n        // We\
+    \ need sz for addall/setall. Use len = 1 for each leaf.\n        // sz at leaves:\
+    \ real leaves have sz=1, padding leaves have sz=0.\n        // Propagate up.\n\
+    \        for (int i = n0; i < n0 + n; i++) sz[i] = 1;\n        for (int i = n0\
+    \ - 1; i >= 1; i--) sz[i] = sz[2*i] + sz[2*i+1];\n        // Note: we also need\
+    \ sz for addall/setall at non-leaf nodes.\n        // Actually, for addall we\
+    \ use sm[k] += sz[k] * x,\n        // so sz[k] must count only real elements.\n\
+    \        // Initialize leaves\n        for (int i = 0; i < n; i++) {\n       \
+    \     int k = n0 + i;\n            ll v = (a ? a[i] : 0LL);\n            max_v[k]\
+    \ = smax_v[k] = min_v[k] = smin_v[k] = v;\n            max_c[k] = min_c[k] = 1;\n\
+    \            sm[k] = v;\n        }\n        // padding leaves: already -LINF /\
+    \ LINF / count=0\n        for (int i = n0 - 1; i >= 1; i--) pull(i);\n    }\n\n\
+    public:\n    segment_beats() = default;\n    segment_beats(int n, ll init_val\
+    \ = 0) {\n        vector<ll> a(n, init_val);\n        _init(n, a.data());\n  \
+    \  }\n    segment_beats(const vector<ll>& a) { _init((int)a.size(), a.data());\
+    \ }\n\n    // half-open intervals [l, r)\n    void range_chmin(int l, int r, ll\
+    \ x) { _chmin(x, l, r, 1, 0, n0); }\n    void range_chmax(int l, int r, ll x)\
+    \ { _chmax(x, l, r, 1, 0, n0); }\n    void range_add  (int l, int r, ll x) { _add\
+    \  (x, l, r, 1, 0, n0); }\n    void range_set  (int l, int r, ll x) { _set  (x,\
+    \ l, r, 1, 0, n0); }\n    ll query_max(int l, int r) { return _qmax(l, r, 1, 0,\
+    \ n0); }\n    ll query_min(int l, int r) { return _qmin(l, r, 1, 0, n0); }\n \
+    \   ll query_sum(int l, int r) { return _qsum(l, r, 1, 0, n0); }\n};\n#line 4\
+    \ \"verify/library_checker_range_chmin_chmax_add_range_sum.test.cpp\"\n\nint main(){\n\
+    \    IO();\n    int T = 1;\n    while (T--) solve();\n}\n\nvoid solve(){\n   \
+    \ int n, q; cin >> n >> q;\n    vector<ll> a(n);\n    rep(i, n) cin >> a[i];\n\
+    \    segment_beats sb(a);\n    rep(q){\n        int t; cin >> t;\n        if (t\
+    \ == 0){\n            // range chmin: a[i] = min(a[i], b) for i in [l, r)\n  \
+    \          int l, r; ll b; cin >> l >> r >> b;\n            sb.range_chmin(l,\
     \ r, b);\n        } else if (t == 1){\n            // range chmax: a[i] = max(a[i],\
     \ b) for i in [l, r)\n            int l, r; ll b; cin >> l >> r >> b;\n      \
     \      sb.range_chmax(l, r, b);\n        } else if (t == 2){\n            // range\
@@ -304,7 +288,7 @@ data:
   isVerificationFile: true
   path: verify/library_checker_range_chmin_chmax_add_range_sum.test.cpp
   requiredBy: []
-  timestamp: '2026-03-09 22:49:24+09:00'
+  timestamp: '2026-03-10 02:22:16+09:00'
   verificationStatus: TEST_WRONG_ANSWER
   verifiedWith: []
 documentation_of: verify/library_checker_range_chmin_chmax_add_range_sum.test.cpp

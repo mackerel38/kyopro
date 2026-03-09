@@ -1,7 +1,7 @@
 ---
 data:
   _extendedDependsOn:
-  - icon: ':x:'
+  - icon: ':heavy_check_mark:'
     path: utility/mo.hpp
     title: utility/mo.hpp
   - icon: ':question:'
@@ -9,9 +9,9 @@ data:
     title: utility/template.hpp
   _extendedRequiredBy: []
   _extendedVerifiedWith: []
-  _isVerificationFailed: true
+  _isVerificationFailed: false
   _pathExtension: cpp
-  _verificationStatusIcon: ':x:'
+  _verificationStatusIcon: ':heavy_check_mark:'
   attributes:
     '*NOT_SPECIAL_COMMENTS*': ''
     PROBLEM: https://judge.yosupo.jp/problem/static_range_inversions_query
@@ -180,31 +180,19 @@ data:
     \n\nint main(){\n    IO();\n    int T = 1;\n    while (T--) solve();\n}\n\nvoid\
     \ solve(){\n    int n, q; cin >> n >> q;\n    vector<int> a(n);\n    rep(i, n)\
     \ cin >> a[i];\n\n    // Coordinate compress\n    vector<int> b = a;\n    sort(b.begin(),\
-    \ b.end()); b.erase(unique(b.begin(), b.end()), b.end());\n    int m = b.size();\n\
+    \ b.end()); b.erase(unique(b.begin(), b.end()), b.end());\n    int m = (int)b.size();\n\
     \    rep(i, n) a[i] = (int)(lower_bound(b.begin(), b.end(), a[i]) - b.begin());\n\
-    \n    // Inline BIT (1-indexed, size m)\n    // bit_add(i, v): add v at position\
-    \ i+1  (i is 0-indexed compressed value)\n    // bit_sum(i)   : sum of positions\
-    \ 1..i  = count with compressed value in [0, i)\n    vector<ll> bit(m + 2, 0);\n\
-    \    auto bit_add = [&](int i, ll v){ for (i += 1; i <= m; i += i & -i) bit[i]\
-    \ += v; };\n    auto bit_sum = [&](int i) -> ll { ll s = 0; for (; i > 0; i -=\
-    \ i & -i) s += bit[i]; return s; };\n\n    mo mo_q(n);\n    rep(i, q){ int l,\
-    \ r; cin >> l >> r; mo_q.add(l, r); }\n\n    vector<ll> ans(q);\n    ll cur =\
-    \ 0;\n    int wsize = 0;\n\n    // add_right(i): extend right to include a[i]\n\
-    \    //   new inversions = #{elements in window with value > a[i]}\n    //   \
-    \               = wsize - bit_sum(a[i] + 1)\n    auto add_r = [&](int i){\n  \
-    \      cur += wsize - bit_sum(a[i] + 1);\n        bit_add(a[i], 1); wsize++;\n\
-    \    };\n    // del_right(i): shrink right to exclude a[i]\n    //   removed inversions\
-    \ = #{elements in window excl a[i] with value > a[i]}\n    //                \
-    \      = wsize - bit_sum(a[i] + 1)  (bit still includes a[i])\n    auto del_r\
-    \ = [&](int i){\n        cur -= wsize - bit_sum(a[i] + 1);\n        bit_add(a[i],\
-    \ -1); wsize--;\n    };\n    // add_left(i): extend left to include a[i]\n   \
-    \ //   a[i] becomes new leftmost; new inversions = #{in window with value < a[i]}\n\
-    \    //                                             = bit_sum(a[i])\n    auto\
-    \ add_l = [&](int i){\n        cur += bit_sum(a[i]);\n        bit_add(a[i], 1);\
-    \ wsize++;\n    };\n    // del_left(i): shrink left to exclude a[i]\n    //  \
-    \ removed inversions = #{in window excl a[i] with value < a[i]}\n    //      \
-    \                = bit_sum(a[i])  (a[i] itself not counted)\n    auto del_l =\
-    \ [&](int i){\n        bit_add(a[i], -1); wsize--;\n        cur -= bit_sum(a[i]);\n\
+    \n    // Fenwick tree (rename to fw to avoid conflict with 'bit' macro)\n    vector<ll>\
+    \ fw(m + 2, 0);\n    auto fw_add = [&](int i, ll v){ for (i += 1; i <= m; i +=\
+    \ i & -i) fw[i] += v; };\n    auto fw_sum = [&](int i) -> ll { ll s = 0; for (;\
+    \ i > 0; i -= i & -i) s += fw[i]; return s; };\n\n    mo mo_q(n);\n    rep(i,\
+    \ q){ int l, r; cin >> l >> r; mo_q.add(l, r); }\n\n    vector<ll> ans(q);\n \
+    \   ll cur = 0;\n    int wsize = 0;\n\n    auto add_r = [&](int i){\n        cur\
+    \ += wsize - fw_sum(a[i] + 1);\n        fw_add(a[i], 1); wsize++;\n    };\n  \
+    \  auto del_r = [&](int i){\n        cur -= wsize - fw_sum(a[i] + 1);\n      \
+    \  fw_add(a[i], -1); wsize--;\n    };\n    auto add_l = [&](int i){\n        cur\
+    \ += fw_sum(a[i]);\n        fw_add(a[i], 1); wsize++;\n    };\n    auto del_l\
+    \ = [&](int i){\n        fw_add(a[i], -1); wsize--;\n        cur -= fw_sum(a[i]);\n\
     \    };\n\n    mo_q.run(add_l, del_l, add_r, del_r, [&](int qi){ ans[qi] = cur;\
     \ });\n    rep(i, q) cout << ans[i] << nl;\n}\n"
   code: "#define PROBLEM \"https://judge.yosupo.jp/problem/static_range_inversions_query\"\
@@ -212,31 +200,19 @@ data:
     \ = 1;\n    while (T--) solve();\n}\n\nvoid solve(){\n    int n, q; cin >> n >>\
     \ q;\n    vector<int> a(n);\n    rep(i, n) cin >> a[i];\n\n    // Coordinate compress\n\
     \    vector<int> b = a;\n    sort(b.begin(), b.end()); b.erase(unique(b.begin(),\
-    \ b.end()), b.end());\n    int m = b.size();\n    rep(i, n) a[i] = (int)(lower_bound(b.begin(),\
-    \ b.end(), a[i]) - b.begin());\n\n    // Inline BIT (1-indexed, size m)\n    //\
-    \ bit_add(i, v): add v at position i+1  (i is 0-indexed compressed value)\n  \
-    \  // bit_sum(i)   : sum of positions 1..i  = count with compressed value in [0,\
-    \ i)\n    vector<ll> bit(m + 2, 0);\n    auto bit_add = [&](int i, ll v){ for\
-    \ (i += 1; i <= m; i += i & -i) bit[i] += v; };\n    auto bit_sum = [&](int i)\
-    \ -> ll { ll s = 0; for (; i > 0; i -= i & -i) s += bit[i]; return s; };\n\n \
-    \   mo mo_q(n);\n    rep(i, q){ int l, r; cin >> l >> r; mo_q.add(l, r); }\n\n\
-    \    vector<ll> ans(q);\n    ll cur = 0;\n    int wsize = 0;\n\n    // add_right(i):\
-    \ extend right to include a[i]\n    //   new inversions = #{elements in window\
-    \ with value > a[i]}\n    //                  = wsize - bit_sum(a[i] + 1)\n  \
-    \  auto add_r = [&](int i){\n        cur += wsize - bit_sum(a[i] + 1);\n     \
-    \   bit_add(a[i], 1); wsize++;\n    };\n    // del_right(i): shrink right to exclude\
-    \ a[i]\n    //   removed inversions = #{elements in window excl a[i] with value\
-    \ > a[i]}\n    //                      = wsize - bit_sum(a[i] + 1)  (bit still\
-    \ includes a[i])\n    auto del_r = [&](int i){\n        cur -= wsize - bit_sum(a[i]\
-    \ + 1);\n        bit_add(a[i], -1); wsize--;\n    };\n    // add_left(i): extend\
-    \ left to include a[i]\n    //   a[i] becomes new leftmost; new inversions = #{in\
-    \ window with value < a[i]}\n    //                                          \
-    \   = bit_sum(a[i])\n    auto add_l = [&](int i){\n        cur += bit_sum(a[i]);\n\
-    \        bit_add(a[i], 1); wsize++;\n    };\n    // del_left(i): shrink left to\
-    \ exclude a[i]\n    //   removed inversions = #{in window excl a[i] with value\
-    \ < a[i]}\n    //                      = bit_sum(a[i])  (a[i] itself not counted)\n\
-    \    auto del_l = [&](int i){\n        bit_add(a[i], -1); wsize--;\n        cur\
-    \ -= bit_sum(a[i]);\n    };\n\n    mo_q.run(add_l, del_l, add_r, del_r, [&](int\
+    \ b.end()), b.end());\n    int m = (int)b.size();\n    rep(i, n) a[i] = (int)(lower_bound(b.begin(),\
+    \ b.end(), a[i]) - b.begin());\n\n    // Fenwick tree (rename to fw to avoid conflict\
+    \ with 'bit' macro)\n    vector<ll> fw(m + 2, 0);\n    auto fw_add = [&](int i,\
+    \ ll v){ for (i += 1; i <= m; i += i & -i) fw[i] += v; };\n    auto fw_sum = [&](int\
+    \ i) -> ll { ll s = 0; for (; i > 0; i -= i & -i) s += fw[i]; return s; };\n\n\
+    \    mo mo_q(n);\n    rep(i, q){ int l, r; cin >> l >> r; mo_q.add(l, r); }\n\n\
+    \    vector<ll> ans(q);\n    ll cur = 0;\n    int wsize = 0;\n\n    auto add_r\
+    \ = [&](int i){\n        cur += wsize - fw_sum(a[i] + 1);\n        fw_add(a[i],\
+    \ 1); wsize++;\n    };\n    auto del_r = [&](int i){\n        cur -= wsize - fw_sum(a[i]\
+    \ + 1);\n        fw_add(a[i], -1); wsize--;\n    };\n    auto add_l = [&](int\
+    \ i){\n        cur += fw_sum(a[i]);\n        fw_add(a[i], 1); wsize++;\n    };\n\
+    \    auto del_l = [&](int i){\n        fw_add(a[i], -1); wsize--;\n        cur\
+    \ -= fw_sum(a[i]);\n    };\n\n    mo_q.run(add_l, del_l, add_r, del_r, [&](int\
     \ qi){ ans[qi] = cur; });\n    rep(i, q) cout << ans[i] << nl;\n}\n"
   dependsOn:
   - utility/template.hpp
@@ -244,8 +220,8 @@ data:
   isVerificationFile: true
   path: verify/library_checker_static_range_inversions_query.test.cpp
   requiredBy: []
-  timestamp: '2026-03-09 22:49:24+09:00'
-  verificationStatus: TEST_WRONG_ANSWER
+  timestamp: '2026-03-10 02:22:16+09:00'
+  verificationStatus: TEST_ACCEPTED
   verifiedWith: []
 documentation_of: verify/library_checker_static_range_inversions_query.test.cpp
 layout: document

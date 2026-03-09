@@ -1,7 +1,7 @@
 ---
 data:
   _extendedDependsOn:
-  - icon: ':question:'
+  - icon: ':heavy_check_mark:'
     path: structure/segtree.hpp
     title: structure/segtree.hpp
   - icon: ':question:'
@@ -183,7 +183,7 @@ data:
     \            return x - size;\n            }\n            l = op(l, data[x]);\n\
     \            x++;\n        } while ((x & -x) != x);\n        return _n;\n    }\n\
     \    template<class F>\n    int min_left(int x, const F& f) {\n        assert(0<=x\
-    \ && x<_n);\n        asserr(f(e()));\n        if (x == 0) return 0;\n        x\
+    \ && x<_n);\n        assert(f(e()));\n        if (x == 0) return 0;\n        x\
     \ += size;\n        T r = e();\n        do {\n            x--;\n            while\
     \ (1<x && (x&1)) x >>= 1;\n            if (!f(op(data[x], r))) {\n           \
     \     while (x < size) {\n                    x = x * 2 + 1;\n               \
@@ -212,7 +212,7 @@ data:
   isVerificationFile: true
   path: verify/library_checker_point_add_range_sum.test.cpp
   requiredBy: []
-  timestamp: '2026-03-07 17:36:50+09:00'
+  timestamp: '2026-03-10 02:33:16+09:00'
   verificationStatus: TEST_ACCEPTED
   verifiedWith: []
 documentation_of: verify/library_checker_point_add_range_sum.test.cpp

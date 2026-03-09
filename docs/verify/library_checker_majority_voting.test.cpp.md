@@ -1,17 +1,17 @@
 ---
 data:
   _extendedDependsOn:
-  - icon: ':question:'
-    path: structure/segtree.hpp
-    title: structure/segtree.hpp
+  - icon: ':heavy_check_mark:'
+    path: structure/majority_vote.hpp
+    title: structure/majority_vote.hpp
   - icon: ':question:'
     path: utility/template.hpp
     title: utility/template.hpp
   _extendedRequiredBy: []
   _extendedVerifiedWith: []
-  _isVerificationFailed: true
+  _isVerificationFailed: false
   _pathExtension: cpp
-  _verificationStatusIcon: ':x:'
+  _verificationStatusIcon: ':heavy_check_mark:'
   attributes:
     '*NOT_SPECIAL_COMMENTS*': ''
     PROBLEM: https://judge.yosupo.jp/problem/majority_voting
@@ -154,86 +154,88 @@ data:
     constexpr long double eps = 1e-9;\nconst long double PI = acos(-1);\nconstexpr\
     \ long long mod = 998244353;\nconstexpr long long MOD = 1000000007;\n\ninline\
     \ void IO() {\n    ios::sync_with_stdio(false);\n    std::cin.tie(nullptr);\n\
-    }\n\nvoid solve();\n\n#line 3 \"structure/segtree.hpp\"\nusing namespace std;\n\
-    template <class T, auto op, auto e>\nstruct segtree {\n    int _n, size;\n   \
-    \ vector<T> data;\n\n    segtree() = default;\n    segtree(int n) : _n(n) { build(vector<T>(n,\
-    \ e())); }\n    segtree(const vector<T>& v) : _n(ssize(v)) { build(v); }\n   \
-    \ void build(const vector<T>& v) {\n        size = __bit_ceil((unsigned int)_n);\n\
-    \        data.assign(2*size, e());\n        for (int i=0; i<_n; ++i) data[size+i]\
-    \ = v[i];\n        for (int i=size-1; 0<i; --i) update(i);\n    }\n    \n    void\
-    \ update(int x) { data[x] = op(data[2*x], data[2*x+1]); }\n\n    void set(int\
-    \ x, T y) {\n        assert(0<=x && x<_n);\n        x += size;\n        data[x]\
-    \ = y;\n        for (x>>=1; 0<x; x>>=1) update(x);\n    }\n    void add(int x,\
-    \ T y) { set(x, op(get(x), y)); }\n\n    T get(int x) const {\n        assert(0<=x\
-    \ && x<_n);\n        return data[size+x];\n    }\n    T operator[](int x) const\
-    \ { return get(x); }\n    T allprod() const { return data[1]; }\n    vector<T>\
-    \ values() const {\n        vector<T> re;\n        re.assign(data.begin()+size,\
-    \ data.begin()+size+_n);\n        return re;\n    }\n\n    T prod(int x, int y)\
-    \ const {\n        assert(0<=x && x<=y && y<=_n);\n        x += size;\n      \
-    \  y += size;\n        T l = e(), r = e();\n        while (x < y) {\n        \
-    \    if (x & 1) l = op(l, data[x++]);\n            if (y & 1) r = op(data[--y],\
-    \ r);\n            x >>= 1;\n            y >>= 1;\n        }\n        return op(l,\
-    \ r);\n    }\n\n    template<class F>\n    int max_right(int x, const F& f) const\
-    \ {\n        assert(0<=x && x<=_n);\n        assert(f(e()));\n        if (x ==\
-    \ _n) return _n;\n        x += size;\n        T l = e();\n        do {\n     \
-    \       while ((x&1) == 0) x >>= 1;\n            if (!f(op(l, data[x]))) {\n \
-    \               while (x < size) {\n                    x = x * 2;\n         \
-    \           if (f(op(l, data[x]))) { \n                        l = op(l, data[x]);\n\
-    \                        x++;\n                    }\n                }\n    \
-    \            return x - size;\n            }\n            l = op(l, data[x]);\n\
-    \            x++;\n        } while ((x & -x) != x);\n        return _n;\n    }\n\
-    \    template<class F>\n    int min_left(int x, const F& f) {\n        assert(0<=x\
-    \ && x<_n);\n        asserr(f(e()));\n        if (x == 0) return 0;\n        x\
-    \ += size;\n        T r = e();\n        do {\n            x--;\n            while\
-    \ (1<x && (x&1)) x >>= 1;\n            if (!f(op(data[x], r))) {\n           \
-    \     while (x < size) {\n                    x = x * 2 + 1;\n               \
-    \     if (f(op(data[x], r))) {\n                        r = op(data[x], r);\n\
-    \                        x--;\n                    }\n                }\n    \
-    \            return x + 1 - size;\n            }\n            r = op(data[x],\
-    \ r);\n        } while ((x & -x) != x);\n        return 0;\n    }\n};\n#line 4\
-    \ \"verify/library_checker_majority_voting.test.cpp\"\n\n// Boyer-Moore voting\
-    \ merge as segtree monoid  S = {candidate, excess}\nusing S = pair<int, int>;\n\
-    const auto bm_op = [](S a, S b) -> S {\n    if (a.second == 0) return b;\n   \
-    \ if (b.second == 0) return a;\n    if (a.first == b.first) return {a.first, a.second\
-    \ + b.second};\n    if (a.second > b.second) return {a.first, a.second - b.second};\n\
-    \    if (a.second < b.second) return {b.first, b.second - a.second};\n    return\
-    \ {b.first, 0};\n};\nconst auto bm_e = []() -> S { return {0, 0}; };\n\nint main(){\n\
-    \    IO();\n    int T = 1;\n    while (T--) solve();\n}\n\nvoid solve(){\n   \
-    \ int n, q; cin >> n >> q;\n    vector<int> a(n);\n    rep(i, n) cin >> a[i];\n\
-    \n    // Precompute sorted positions per value for O(log n) count\n    map<int,\
-    \ vector<int>> pos;\n    rep(i, n) pos[a[i]].push_back(i);\n\n    vector<S> sv(n);\n\
-    \    rep(i, n) sv[i] = {a[i], 1};\n    segtree<S, bm_op, bm_e> seg(sv);\n\n  \
-    \  rep(q){\n        int l, r; cin >> l >> r;\n        auto [cand, dummy] = seg.query(l,\
-    \ r);\n        auto it = pos.find(cand);\n        int cnt = 0;\n        if (it\
-    \ != pos.end()){\n            auto& v = it->second;\n            cnt = (int)(lower_bound(v.begin(),\
-    \ v.end(), r) -\n                        lower_bound(v.begin(), v.end(), l));\n\
-    \        }\n        cout << (cnt * 2 > r - l ? cand : -1) << nl;\n    }\n}\n"
+    }\n\nvoid solve();\n\n#line 3 \"structure/majority_vote.hpp\"\nusing namespace\
+    \ std;\n\n// Boyer-Moore majority voting  (single-pass streaming)\n// After pushing\
+    \ N elements, query() returns the majority candidate.\n// IMPORTANT: verify externally\
+    \ that the candidate appears > N/2 times.\ntemplate <class T = int>\nstruct majority_vote\
+    \ {\n    T cand{};\n    int cnt = 0;\n\n    void push(T x) {\n        if (cnt\
+    \ == 0) { cand = x; cnt = 1; }\n        else if (cand == x) ++cnt;\n        else\
+    \ --cnt;\n    }\n    T   query()          const { return cand; }\n    bool has_candidate()\
+    \ const { return cnt > 0; }\n    void clear() { cand = T{}; cnt = 0; }\n};\n\n\
+    // Segment-tree-based majority query with point updates\n// S = pair<T, int>:\
+    \ {candidate, excess}\n// Use with segtree<S, bm_op<T>, bm_e<T>>\n//\n// After\
+    \ query(l, r), the returned candidate MIGHT be the majority.\n// Verify by counting\
+    \ occurrences externally (e.g. using map<T, pbds_set>).\n\ntemplate <class T =\
+    \ int>\nstruct majority_segtree {\n    using S = pair<T, int>;\n\n    static S\
+    \ bm_op(S a, S b) {\n        if (a.second == 0) return b;\n        if (b.second\
+    \ == 0) return a;\n        if (a.first == b.first) return {a.first, a.second +\
+    \ b.second};\n        if (a.second > b.second) return {a.first, a.second - b.second};\n\
+    \        if (a.second < b.second) return {b.first, b.second - a.second};\n   \
+    \     return {b.first, 0};\n    }\n    static S bm_e() { return {T{}, 0}; }\n\n\
+    \    int n;\n    vector<S> seg;\n\n    majority_segtree() = default;\n    majority_segtree(const\
+    \ vector<T>& a) : n(a.size()), seg(4 * a.size()) {\n        build(a, 1, 0, n);\n\
+    \    }\n\n    void build(const vector<T>& a, int v, int l, int r) {\n        if\
+    \ (r - l == 1) { seg[v] = {a[l], 1}; return; }\n        int m = (l + r) / 2;\n\
+    \        build(a, 2*v, l, m); build(a, 2*v+1, m, r);\n        seg[v] = bm_op(seg[2*v],\
+    \ seg[2*v+1]);\n    }\n    void set(int i, T x, int v, int l, int r) {\n     \
+    \   if (r - l == 1) { seg[v] = {x, 1}; return; }\n        int m = (l + r) / 2;\n\
+    \        if (i < m) set(i, x, 2*v, l, m); else set(i, x, 2*v+1, m, r);\n     \
+    \   seg[v] = bm_op(seg[2*v], seg[2*v+1]);\n    }\n    S query(int ql, int qr,\
+    \ int v, int l, int r) {\n        if (qr <= l || r <= ql) return bm_e();\n   \
+    \     if (ql <= l && r <= qr) return seg[v];\n        int m = (l + r) / 2;\n \
+    \       return bm_op(query(ql, qr, 2*v, l, m), query(ql, qr, 2*v+1, m, r));\n\
+    \    }\n\n    void set(int i, T x)       { set(i, x, 1, 0, n); }\n    // Returns\
+    \ BM candidate for a[l..r). Verify count externally!\n    S query(int l, int r)\
+    \      { return query(l, r, 1, 0, n); }\n};\n#line 4 \"verify/library_checker_majority_voting.test.cpp\"\
+    \n\n// Policy-based order-statistics tree for O(log n) rank queries\n#include\
+    \ <ext/pb_ds/assoc_container.hpp>\n#include <ext/pb_ds/tree_policy.hpp>\nusing\
+    \ namespace __gnu_pbds;\nusing pbds_set = tree<int, null_type, less<int>,\n  \
+    \                     rb_tree_tag, tree_order_statistics_node_update>;\n\nint\
+    \ main(){\n    IO();\n    int T = 1;\n    while (T--) solve();\n}\n\nvoid solve(){\n\
+    \    int n, q; cin >> n >> q;\n    vector<int> a(n);\n    rep(i, n) cin >> a[i];\n\
+    \n    // BM segtree for candidate queries\n    majority_segtree<int> ms(a);\n\n\
+    \    // positions[v] = sorted set of indices where a[i] == v\n    // Use pb_ds\
+    \ for O(log n) count in range [l, r)\n    map<int, pbds_set> pos;\n    rep(i,\
+    \ n) pos[a[i]].insert(i);\n\n    rep(q){\n        int t; cin >> t;\n        if\
+    \ (t == 0){\n            // point update: a[p] = x\n            int p, x; cin\
+    \ >> p >> x;\n            pos[a[p]].erase(p);\n            a[p] = x;\n       \
+    \     pos[x].insert(p);\n            ms.set(p, x);\n        } else {\n       \
+    \     // range majority query [l, r)\n            int l, r; cin >> l >> r;\n \
+    \           auto [cand, excess] = ms.query(l, r);\n            // count occurrences\
+    \ of cand in [l, r)\n            auto it = pos.find(cand);\n            int cnt\
+    \ = 0;\n            if (it != pos.end()){\n                auto& S = it->second;\n\
+    \                cnt = (int)S.order_of_key(r) - (int)S.order_of_key(l);\n    \
+    \        }\n            cout << (cnt * 2 > r - l ? cand : -1) << nl;\n       \
+    \ }\n    }\n}\n"
   code: "#define PROBLEM \"https://judge.yosupo.jp/problem/majority_voting\"\n#include\
-    \ \"template\"\n#include \"segtree\"\n\n// Boyer-Moore voting merge as segtree\
-    \ monoid  S = {candidate, excess}\nusing S = pair<int, int>;\nconst auto bm_op\
-    \ = [](S a, S b) -> S {\n    if (a.second == 0) return b;\n    if (b.second ==\
-    \ 0) return a;\n    if (a.first == b.first) return {a.first, a.second + b.second};\n\
-    \    if (a.second > b.second) return {a.first, a.second - b.second};\n    if (a.second\
-    \ < b.second) return {b.first, b.second - a.second};\n    return {b.first, 0};\n\
-    };\nconst auto bm_e = []() -> S { return {0, 0}; };\n\nint main(){\n    IO();\n\
-    \    int T = 1;\n    while (T--) solve();\n}\n\nvoid solve(){\n    int n, q; cin\
-    \ >> n >> q;\n    vector<int> a(n);\n    rep(i, n) cin >> a[i];\n\n    // Precompute\
-    \ sorted positions per value for O(log n) count\n    map<int, vector<int>> pos;\n\
-    \    rep(i, n) pos[a[i]].push_back(i);\n\n    vector<S> sv(n);\n    rep(i, n)\
-    \ sv[i] = {a[i], 1};\n    segtree<S, bm_op, bm_e> seg(sv);\n\n    rep(q){\n  \
-    \      int l, r; cin >> l >> r;\n        auto [cand, dummy] = seg.query(l, r);\n\
-    \        auto it = pos.find(cand);\n        int cnt = 0;\n        if (it != pos.end()){\n\
-    \            auto& v = it->second;\n            cnt = (int)(lower_bound(v.begin(),\
-    \ v.end(), r) -\n                        lower_bound(v.begin(), v.end(), l));\n\
-    \        }\n        cout << (cnt * 2 > r - l ? cand : -1) << nl;\n    }\n}\n"
+    \ \"template\"\n#include \"majority_vote\"\n\n// Policy-based order-statistics\
+    \ tree for O(log n) rank queries\n#include <ext/pb_ds/assoc_container.hpp>\n#include\
+    \ <ext/pb_ds/tree_policy.hpp>\nusing namespace __gnu_pbds;\nusing pbds_set = tree<int,\
+    \ null_type, less<int>,\n                       rb_tree_tag, tree_order_statistics_node_update>;\n\
+    \nint main(){\n    IO();\n    int T = 1;\n    while (T--) solve();\n}\n\nvoid\
+    \ solve(){\n    int n, q; cin >> n >> q;\n    vector<int> a(n);\n    rep(i, n)\
+    \ cin >> a[i];\n\n    // BM segtree for candidate queries\n    majority_segtree<int>\
+    \ ms(a);\n\n    // positions[v] = sorted set of indices where a[i] == v\n    //\
+    \ Use pb_ds for O(log n) count in range [l, r)\n    map<int, pbds_set> pos;\n\
+    \    rep(i, n) pos[a[i]].insert(i);\n\n    rep(q){\n        int t; cin >> t;\n\
+    \        if (t == 0){\n            // point update: a[p] = x\n            int\
+    \ p, x; cin >> p >> x;\n            pos[a[p]].erase(p);\n            a[p] = x;\n\
+    \            pos[x].insert(p);\n            ms.set(p, x);\n        } else {\n\
+    \            // range majority query [l, r)\n            int l, r; cin >> l >>\
+    \ r;\n            auto [cand, excess] = ms.query(l, r);\n            // count\
+    \ occurrences of cand in [l, r)\n            auto it = pos.find(cand);\n     \
+    \       int cnt = 0;\n            if (it != pos.end()){\n                auto&\
+    \ S = it->second;\n                cnt = (int)S.order_of_key(r) - (int)S.order_of_key(l);\n\
+    \            }\n            cout << (cnt * 2 > r - l ? cand : -1) << nl;\n   \
+    \     }\n    }\n}\n"
   dependsOn:
   - utility/template.hpp
-  - structure/segtree.hpp
+  - structure/majority_vote.hpp
   isVerificationFile: true
   path: verify/library_checker_majority_voting.test.cpp
   requiredBy: []
-  timestamp: '2026-03-09 22:49:24+09:00'
-  verificationStatus: TEST_WRONG_ANSWER
+  timestamp: '2026-03-10 02:33:16+09:00'
+  verificationStatus: TEST_ACCEPTED
   verifiedWith: []
 documentation_of: verify/library_checker_majority_voting.test.cpp
 layout: document

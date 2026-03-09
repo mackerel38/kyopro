@@ -15,22 +15,19 @@ data:
   - icon: ':heavy_check_mark:'
     path: verify/library_checker_factorize.test.cpp
     title: verify/library_checker_factorize.test.cpp
-  - icon: ':x:'
+  - icon: ':heavy_check_mark:'
     path: verify/library_checker_majority_voting.test.cpp
     title: verify/library_checker_majority_voting.test.cpp
   - icon: ':heavy_check_mark:'
     path: verify/library_checker_minimum_spanning_tree.test.cpp
     title: verify/library_checker_minimum_spanning_tree.test.cpp
-  - icon: ':x:'
-    path: verify/library_checker_ordered_set.test.cpp
-    title: verify/library_checker_ordered_set.test.cpp
   - icon: ':heavy_check_mark:'
     path: verify/library_checker_point_add_range_sum.test.cpp
     title: verify/library_checker_point_add_range_sum.test.cpp
   - icon: ':heavy_check_mark:'
     path: verify/library_checker_point_add_range_sum_1.test.cpp
     title: verify/library_checker_point_add_range_sum_1.test.cpp
-  - icon: ':x:'
+  - icon: ':heavy_check_mark:'
     path: verify/library_checker_point_add_range_sum_bit.test.cpp
     title: verify/library_checker_point_add_range_sum_bit.test.cpp
   - icon: ':x:'
@@ -57,7 +54,7 @@ data:
   - icon: ':heavy_check_mark:'
     path: verify/library_checker_shortest_path.test.cpp
     title: verify/library_checker_shortest_path.test.cpp
-  - icon: ':x:'
+  - icon: ':heavy_check_mark:'
     path: verify/library_checker_static_range_inversions_query.test.cpp
     title: verify/library_checker_static_range_inversions_query.test.cpp
   - icon: ':heavy_check_mark:'
@@ -371,7 +368,6 @@ data:
   - verify/library_checker_factorize.test.cpp
   - verify/library_checker_staticrmq.test.cpp
   - verify/library_checker_queue_operate_all_composite.test.cpp
-  - verify/library_checker_ordered_set.test.cpp
   - verify/library_checker_static_range_inversions_query.test.cpp
   - verify/library_checker_majority_voting.test.cpp
   - verify/library_checker_range_affine_range_sum.test.cpp

@@ -6,12 +6,12 @@ data:
   - icon: ':heavy_check_mark:'
     path: verify/library_checker_point_add_range_sum_1.test.cpp
     title: verify/library_checker_point_add_range_sum_1.test.cpp
-  - icon: ':x:'
+  - icon: ':heavy_check_mark:'
     path: verify/library_checker_point_add_range_sum_bit.test.cpp
     title: verify/library_checker_point_add_range_sum_bit.test.cpp
-  _isVerificationFailed: true
+  _isVerificationFailed: false
   _pathExtension: hpp
-  _verificationStatusIcon: ':question:'
+  _verificationStatusIcon: ':heavy_check_mark:'
   attributes:
     links: []
   bundledCode: "#line 2 \"structure/BIT.hpp\"\n#include<bits/stdc++.h>\nusing namespace\
@@ -47,7 +47,7 @@ data:
   path: structure/BIT.hpp
   requiredBy: []
   timestamp: '2026-03-07 14:47:14+09:00'
-  verificationStatus: LIBRARY_SOME_WA
+  verificationStatus: LIBRARY_ALL_AC
   verifiedWith:
   - verify/library_checker_point_add_range_sum_bit.test.cpp
   - verify/library_checker_point_add_range_sum_1.test.cpp

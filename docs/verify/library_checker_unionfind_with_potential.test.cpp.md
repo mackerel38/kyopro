@@ -217,30 +217,34 @@ data:
     \ fact[n] * inv_fact[n-r];\n    }\n    // Multiset coefficient H(n,r) = C(n+r-1,\
     \ r)\n    mint h(int n, int r) const {\n        if (n == 0 && r == 0) return 1;\n\
     \        return c(n+r-1, r);\n    }\n};\n#line 5 \"verify/library_checker_unionfind_with_potential.test.cpp\"\
-    \n\n// Group operation: addition mod 998244353  (use mint)\n\nint main(){\n  \
-    \  IO();\n    int T = 1;\n    while (T--) solve();\n}\n\nvoid solve(){\n    int\
-    \ n, q; cin >> n >> q;\n    weighted_unionfind<mint> uf(n);\n    rep(q){\n   \
-    \     int t, u, v; cin >> t >> u >> v;\n        if (t == 0){\n            // Assert\
-    \ diff(u -> v) = w.  Output 1 if consistent, 0 if contradiction.\n           \
-    \ mint w; cin >> w;\n            if (!uf.same(u, v)){\n                uf.merge(u,\
-    \ v, w);\n                cout << 1 << nl;\n            } else {\n           \
-    \     cout << (uf.diff(u, v) == w ? 1 : 0) << nl;\n            }\n        } else\
-    \ {\n            // Query diff(u -> v).  Output -1 if not connected.\n       \
-    \     if (!uf.same(u, v)) cout << -1 << nl;\n            else cout << uf.diff(u,\
-    \ v) << nl;\n        }\n    }\n}\n"
+    \n\n// Constraint: a[u] \u2261 a[v] + x (mod p)  \u2194  a[u] - a[v] = x\n// Our\
+    \ library: diff(x, y) = pot[y] - pot[x]\n//   a[u] - a[v] = diff(v, u)\n//   So\
+    \ merge(v, u, x) sets pot[u] - pot[v] = x  \u2713\n//   Query: diff(v, u) = a[u]\
+    \ - a[v]  \u2713\n\nint main(){\n    IO();\n    int T = 1;\n    while (T--) solve();\n\
+    }\n\nvoid solve(){\n    int n, q; cin >> n >> q;\n    weighted_unionfind<mint>\
+    \ uf(n);\n    rep(q){\n        int t, u, v; cin >> t >> u >> v;\n        if (t\
+    \ == 0){\n            mint x; cin >> x;\n            if (!uf.same(u, v)){\n  \
+    \              // a[u] = a[v] + x  =>  a[u] - a[v] = x  =>  diff(v, u) = x\n \
+    \               uf.merge(v, u, x);\n                cout << 1 << nl;\n       \
+    \     } else {\n                // check consistency: a[u] - a[v] = diff(v, u)\n\
+    \                cout << (uf.diff(v, u) == x ? 1 : 0) << nl;\n            }\n\
+    \        } else {\n            if (!uf.same(u, v)) cout << -1 << nl;\n       \
+    \     else cout << uf.diff(v, u) << nl;\n        }\n    }\n}\n"
   code: "#define PROBLEM \"https://judge.yosupo.jp/problem/unionfind_with_potential\"\
     \n#include \"template\"\n#include \"weighted_unionfind\"\n#include \"modint\"\n\
-    \n// Group operation: addition mod 998244353  (use mint)\n\nint main(){\n    IO();\n\
-    \    int T = 1;\n    while (T--) solve();\n}\n\nvoid solve(){\n    int n, q; cin\
-    \ >> n >> q;\n    weighted_unionfind<mint> uf(n);\n    rep(q){\n        int t,\
-    \ u, v; cin >> t >> u >> v;\n        if (t == 0){\n            // Assert diff(u\
-    \ -> v) = w.  Output 1 if consistent, 0 if contradiction.\n            mint w;\
-    \ cin >> w;\n            if (!uf.same(u, v)){\n                uf.merge(u, v,\
-    \ w);\n                cout << 1 << nl;\n            } else {\n              \
-    \  cout << (uf.diff(u, v) == w ? 1 : 0) << nl;\n            }\n        } else\
-    \ {\n            // Query diff(u -> v).  Output -1 if not connected.\n       \
-    \     if (!uf.same(u, v)) cout << -1 << nl;\n            else cout << uf.diff(u,\
-    \ v) << nl;\n        }\n    }\n}\n"
+    \n// Constraint: a[u] \u2261 a[v] + x (mod p)  \u2194  a[u] - a[v] = x\n// Our\
+    \ library: diff(x, y) = pot[y] - pot[x]\n//   a[u] - a[v] = diff(v, u)\n//   So\
+    \ merge(v, u, x) sets pot[u] - pot[v] = x  \u2713\n//   Query: diff(v, u) = a[u]\
+    \ - a[v]  \u2713\n\nint main(){\n    IO();\n    int T = 1;\n    while (T--) solve();\n\
+    }\n\nvoid solve(){\n    int n, q; cin >> n >> q;\n    weighted_unionfind<mint>\
+    \ uf(n);\n    rep(q){\n        int t, u, v; cin >> t >> u >> v;\n        if (t\
+    \ == 0){\n            mint x; cin >> x;\n            if (!uf.same(u, v)){\n  \
+    \              // a[u] = a[v] + x  =>  a[u] - a[v] = x  =>  diff(v, u) = x\n \
+    \               uf.merge(v, u, x);\n                cout << 1 << nl;\n       \
+    \     } else {\n                // check consistency: a[u] - a[v] = diff(v, u)\n\
+    \                cout << (uf.diff(v, u) == x ? 1 : 0) << nl;\n            }\n\
+    \        } else {\n            if (!uf.same(u, v)) cout << -1 << nl;\n       \
+    \     else cout << uf.diff(v, u) << nl;\n        }\n    }\n}\n"
   dependsOn:
   - utility/template.hpp
   - structure/weighted_unionfind.hpp
@@ -248,7 +252,7 @@ data:
   isVerificationFile: true
   path: verify/library_checker_unionfind_with_potential.test.cpp
   requiredBy: []
-  timestamp: '2026-03-09 22:49:24+09:00'
+  timestamp: '2026-03-10 02:22:16+09:00'
   verificationStatus: TEST_WRONG_ANSWER
   verifiedWith: []
 documentation_of: verify/library_checker_unionfind_with_potential.test.cpp

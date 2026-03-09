@@ -1,7 +1,7 @@
 ---
 data:
   _extendedDependsOn:
-  - icon: ':question:'
+  - icon: ':heavy_check_mark:'
     path: structure/BIT.hpp
     title: structure/BIT.hpp
   - icon: ':question:'
@@ -188,7 +188,7 @@ data:
   isVerificationFile: true
   path: verify/library_checker_point_add_range_sum_1.test.cpp
   requiredBy: []
-  timestamp: '2026-03-07 14:47:14+09:00'
+  timestamp: '2026-03-10 02:33:16+09:00'
   verificationStatus: TEST_ACCEPTED
   verifiedWith: []
 documentation_of: verify/library_checker_point_add_range_sum_1.test.cpp
