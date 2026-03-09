@@ -3,11 +3,15 @@
 using namespace std;
 
 // Splay Tree
-// - insert(key)    : O(log n) amortized
-// - erase(key)     : O(log n) amortized
-// - contains(key)  : O(log n) amortized
-// - predecessor(key): max element strictly less than key, O(log n) amortized
-// - successor(key)  : min element strictly greater than key, O(log n) amortized
+// - insert(key)     : O(log n) amortized
+// - erase(key)      : O(log n) amortized
+// - contains(key)   : O(log n) amortized
+// - predecessor(key): max element strictly < key,  O(log n) amortized
+// - successor(key)  : min element strictly > key,  O(log n) amortized
+// - lower_bound(key): min element >= key,           O(log n) amortized
+// - prev_le(key)    : max element <= key,           O(log n) amortized
+// - min_element()   : min element in set
+// - max_element()   : max element in set
 template <class Key, class Comp = less<Key>>
 struct splay_tree {
 private:
@@ -164,6 +168,38 @@ public:
         Node* cur = x->ch[1];
         if (!cur) return nullopt;
         while (cur->ch[0]) cur = cur->ch[0];
+        return cur->key;
+    }
+
+    // Min element >= key, or nullopt. O(log n) amortized
+    optional<Key> lower_bound(const Key& key) {
+        if (!root) return nullopt;
+        Node* x = find_node(key);
+        splay(x);
+        if (!comp(x->key, key)) {
+            // x->key >= key
+            return x->key;
+        }
+        // x->key < key -> look in right subtree for min
+        Node* cur = x->ch[1];
+        if (!cur) return nullopt;
+        while (cur->ch[0]) cur = cur->ch[0];
+        return cur->key;
+    }
+
+    // Max element <= key, or nullopt. O(log n) amortized
+    optional<Key> prev_le(const Key& key) {
+        if (!root) return nullopt;
+        Node* x = find_node(key);
+        splay(x);
+        if (!comp(key, x->key)) {
+            // x->key <= key
+            return x->key;
+        }
+        // x->key > key -> look in left subtree for max
+        Node* cur = x->ch[0];
+        if (!cur) return nullopt;
+        while (cur->ch[1]) cur = cur->ch[1];
         return cur->key;
     }
 
