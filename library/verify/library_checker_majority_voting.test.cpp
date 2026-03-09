@@ -1,18 +1,13 @@
 #define PROBLEM "https://judge.yosupo.jp/problem/majority_voting"
 #include "template"
-#include "segtree"
+#include "majority_vote"
 
-// Boyer-Moore voting merge as segtree monoid  S = {candidate, excess}
-using S = pair<int, int>;
-const auto bm_op = [](S a, S b) -> S {
-    if (a.second == 0) return b;
-    if (b.second == 0) return a;
-    if (a.first == b.first) return {a.first, a.second + b.second};
-    if (a.second > b.second) return {a.first, a.second - b.second};
-    if (a.second < b.second) return {b.first, b.second - a.second};
-    return {b.first, 0};
-};
-const auto bm_e = []() -> S { return {0, 0}; };
+// Policy-based order-statistics tree for O(log n) rank queries
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds;
+using pbds_set = tree<int, null_type, less<int>,
+                       rb_tree_tag, tree_order_statistics_node_update>;
 
 int main(){
     IO();
@@ -25,24 +20,35 @@ void solve(){
     vector<int> a(n);
     rep(i, n) cin >> a[i];
 
-    // Precompute sorted positions per value for O(log n) count
-    map<int, vector<int>> pos;
-    rep(i, n) pos[a[i]].push_back(i);
+    // BM segtree for candidate queries
+    majority_segtree<int> ms(a);
 
-    vector<S> sv(n);
-    rep(i, n) sv[i] = {a[i], 1};
-    segtree<S, bm_op, bm_e> seg(sv);
+    // positions[v] = sorted set of indices where a[i] == v
+    // Use pb_ds for O(log n) count in range [l, r)
+    map<int, pbds_set> pos;
+    rep(i, n) pos[a[i]].insert(i);
 
     rep(q){
-        int l, r; cin >> l >> r;
-        auto [cand, dummy] = seg.query(l, r);
-        auto it = pos.find(cand);
-        int cnt = 0;
-        if (it != pos.end()){
-            auto& v = it->second;
-            cnt = (int)(lower_bound(v.begin(), v.end(), r) -
-                        lower_bound(v.begin(), v.end(), l));
+        int t; cin >> t;
+        if (t == 0){
+            // point update: a[p] = x
+            int p, x; cin >> p >> x;
+            pos[a[p]].erase(p);
+            a[p] = x;
+            pos[x].insert(p);
+            ms.set(p, x);
+        } else {
+            // range majority query [l, r)
+            int l, r; cin >> l >> r;
+            auto [cand, excess] = ms.query(l, r);
+            // count occurrences of cand in [l, r)
+            auto it = pos.find(cand);
+            int cnt = 0;
+            if (it != pos.end()){
+                auto& S = it->second;
+                cnt = (int)S.order_of_key(r) - (int)S.order_of_key(l);
+            }
+            cout << (cnt * 2 > r - l ? cand : -1) << nl;
         }
-        cout << (cnt * 2 > r - l ? cand : -1) << nl;
     }
 }

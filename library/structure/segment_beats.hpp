@@ -3,216 +3,185 @@
 using namespace std;
 
 // Segment Beats (Ji Driver Segmentation)
-// Supports:
-//   range chmin   : for i in [l,r), a[i] = min(a[i], v)
-//   range chmax   : for i in [l,r), a[i] = max(a[i], v)
-//   range add     : for i in [l,r), a[i] += v
-//   range sum     : sum of a[l..r)
-//   range min/max : min/max of a[l..r)
+// Supports (all queries half-open [l, r)):
+//   range_chmin(l, r, x) : a[i] = min(a[i], x)
+//   range_chmax(l, r, x) : a[i] = max(a[i], x)
+//   range_add  (l, r, x) : a[i] += x
+//   range_set  (l, r, x) : a[i] = x
+//   query_max  (l, r)    : max of a[l..r)
+//   query_min  (l, r)    : min of a[l..r)
+//   query_sum  (l, r)    : sum of a[l..r)
 //
-// Amortized O((n + q) log^2 n) time.
-//
-// Reference: Ji (2016), "Chtholly Tree" style lazy propagation.
+// Amortized O((n + q) log^2 n).
+// Reference: https://tjkendev.github.io/procon-library/cpp/range_query/segment_tree_beats_2.html
 
 struct segment_beats {
-    struct Node {
-        long long sum;
-        long long mx, mx2; int mxc;  // max, 2nd max, count of max
-        long long mn, mn2; int mnc;  // min, 2nd min, count of min
-        long long lazy_add;
-        long long lazy_chmin, lazy_chmax; // pending clamp targets
-    };
+    using ll = long long;
+    static constexpr ll LINF = 2e18;
 
-    int n;
-    vector<Node> t;
+    int n, n0;
+    // max_v, smax_v: max value, strict 2nd-max value (-LINF if none)
+    // min_v, smin_v: min value, strict 2nd-min value (+LINF if none)
+    vector<ll> max_v, smax_v, min_v, smin_v, sm, sz, ladd, lval;
+    vector<int> max_c, min_c;
 
-    void _init(Node& nd, long long v) {
-        nd.sum = v; nd.mx = v; nd.mx2 = LLONG_MIN; nd.mxc = 1;
-        nd.mn = v; nd.mn2 = LLONG_MAX; nd.mnc = 1;
-        nd.lazy_add = 0; nd.lazy_chmin = LLONG_MAX; nd.lazy_chmax = LLONG_MIN;
+    // ---- leaf/node modifiers ----
+    // addall: add x to every element of node k
+    void addall(int k, ll x) {
+        max_v[k] += x;
+        if (smax_v[k] != -LINF) smax_v[k] += x;
+        min_v[k] += x;
+        if (smin_v[k] !=  LINF) smin_v[k] += x;
+        sm[k] += sz[k] * x;
+        if (lval[k] != LINF) lval[k] += x;
+        else                 ladd[k] += x;
+    }
+    // setall: set every element of node k to x
+    void setall(int k, ll x) {
+        max_v[k] = smax_v[k] = min_v[k] = smin_v[k] = x;
+        max_c[k] = min_c[k] = (int)sz[k];
+        sm[k] = sz[k] * x;
+        lval[k] = x; ladd[k] = 0;
+    }
+    // push_chmin: apply chmin(x) to node k, reducing its current max to x
+    //   precondition: smax_v[k] < x < max_v[k]
+    void push_chmin(int k, ll x) {
+        sm[k] -= (max_v[k] - x) * max_c[k];
+        if (max_v[k] == min_v[k]) min_v[k] = x;
+        if (max_v[k] == smin_v[k]) smin_v[k] = x;
+        max_v[k] = x;
+        if (lval[k] != LINF && lval[k] > x) lval[k] = x;
+    }
+    // push_chmax: apply chmax(x) to node k, raising its current min to x
+    //   precondition: smin_v[k] > x > min_v[k]
+    void push_chmax(int k, ll x) {
+        sm[k] += (x - min_v[k]) * min_c[k];
+        if (max_v[k] == min_v[k]) max_v[k] = x;
+        if (smax_v[k] == min_v[k]) smax_v[k] = x;
+        min_v[k] = x;
+        if (lval[k] != LINF && lval[k] < x) lval[k] = x;
     }
 
-    void _pull(int v) {
-        auto &L = t[2*v], &R = t[2*v+1], &N = t[v];
-        N.sum = L.sum + R.sum;
-        // max
-        if (L.mx == R.mx) { N.mx = L.mx; N.mxc = L.mxc + R.mxc; N.mx2 = max(L.mx2, R.mx2); }
-        else if (L.mx > R.mx) { N.mx = L.mx; N.mxc = L.mxc; N.mx2 = max(L.mx2, R.mx); }
-        else { N.mx = R.mx; N.mxc = R.mxc; N.mx2 = max(L.mx, R.mx2); }
-        // min
-        if (L.mn == R.mn) { N.mn = L.mn; N.mnc = L.mnc + R.mnc; N.mn2 = min(L.mn2, R.mn2); }
-        else if (L.mn < R.mn) { N.mn = L.mn; N.mnc = L.mnc; N.mn2 = min(L.mn2, R.mn); }
-        else { N.mn = R.mn; N.mnc = R.mnc; N.mn2 = min(L.mn, R.mn2); }
-        N.lazy_add = 0; N.lazy_chmin = LLONG_MAX; N.lazy_chmax = LLONG_MIN;
+    // pull: recompute node k from its children
+    void pull(int k) {
+        int l = 2*k, r = 2*k+1;
+        sm[k] = sm[l] + sm[r];
+        // max info
+        if      (max_v[l] < max_v[r]) { max_v[k]=max_v[r]; max_c[k]=max_c[r]; smax_v[k]=max(max_v[l], smax_v[r]); }
+        else if (max_v[l] > max_v[r]) { max_v[k]=max_v[l]; max_c[k]=max_c[l]; smax_v[k]=max(smax_v[l], max_v[r]); }
+        else                          { max_v[k]=max_v[l]; max_c[k]=max_c[l]+max_c[r]; smax_v[k]=max(smax_v[l], smax_v[r]); }
+        // min info
+        if      (min_v[l] < min_v[r]) { min_v[k]=min_v[l]; min_c[k]=min_c[l]; smin_v[k]=min(smin_v[l], min_v[r]); }
+        else if (min_v[l] > min_v[r]) { min_v[k]=min_v[r]; min_c[k]=min_c[r]; smin_v[k]=min(min_v[l], smin_v[r]); }
+        else                          { min_v[k]=min_v[l]; min_c[k]=min_c[l]+min_c[r]; smin_v[k]=min(smin_v[l], smin_v[r]); }
     }
 
-    void _apply_add(int v, long long val) {
-        t[v].sum += val * (/* node size */ 1); // corrected in _push
-        t[v].mx += val; if (t[v].mx2 != LLONG_MIN) t[v].mx2 += val;
-        t[v].mn += val; if (t[v].mn2 != LLONG_MAX) t[v].mn2 += val;
-        if (t[v].lazy_chmin != LLONG_MAX) t[v].lazy_chmin += val;
-        if (t[v].lazy_chmax != LLONG_MIN) t[v].lazy_chmax += val;
-        t[v].lazy_add += val;
-    }
-    void _apply_chmin(int v, long long val) {
-        if (val >= t[v].mx) return;
-        t[v].sum -= (long long)(t[v].mx - val) * t[v].mxc;
-        if (t[v].lazy_chmin != LLONG_MAX) t[v].lazy_chmin = min(t[v].lazy_chmin, val);
-        else t[v].lazy_chmin = val;
-        t[v].mx = val;
-    }
-    void _apply_chmax(int v, long long val) {
-        if (val <= t[v].mn) return;
-        t[v].sum += (long long)(val - t[v].mn) * t[v].mnc;
-        if (t[v].lazy_chmax != LLONG_MIN) t[v].lazy_chmax = max(t[v].lazy_chmax, val);
-        else t[v].lazy_chmax = val;
-        t[v].mn = val;
-    }
-
-    void _push(int v, int sz) {
-        int lsz = sz - sz / 2, rsz = sz / 2; // left child size, right child size
-        // correct lazy_add to account for node sizes
-        // Actually, we maintain sum correctly in apply; just propagate lazy
-        if (t[v].lazy_add) {
-            t[2*v].sum   += t[v].lazy_add * lsz;
-            t[2*v+1].sum += t[v].lazy_add * rsz;
-            _apply_add(2*v,   t[v].lazy_add); t[2*v].sum   -= t[v].lazy_add * lsz;   // undo overcounting
-            _apply_add(2*v+1, t[v].lazy_add); t[2*v+1].sum -= t[v].lazy_add * rsz;
-            // Actually rewrite with proper size-aware apply
-        }
-        // This simple approach has issues with sum tracking. Use size-aware nodes:
-        // See the rewritten version below.
-        (void)v; (void)sz;
-    }
-
-    // --- Proper implementation with explicit size ---
-    // Rewrite using sz stored in node.
-
-    struct Node2 {
-        long long sum, add;
-        long long mx, mx2, chmin; int mxcnt;
-        long long mn, mn2, chmax; int mncnt;
-        int sz;
-    };
-    vector<Node2> nd;
-
-    void _build(int v, int l, int r, const vector<long long>& a) {
-        nd[v].sz = r - l;
-        nd[v].add = 0; nd[v].chmin = LLONG_MAX; nd[v].chmax = LLONG_MIN;
-        if (r - l == 1) {
-            nd[v].sum = a[l];
-            nd[v].mx = nd[v].mn = a[l];
-            nd[v].mx2 = LLONG_MIN; nd[v].mxcnt = 1;
-            nd[v].mn2 = LLONG_MAX; nd[v].mncnt = 1;
+    // push: propagate lazy values to children
+    void push(int k) {
+        if (k >= n0) return;  // leaf: nothing to push
+        if (lval[k] != LINF) {
+            setall(2*k, lval[k]); setall(2*k+1, lval[k]);
+            lval[k] = LINF; ladd[k] = 0;
             return;
         }
-        int m = (l + r) / 2;
-        _build(2*v, l, m, a); _build(2*v+1, m, r, a);
-        _up(v);
+        if (ladd[k] != 0) {
+            addall(2*k, ladd[k]); addall(2*k+1, ladd[k]);
+            ladd[k] = 0;
+        }
+        // propagate chmin / chmax bounds
+        if (max_v[k] < max_v[2*k])   push_chmin(2*k,   max_v[k]);
+        if (min_v[2*k] < min_v[k])   push_chmax(2*k,   min_v[k]);
+        if (max_v[k] < max_v[2*k+1]) push_chmin(2*k+1, max_v[k]);
+        if (min_v[2*k+1] < min_v[k]) push_chmax(2*k+1, min_v[k]);
     }
 
-    void _up(int v) {
-        auto &L = nd[2*v], &R = nd[2*v+1], &N = nd[v];
-        N.sum = L.sum + R.sum;
-        if (L.mx == R.mx) { N.mx = L.mx; N.mxcnt = L.mxcnt + R.mxcnt; N.mx2 = max(L.mx2, R.mx2); }
-        else if (L.mx > R.mx) { N.mx = L.mx; N.mxcnt = L.mxcnt; N.mx2 = max(L.mx2, R.mx); }
-        else { N.mx = R.mx; N.mxcnt = R.mxcnt; N.mx2 = max(L.mx, R.mx2); }
-        if (L.mn == R.mn) { N.mn = L.mn; N.mncnt = L.mncnt + R.mncnt; N.mn2 = min(L.mn2, R.mn2); }
-        else if (L.mn < R.mn) { N.mn = L.mn; N.mncnt = L.mncnt; N.mn2 = min(L.mn2, R.mn); }
-        else { N.mn = R.mn; N.mncnt = R.mncnt; N.mn2 = min(L.mn, R.mn2); }
+    // ---- range operations ----
+    void _chmin(ll x, int a, int b, int k, int l, int r) {
+        if (b <= l || r <= a || max_v[k] <= x) return;
+        if (a <= l && r <= b && smax_v[k] < x) { push_chmin(k, x); return; }
+        push(k); int m = (l+r)/2;
+        _chmin(x,a,b,2*k,l,m); _chmin(x,a,b,2*k+1,m,r); pull(k);
+    }
+    void _chmax(ll x, int a, int b, int k, int l, int r) {
+        if (b <= l || r <= a || x <= min_v[k]) return;
+        if (a <= l && r <= b && x < smin_v[k]) { push_chmax(k, x); return; }
+        push(k); int m = (l+r)/2;
+        _chmax(x,a,b,2*k,l,m); _chmax(x,a,b,2*k+1,m,r); pull(k);
+    }
+    void _add(ll x, int a, int b, int k, int l, int r) {
+        if (b <= l || r <= a) return;
+        if (a <= l && r <= b) { addall(k, x); return; }
+        push(k); int m = (l+r)/2;
+        _add(x,a,b,2*k,l,m); _add(x,a,b,2*k+1,m,r); pull(k);
+    }
+    void _set(ll x, int a, int b, int k, int l, int r) {
+        if (b <= l || r <= a) return;
+        if (a <= l && r <= b) { setall(k, x); return; }
+        push(k); int m = (l+r)/2;
+        _set(x,a,b,2*k,l,m); _set(x,a,b,2*k+1,m,r); pull(k);
+    }
+    ll _qmax(int a, int b, int k, int l, int r) {
+        if (b <= l || r <= a) return -LINF;
+        if (a <= l && r <= b) return max_v[k];
+        push(k); int m = (l+r)/2;
+        return max(_qmax(a,b,2*k,l,m), _qmax(a,b,2*k+1,m,r));
+    }
+    ll _qmin(int a, int b, int k, int l, int r) {
+        if (b <= l || r <= a) return LINF;
+        if (a <= l && r <= b) return min_v[k];
+        push(k); int m = (l+r)/2;
+        return min(_qmin(a,b,2*k,l,m), _qmin(a,b,2*k+1,m,r));
+    }
+    ll _qsum(int a, int b, int k, int l, int r) {
+        if (b <= l || r <= a) return 0;
+        if (a <= l && r <= b) return sm[k];
+        push(k); int m = (l+r)/2;
+        return _qsum(a,b,2*k,l,m) + _qsum(a,b,2*k+1,m,r);
     }
 
-    void _push_add(int v, long long val) {
-        nd[v].sum += val * nd[v].sz;
-        nd[v].mx += val; nd[v].mn += val;
-        if (nd[v].mx2 != LLONG_MIN) nd[v].mx2 += val;
-        if (nd[v].mn2 != LLONG_MAX) nd[v].mn2 += val;
-        if (nd[v].chmin != LLONG_MAX) nd[v].chmin += val;
-        if (nd[v].chmax != LLONG_MIN) nd[v].chmax += val;
-        nd[v].add += val;
-    }
-    void _push_chmin(int v, long long val) {
-        if (val >= nd[v].mx) return;
-        nd[v].sum -= (nd[v].mx - val) * nd[v].mxcnt;
-        nd[v].chmin = (nd[v].chmin != LLONG_MAX) ? min(nd[v].chmin, val) : val;
-        nd[v].mx = val;
-    }
-    void _push_chmax(int v, long long val) {
-        if (val <= nd[v].mn) return;
-        nd[v].sum += (val - nd[v].mn) * nd[v].mncnt;
-        nd[v].chmax = (nd[v].chmax != LLONG_MIN) ? max(nd[v].chmax, val) : val;
-        nd[v].mn = val;
-    }
-    void _pushdown(int v) {
-        if (nd[v].add != 0) {
-            _push_add(2*v, nd[v].add); _push_add(2*v+1, nd[v].add);
-            nd[v].add = 0;
+    // ---- construction ----
+    void _init(int n_, const ll* a) {
+        n = n_; n0 = 1; while (n0 < n) n0 <<= 1;
+        int sz2 = 2 * n0 + 2;
+        max_v.assign(sz2, -LINF); smax_v.assign(sz2, -LINF); max_c.assign(sz2, 0);
+        min_v.assign(sz2,  LINF); smin_v.assign(sz2,  LINF); min_c.assign(sz2, 0);
+        sm.assign(sz2, 0); sz.assign(sz2, 0);
+        ladd.assign(sz2, 0); lval.assign(sz2, LINF);
+        // set sizes (sz[k] = number of REAL elements covered)
+        // We need sz for addall/setall. Use len = 1 for each leaf.
+        // sz at leaves: real leaves have sz=1, padding leaves have sz=0.
+        // Propagate up.
+        for (int i = n0; i < n0 + n; i++) sz[i] = 1;
+        for (int i = n0 - 1; i >= 1; i--) sz[i] = sz[2*i] + sz[2*i+1];
+        // Note: we also need sz for addall/setall at non-leaf nodes.
+        // Actually, for addall we use sm[k] += sz[k] * x,
+        // so sz[k] must count only real elements.
+        // Initialize leaves
+        for (int i = 0; i < n; i++) {
+            int k = n0 + i;
+            ll v = (a ? a[i] : 0LL);
+            max_v[k] = smax_v[k] = min_v[k] = smin_v[k] = v;
+            max_c[k] = min_c[k] = 1;
+            sm[k] = v;
         }
-        if (nd[v].chmin != LLONG_MAX) {
-            _push_chmin(2*v, nd[v].chmin); _push_chmin(2*v+1, nd[v].chmin);
-            nd[v].chmin = LLONG_MAX;
-        }
-        if (nd[v].chmax != LLONG_MIN) {
-            _push_chmax(2*v, nd[v].chmax); _push_chmax(2*v+1, nd[v].chmax);
-            nd[v].chmax = LLONG_MIN;
-        }
-    }
-
-    // apply range add [l,r) += val, current node [nl,nr)
-    void _add(int v, int nl, int nr, int l, int r, long long val) {
-        if (r <= nl || nr <= l) return;
-        if (l <= nl && nr <= r) { _push_add(v, val); return; }
-        _pushdown(v); int m = (nl + nr) / 2;
-        _add(2*v, nl, m, l, r, val); _add(2*v+1, m, nr, l, r, val); _up(v);
-    }
-    void _chmin(int v, int nl, int nr, int l, int r, long long val) {
-        if (r <= nl || nr <= l || val >= nd[v].mx) return;
-        if (l <= nl && nr <= r && val > nd[v].mx2) { _push_chmin(v, val); return; }
-        _pushdown(v); int m = (nl + nr) / 2;
-        _chmin(2*v, nl, m, l, r, val); _chmin(2*v+1, m, nr, l, r, val); _up(v);
-    }
-    void _chmax(int v, int nl, int nr, int l, int r, long long val) {
-        if (r <= nl || nr <= l || val <= nd[v].mn) return;
-        if (l <= nl && nr <= r && val < nd[v].mn2) { _push_chmax(v, val); return; }
-        _pushdown(v); int m = (nl + nr) / 2;
-        _chmax(2*v, nl, m, l, r, val); _chmax(2*v+1, m, nr, l, r, val); _up(v);
-    }
-    long long _query_sum(int v, int nl, int nr, int l, int r) {
-        if (r <= nl || nr <= l) return 0;
-        if (l <= nl && nr <= r) return nd[v].sum;
-        _pushdown(v); int m = (nl + nr) / 2;
-        return _query_sum(2*v, nl, m, l, r) + _query_sum(2*v+1, m, nr, l, r);
-    }
-    long long _query_min(int v, int nl, int nr, int l, int r) {
-        if (r <= nl || nr <= l) return LLONG_MAX;
-        if (l <= nl && nr <= r) return nd[v].mn;
-        _pushdown(v); int m = (nl + nr) / 2;
-        return min(_query_min(2*v, nl, m, l, r), _query_min(2*v+1, m, nr, l, r));
-    }
-    long long _query_max(int v, int nl, int nr, int l, int r) {
-        if (r <= nl || nr <= l) return LLONG_MIN;
-        if (l <= nl && nr <= r) return nd[v].mx;
-        _pushdown(v); int m = (nl + nr) / 2;
-        return max(_query_max(2*v, nl, m, l, r), _query_max(2*v+1, m, nr, l, r));
+        // padding leaves: already -LINF / LINF / count=0
+        for (int i = n0 - 1; i >= 1; i--) pull(i);
     }
 
 public:
     segment_beats() = default;
-    segment_beats(int n, long long init_val = 0)
-        : n(n), nd(4 * n) {
-        vector<long long> a(n, init_val);
-        _build(1, 0, n, a);
+    segment_beats(int n, ll init_val = 0) {
+        vector<ll> a(n, init_val);
+        _init(n, a.data());
     }
-    segment_beats(const vector<long long>& a)
-        : n(a.size()), nd(4 * a.size()) {
-        _build(1, 0, n, a);
-    }
+    segment_beats(const vector<ll>& a) { _init((int)a.size(), a.data()); }
 
-    void range_add  (int l, int r, long long v) { _add  (1, 0, n, l, r, v); }
-    void range_chmin(int l, int r, long long v) { _chmin(1, 0, n, l, r, v); }
-    void range_chmax(int l, int r, long long v) { _chmax(1, 0, n, l, r, v); }
-
-    long long query_sum(int l, int r) { return _query_sum(1, 0, n, l, r); }
-    long long query_min(int l, int r) { return _query_min(1, 0, n, l, r); }
-    long long query_max(int l, int r) { return _query_max(1, 0, n, l, r); }
+    // half-open intervals [l, r)
+    void range_chmin(int l, int r, ll x) { _chmin(x, l, r, 1, 0, n0); }
+    void range_chmax(int l, int r, ll x) { _chmax(x, l, r, 1, 0, n0); }
+    void range_add  (int l, int r, ll x) { _add  (x, l, r, 1, 0, n0); }
+    void range_set  (int l, int r, ll x) { _set  (x, l, r, 1, 0, n0); }
+    ll query_max(int l, int r) { return _qmax(l, r, 1, 0, n0); }
+    ll query_min(int l, int r) { return _qmin(l, r, 1, 0, n0); }
+    ll query_sum(int l, int r) { return _qsum(l, r, 1, 0, n0); }
 };

@@ -3,7 +3,11 @@
 #include "weighted_unionfind"
 #include "modint"
 
-// Group operation: addition mod 998244353  (use mint)
+// Constraint: a[u] ≡ a[v] + x (mod p)  ↔  a[u] - a[v] = x
+// Our library: diff(x, y) = pot[y] - pot[x]
+//   a[u] - a[v] = diff(v, u)
+//   So merge(v, u, x) sets pot[u] - pot[v] = x  ✓
+//   Query: diff(v, u) = a[u] - a[v]  ✓
 
 int main(){
     IO();
@@ -17,18 +21,18 @@ void solve(){
     rep(q){
         int t, u, v; cin >> t >> u >> v;
         if (t == 0){
-            // Assert diff(u -> v) = w.  Output 1 if consistent, 0 if contradiction.
-            mint w; cin >> w;
+            mint x; cin >> x;
             if (!uf.same(u, v)){
-                uf.merge(u, v, w);
+                // a[u] = a[v] + x  =>  a[u] - a[v] = x  =>  diff(v, u) = x
+                uf.merge(v, u, x);
                 cout << 1 << nl;
             } else {
-                cout << (uf.diff(u, v) == w ? 1 : 0) << nl;
+                // check consistency: a[u] - a[v] = diff(v, u)
+                cout << (uf.diff(v, u) == x ? 1 : 0) << nl;
             }
         } else {
-            // Query diff(u -> v).  Output -1 if not connected.
             if (!uf.same(u, v)) cout << -1 << nl;
-            else cout << uf.diff(u, v) << nl;
+            else cout << uf.diff(v, u) << nl;
         }
     }
 }
