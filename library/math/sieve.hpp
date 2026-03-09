@@ -4,13 +4,13 @@ using namespace std;
 
 // Linear sieve: O(N) precomputation
 // Provides: is_prime, factorize, divisors, primes list
-struct Sieve {
+struct sieve {
     int n;
     vector<int> smallest_prime;
     vector<bool> is_prime_arr;
     vector<int> primes;
 
-    Sieve(int n) : n(n), smallest_prime(n+1, 0), is_prime_arr(n+1, true) {
+    sieve(int n) : n(n), smallest_prime(n+1, 0), is_prime_arr(n+1, true) {
         is_prime_arr[0] = is_prime_arr[1] = false;
         for (int i = 2; i <= n; i++) {
             if (is_prime_arr[i]) {

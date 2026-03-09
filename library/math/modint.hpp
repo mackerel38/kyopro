@@ -3,44 +3,44 @@
 using namespace std;
 
 template <long long Mod>
-struct ModInt {
+struct modint {
     long long val;
-    ModInt(long long v = 0) : val(v % Mod) { if (val < 0) val += Mod; }
-    ModInt operator+(const ModInt& r) const { return ModInt(val + r.val); }
-    ModInt operator-(const ModInt& r) const { return ModInt(val - r.val + Mod); }
-    ModInt operator*(const ModInt& r) const { return ModInt(val * r.val % Mod); }
-    ModInt operator/(const ModInt& r) const { return *this * r.inv(); }
-    ModInt& operator+=(const ModInt& r) { return *this = *this + r; }
-    ModInt& operator-=(const ModInt& r) { return *this = *this - r; }
-    ModInt& operator*=(const ModInt& r) { return *this = *this * r; }
-    ModInt& operator/=(const ModInt& r) { return *this = *this / r; }
-    bool operator==(const ModInt& r) const { return val == r.val; }
-    bool operator!=(const ModInt& r) const { return val != r.val; }
-    ModInt pow(long long n) const {
-        ModInt res(1), base(val);
+    modint(long long v = 0) : val(v % Mod) { if (val < 0) val += Mod; }
+    modint operator+(const modint& r) const { return modint(val + r.val); }
+    modint operator-(const modint& r) const { return modint(val - r.val + Mod); }
+    modint operator*(const modint& r) const { return modint(val * r.val % Mod); }
+    modint operator/(const modint& r) const { return *this * r.inv(); }
+    modint& operator+=(const modint& r) { return *this = *this + r; }
+    modint& operator-=(const modint& r) { return *this = *this - r; }
+    modint& operator*=(const modint& r) { return *this = *this * r; }
+    modint& operator/=(const modint& r) { return *this = *this / r; }
+    bool operator==(const modint& r) const { return val == r.val; }
+    bool operator!=(const modint& r) const { return val != r.val; }
+    modint pow(long long n) const {
+        modint res(1), base(val);
         for (; n > 0; n >>= 1) {
             if (n & 1) res *= base;
             base *= base;
         }
         return res;
     }
-    ModInt inv() const { return pow(Mod - 2); } // Mod must be prime
-    friend ostream& operator<<(ostream& os, const ModInt& x) { return os << x.val; }
-    friend istream& operator>>(istream& is, ModInt& x) {
-        long long v; is >> v; x = ModInt(v); return is;
+    modint inv() const { return pow(Mod - 2); } // Mod must be prime
+    friend ostream& operator<<(ostream& os, const modint& x) { return os << x.val; }
+    friend istream& operator>>(istream& is, modint& x) {
+        long long v; is >> v; x = modint(v); return is;
     }
 };
 
-using mint  = ModInt<998244353>;
-using mint7 = ModInt<1000000007>;
+using mint  = modint<998244353>;
+using mint7 = modint<1000000007>;
 
 // Combination/Permutation precomputed with mod
-// Usage: Combination<mint> C(MAXN);
+// Usage: combination<mint> C(MAXN); C.c(n, r);
 template <class mint>
-struct Combination {
+struct combination {
     vector<mint> fact, inv_fact;
 
-    Combination(int n) : fact(n+1), inv_fact(n+1) {
+    combination(int n) : fact(n+1), inv_fact(n+1) {
         fact[0] = 1;
         for (int i = 1; i <= n; i++) fact[i] = fact[i-1] * i;
         inv_fact[n] = fact[n].inv();
@@ -48,18 +48,18 @@ struct Combination {
     }
 
     // nCr
-    mint C(int n, int r) const {
+    mint c(int n, int r) const {
         if (r < 0 || r > n || n < 0) return 0;
         return fact[n] * inv_fact[r] * inv_fact[n-r];
     }
     // nPr
-    mint P(int n, int r) const {
+    mint p(int n, int r) const {
         if (r < 0 || r > n || n < 0) return 0;
         return fact[n] * inv_fact[n-r];
     }
     // Multiset coefficient H(n,r) = C(n+r-1, r)
-    mint H(int n, int r) const {
+    mint h(int n, int r) const {
         if (n == 0 && r == 0) return 1;
-        return C(n+r-1, r);
+        return c(n+r-1, r);
     }
 };

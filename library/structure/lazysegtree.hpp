@@ -6,18 +6,18 @@ using namespace std;
 // S: value monoid type, op: S*S->S, e: identity of S
 // F: lazy type, mapping: F*S->S, composition: F*F->F, id: identity of F
 template <class S, auto op, auto e, class F, auto mapping, auto composition, auto id>
-struct LazySegTree {
+struct lazysegtree {
     int n, size;
     vector<S> data;
     vector<F> lazy;
 
-    LazySegTree(int n) : n(n) {
+    lazysegtree(int n) : n(n) {
         size = 1;
         while (size < n) size <<= 1;
         data.assign(2*size, e());
         lazy.assign(2*size, id());
     }
-    LazySegTree(const vector<S>& v) : LazySegTree(v.size()) {
+    lazysegtree(const vector<S>& v) : lazysegtree(v.size()) {
         for (int i = 0; i < (int)v.size(); i++) data[size+i] = v[i];
         for (int i = size-1; i >= 1; i--) data[i] = op(data[2*i], data[2*i+1]);
     }
@@ -74,4 +74,4 @@ struct LazySegTree {
 // auto mapping = [](long long f, long long s){ return f + s; };
 // auto composition = [](long long f, long long g){ return f + g; };
 // auto id = []{ return 0LL; };
-// LazySegTree<long long, op, e, long long, mapping, composition, id> seg(n);
+// lazysegtree<long long, op, e, long long, mapping, composition, id> seg(n);

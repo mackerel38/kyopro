@@ -3,7 +3,7 @@
 using namespace std;
 
 // Rolling Hash (double hash to reduce collision probability)
-struct RollingHash {
+struct rolling_hash {
     static constexpr long long MOD1 = 1000000007LL;
     static constexpr long long MOD2 = 998244353LL;
     static constexpr long long BASE1 = 131LL;
@@ -12,7 +12,7 @@ struct RollingHash {
     int n;
     vector<long long> h1, h2, pw1, pw2;
 
-    RollingHash(const string& s)
+    rolling_hash(const string& s)
         : n(s.size()), h1(n+1,0), h2(n+1,0), pw1(n+1,1), pw2(n+1,1) {
         for (int i = 0; i < n; i++) {
             h1[i+1] = (h1[i] * BASE1 + s[i]) % MOD1;
