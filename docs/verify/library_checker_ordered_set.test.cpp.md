@@ -239,8 +239,8 @@ data:
     \ s < x)  (-1 if |S| < x)\n//   3 x: count of elem <= x   -> prod(LO, x+1)\n//\
     \   4 x: max elem <= x        -> min_left(x+1, s==0) - 1  (-1 if none)\n//   5\
     \ x: min elem >= x        -> max_right(x, s==0)        (-1 if none)\n\nvoid solve()\
-    \ {\n    int n, q;\n    cin >> n >> q;\n\n    const long long LO = 0, HI = 1LL\
-    \ << 30;  // covers [0, 10^9]\n    dynamic_segtree<int, [](int a, int b){ return\
+    \ {\n    int n, q;\n    cin >> n >> q;\n    const long long LO = 0, HI = 1LL <<\
+    \ 30;  // covers [0, 10^9]\n    dynamic_segtree<int, [](int a, int b){ return\
     \ a + b; }, []{ return 0; }> seg(LO, HI);\n\n    rep(n) {\n        int x; cin\
     \ >> x;\n        seg.set((long long)x, 1);\n    }\n\n    rep(q) {\n        int\
     \ t; cin >> t;\n        if (t == 0) {\n            // insert x\n            int\
@@ -268,7 +268,7 @@ data:
     \ < x)\n//   3 x: count of elem <= x   -> prod(LO, x+1)\n//   4 x: max elem <=\
     \ x        -> min_left(x+1, s==0) - 1  (-1 if none)\n//   5 x: min elem >= x \
     \       -> max_right(x, s==0)        (-1 if none)\n\nvoid solve() {\n    int n,\
-    \ q;\n    cin >> n >> q;\n\n    const long long LO = 0, HI = 1LL << 30;  // covers\
+    \ q;\n    cin >> n >> q;\n    const long long LO = 0, HI = 1LL << 30;  // covers\
     \ [0, 10^9]\n    dynamic_segtree<int, [](int a, int b){ return a + b; }, []{ return\
     \ 0; }> seg(LO, HI);\n\n    rep(n) {\n        int x; cin >> x;\n        seg.set((long\
     \ long)x, 1);\n    }\n\n    rep(q) {\n        int t; cin >> t;\n        if (t\
@@ -294,7 +294,7 @@ data:
   isVerificationFile: true
   path: verify/library_checker_ordered_set.test.cpp
   requiredBy: []
-  timestamp: '2026-03-10 09:18:33+09:00'
+  timestamp: '2026-03-10 09:39:32+09:00'
   verificationStatus: TEST_WRONG_ANSWER
   verifiedWith: []
 documentation_of: verify/library_checker_ordered_set.test.cpp
