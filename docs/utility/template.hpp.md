@@ -10,6 +10,9 @@ data:
     path: verify/library_checker_associative_array.test.cpp
     title: verify/library_checker_associative_array.test.cpp
   - icon: ':heavy_check_mark:'
+    path: verify/library_checker_double_ended_priority_queue.test.cpp
+    title: verify/library_checker_double_ended_priority_queue.test.cpp
+  - icon: ':heavy_check_mark:'
     path: verify/library_checker_enumerate_primes.test.cpp
     title: verify/library_checker_enumerate_primes.test.cpp
   - icon: ':heavy_check_mark:'
@@ -361,6 +364,7 @@ data:
   - verify/library_checker_associative_array.test.cpp
   - verify/library_checker_factorize.test.cpp
   - verify/library_checker_staticrmq.test.cpp
+  - verify/library_checker_double_ended_priority_queue.test.cpp
   - verify/library_checker_predecessor_problem.test.cpp
   - verify/library_checker_queue_operate_all_composite.test.cpp
   - verify/library_checker_ordered_set.test.cpp

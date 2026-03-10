@@ -113,6 +113,9 @@ data:
       path: structure/BIT2d.hpp
       title: structure/BIT2d.hpp
     - icon: ':heavy_check_mark:'
+      path: structure/bipq.hpp
+      title: structure/bipq.hpp
+    - icon: ':heavy_check_mark:'
       path: structure/dynamic_segtree.hpp
       title: structure/dynamic_segtree.hpp
     - icon: ':heavy_check_mark:'
@@ -159,6 +162,9 @@ data:
     - icon: ':heavy_check_mark:'
       path: verify/library_checker_associative_array.test.cpp
       title: verify/library_checker_associative_array.test.cpp
+    - icon: ':heavy_check_mark:'
+      path: verify/library_checker_double_ended_priority_queue.test.cpp
+      title: verify/library_checker_double_ended_priority_queue.test.cpp
     - icon: ':heavy_check_mark:'
       path: verify/library_checker_enumerate_primes.test.cpp
       title: verify/library_checker_enumerate_primes.test.cpp
