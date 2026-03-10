@@ -1,17 +1,17 @@
 ---
 data:
   _extendedDependsOn:
-  - icon: ':x:'
+  - icon: ':heavy_check_mark:'
     path: structure/dynamic_segtree.hpp
     title: structure/dynamic_segtree.hpp
-  - icon: ':question:'
+  - icon: ':heavy_check_mark:'
     path: utility/template.hpp
     title: utility/template.hpp
   _extendedRequiredBy: []
   _extendedVerifiedWith: []
-  _isVerificationFailed: true
+  _isVerificationFailed: false
   _pathExtension: cpp
-  _verificationStatusIcon: ':x:'
+  _verificationStatusIcon: ':heavy_check_mark:'
   attributes:
     '*NOT_SPECIAL_COMMENTS*': ''
     PROBLEM: https://judge.yosupo.jp/problem/ordered_set
@@ -167,8 +167,8 @@ data:
     //     (*) f must be monotone and f(e()) must be true.\n\ntemplate <class T, auto\
     \ op, auto e, class Idx = long long>\nstruct dynamic_segtree {\nprivate:\n   \
     \ struct Node {\n        T   val;\n        int left, right;\n    };\n\n    vector<Node>\
-    \ pool;\n    int  root;\n    Idx  lo, hi;\n\n    int new_node() {\n        pool.push_back({e(),\
-    \ -1, -1});\n        return (int)pool.size() - 1;\n    }\n\n    T node_val(int\
+    \ pool;\n    int  root;\n    Idx  lo, hi;\n\n    int new_node() {\n        pool.emplace_back(e(),\
+    \ -1, -1);\n        return (int)pool.size() - 1;\n    }\n\n    T node_val(int\
     \ v) const noexcept {\n        return v == -1 ? e() : pool[v].val;\n    }\n\n\
     \    void push_up(int v) noexcept {\n        pool[v].val = op(node_val(pool[v].left),\
     \ node_val(pool[v].right));\n    }\n\n    // ---- prod ----\n    T _prod(int v,\
@@ -176,89 +176,75 @@ data:
     \ ql) return e();\n        if (ql <= l && r <= qr) return pool[v].val;\n     \
     \   Idx m = l + (r - l) / 2;\n        return op(_prod(pool[v].left,  l, m, ql,\
     \ qr),\n                  _prod(pool[v].right, m, r, ql, qr));\n    }\n\n    //\
-    \ ---- set ----\n    void _set(int& v, Idx l, Idx r, Idx pos, T val) {\n     \
-    \   if (v == -1) v = new_node();\n        if (r - l == 1) { pool[v].val = val;\
-    \ return; }\n        Idx m = l + (r - l) / 2;\n        if (pos < m) _set(pool[v].left,\
-    \  l, m, pos, val);\n        else         _set(pool[v].right, m, r, pos, val);\n\
-    \        push_up(v);\n    }\n\n    // ---- apply ----\n    void _apply(int& v,\
-    \ Idx l, Idx r, Idx pos, T val) {\n        if (v == -1) v = new_node();\n    \
-    \    if (r - l == 1) { pool[v].val = op(pool[v].val, val); return; }\n       \
-    \ Idx m = l + (r - l) / 2;\n        if (pos < m) _apply(pool[v].left,  l, m, pos,\
-    \ val);\n        else         _apply(pool[v].right, m, r, pos, val);\n       \
-    \ push_up(v);\n    }\n\n    // ---- max_right ----\n    // Returns the leftmost\
-    \ position where the running product (from ql) first\n    // fails f.  Returns\
-    \ hi if f holds throughout.\n    // acc : product accumulated so far (left of\
-    \ current subtree)\n    template <class F>\n    Idx _max_right(int v, Idx l, Idx\
-    \ r, Idx ql, T& acc, const F& f) const {\n        if (r <= ql || v == -1) return\
-    \ hi;   // out of range or null (contributes e())\n        if (ql <= l) {\n  \
-    \          // fully in range\n            T nxt = op(acc, pool[v].val);\n    \
-    \        if (f(nxt)) { acc = nxt; return hi; }  // whole node ok, keep going right\n\
-    \            if (r - l == 1) return l;              // leaf fails: boundary is\
-    \ here\n        }\n        Idx m = l + (r - l) / 2;\n        Idx res = _max_right(pool[v].left,\
+    \ ---- set ----\n    // Returns (possibly new) node index.\n    // Must NOT pass\
+    \ pool[v].left/right as int& \u2014 new_node() may reallocate pool.\n    int _set(int\
+    \ v, Idx l, Idx r, Idx pos, T val) {\n        if (v == -1) v = new_node();\n \
+    \       if (r - l == 1) { pool[v].val = val; return v; }\n        Idx m = l +\
+    \ (r - l) / 2;\n        if (pos < m) pool[v].left  = _set(pool[v].left,  l, m,\
+    \ pos, val);\n        else         pool[v].right = _set(pool[v].right, m, r, pos,\
+    \ val);\n        push_up(v);\n        return v;\n    }\n\n    // ---- apply ----\n\
+    \    int _apply(int v, Idx l, Idx r, Idx pos, T val) {\n        if (v == -1) v\
+    \ = new_node();\n        if (r - l == 1) { pool[v].val = op(pool[v].val, val);\
+    \ return v; }\n        Idx m = l + (r - l) / 2;\n        if (pos < m) pool[v].left\
+    \  = _apply(pool[v].left,  l, m, pos, val);\n        else         pool[v].right\
+    \ = _apply(pool[v].right, m, r, pos, val);\n        push_up(v);\n        return\
+    \ v;\n    }\n\n    // ---- max_right ----\n    template <class F>\n    Idx _max_right(int\
+    \ v, Idx l, Idx r, Idx ql, T& acc, const F& f) const {\n        if (r <= ql ||\
+    \ v == -1) return hi;\n        if (ql <= l) {\n            T nxt = op(acc, pool[v].val);\n\
+    \            if (f(nxt)) { acc = nxt; return hi; }\n            if (r - l == 1)\
+    \ return l;\n        }\n        Idx m = l + (r - l) / 2;\n        Idx res = _max_right(pool[v].left,\
     \  l, m, ql, acc, f);\n        if (res != hi) return res;\n        return  _max_right(pool[v].right,\
-    \ m, r, ql, acc, f);\n    }\n\n    // ---- min_left ----\n    // Returns the rightmost\
-    \ position where the running product (up to qr) first\n    // fails f when we\
-    \ extend leftward.  Returns lo if f holds throughout.\n    // acc : product accumulated\
-    \ so far (right of current subtree)\n    template <class F>\n    Idx _min_left(int\
-    \ v, Idx l, Idx r, Idx qr, T& acc, const F& f) const {\n        if (qr <= l ||\
-    \ v == -1) return lo;   // out of range or null (contributes e())\n        if\
-    \ (r <= qr) {\n            // fully in range\n            T nxt = op(pool[v].val,\
-    \ acc);\n            if (f(nxt)) { acc = nxt; return lo; }  // whole node ok,\
-    \ keep going left\n            if (r - l == 1) return r;              // leaf\
-    \ fails: boundary is r (= l+1)\n        }\n        Idx m = l + (r - l) / 2;\n\
-    \        Idx res = _min_left(pool[v].right, m, r, qr, acc, f);\n        if (res\
-    \ != lo) return res;\n        return   _min_left(pool[v].left,  l, m, qr, acc,\
-    \ f);\n    }\n\npublic:\n    dynamic_segtree() = default;\n    // reserve_size:\
-    \ pre-allocated node pool capacity\n    dynamic_segtree(Idx lo, Idx hi, int reserve_size\
-    \ = 1 << 22)\n        : lo(lo), hi(hi), root(-1) {\n        pool.reserve(reserve_size);\n\
-    \    }\n\n    // prod(ql, qr): op-product of [ql, qr)\n    T prod(Idx ql, Idx\
-    \ qr) const {\n        assert(lo <= ql && qr <= hi);\n        return _prod(root,\
+    \ m, r, ql, acc, f);\n    }\n\n    // ---- min_left ----\n    template <class\
+    \ F>\n    Idx _min_left(int v, Idx l, Idx r, Idx qr, T& acc, const F& f) const\
+    \ {\n        if (qr <= l || v == -1) return lo;\n        if (r <= qr) {\n    \
+    \        T nxt = op(pool[v].val, acc);\n            if (f(nxt)) { acc = nxt; return\
+    \ lo; }\n            if (r - l == 1) return r;\n        }\n        Idx m = l +\
+    \ (r - l) / 2;\n        Idx res = _min_left(pool[v].right, m, r, qr, acc, f);\n\
+    \        if (res != lo) return res;\n        return   _min_left(pool[v].left,\
+    \  l, m, qr, acc, f);\n    }\n\npublic:\n    dynamic_segtree() = default;\n  \
+    \  dynamic_segtree(Idx lo, Idx hi, int reserve_size = 1 << 22)\n        : lo(lo),\
+    \ hi(hi), root(-1) {\n        pool.reserve(reserve_size);\n    }\n\n    T prod(Idx\
+    \ ql, Idx qr) const {\n        assert(lo <= ql && qr <= hi);\n        return _prod(root,\
     \ lo, hi, ql, qr);\n    }\n\n    T all_prod() const { return node_val(root); }\n\
-    \n    // get(pos): value at pos\n    T get(Idx pos) const {\n        assert(lo\
-    \ <= pos && pos < hi);\n        return _prod(root, lo, hi, pos, pos + 1);\n  \
-    \  }\n\n    // set(pos, val): a[pos] = val\n    void set(Idx pos, T val) {\n \
-    \       assert(lo <= pos && pos < hi);\n        _set(root, lo, hi, pos, val);\n\
-    \    }\n\n    // apply(pos, val): a[pos] = op(a[pos], val)\n    void apply(Idx\
-    \ pos, T val) {\n        assert(lo <= pos && pos < hi);\n        _apply(root,\
-    \ lo, hi, pos, val);\n    }\n\n    // max_right(ql, f):\n    //   Returns r in\
-    \ [ql, hi] s.t. f(prod(ql, r)) == true\n    //   and (r == hi  or  f(prod(ql,\
-    \ r+1)) == false).\n    //   Precondition: f(e()) == true, f must be monotone.\n\
-    \    template <class F>\n    Idx max_right(Idx ql, const F& f) const {\n     \
-    \   assert(lo <= ql && ql <= hi);\n        assert(f(e()));\n        T acc = e();\n\
-    \        return _max_right(root, lo, hi, ql, acc, f);\n    }\n\n    // min_left(qr,\
-    \ f):\n    //   Returns l in [lo, qr] s.t. f(prod(l, qr)) == true\n    //   and\
-    \ (l == lo  or  f(prod(l-1, qr)) == false).\n    //   Precondition: f(e()) ==\
-    \ true, f must be monotone.\n    template <class F>\n    Idx min_left(Idx qr,\
-    \ const F& f) const {\n        assert(lo <= qr && qr <= hi);\n        assert(f(e()));\n\
-    \        T acc = e();\n        return _min_left(root, lo, hi, qr, acc, f);\n \
-    \   }\n};\n#line 4 \"verify/library_checker_ordered_set.test.cpp\"\n\n// Ordered\
-    \ Set using Dynamic Segment Tree (frequency array over coordinate space)\n// Range:\
-    \ [0, 2^30)  which covers all x <= 10^9\n// a[x] = 1 if x is in the set, 0 otherwise\n\
-    //\n// Query mapping:\n//   0 x: insert x             -> set(x, 1)\n//   1 x:\
-    \ erase  x             -> set(x, 0)\n//   2 x: x-th (1-indexed)     -> max_right(LO,\
-    \ s < x)  (-1 if |S| < x)\n//   3 x: count of elem <= x   -> prod(LO, x+1)\n//\
-    \   4 x: max elem <= x        -> min_left(x+1, s==0) - 1  (-1 if none)\n//   5\
-    \ x: min elem >= x        -> max_right(x, s==0)        (-1 if none)\n\nvoid solve()\
-    \ {\n    int n, q;\n    cin >> n >> q;\n    const long long LO = 0, HI = 1LL <<\
-    \ 30;  // covers [0, 10^9]\n    dynamic_segtree<int, [](int a, int b){ return\
-    \ a + b; }, []{ return 0; }> seg(LO, HI);\n\n    rep(n) {\n        int x; cin\
-    \ >> x;\n        seg.set((long long)x, 1);\n    }\n\n    rep(q) {\n        int\
-    \ t; cin >> t;\n        if (t == 0) {\n            // insert x\n            int\
-    \ x; cin >> x;\n            seg.set((long long)x, 1);\n        } else if (t ==\
-    \ 1) {\n            // erase x\n            int x; cin >> x;\n            seg.set((long\
-    \ long)x, 0);\n        } else if (t == 2) {\n            // x-th smallest (1-indexed);\
-    \ -1 if |S| < x\n            int x; cin >> x;\n            long long r = seg.max_right(LO,\
-    \ [&](int s){ return s < x; });\n            cout << (r < HI ? r : -1LL) << nl;\n\
-    \        } else if (t == 3) {\n            // count of elements <= x\n       \
-    \     int x; cin >> x;\n            cout << seg.prod(LO, (long long)x + 1) <<\
-    \ nl;\n        } else if (t == 4) {\n            // max element <= x  (-1 if none)\n\
-    \            int x; cin >> x;\n            long long l = seg.min_left((long long)x\
-    \ + 1, [](int s){ return s == 0; });\n            cout << (l > LO ? l - 1 : -1LL)\
-    \ << nl;\n        } else {\n            // min element >= x  (-1 if none)\n  \
-    \          int x; cin >> x;\n            long long r = seg.max_right((long long)x,\
-    \ [](int s){ return s == 0; });\n            cout << (r < HI ? r : -1LL) << nl;\n\
-    \        }\n    }\n}\n\nint main() {\n    IO();\n    int T = 1;\n    while (T--)\
-    \ solve();\n}\n"
+    \n    T get(Idx pos) const {\n        assert(lo <= pos && pos < hi);\n       \
+    \ return _prod(root, lo, hi, pos, pos + 1);\n    }\n\n    void set(Idx pos, T\
+    \ val) {\n        assert(lo <= pos && pos < hi);\n        root = _set(root, lo,\
+    \ hi, pos, val);\n    }\n\n    void apply(Idx pos, T val) {\n        assert(lo\
+    \ <= pos && pos < hi);\n        root = _apply(root, lo, hi, pos, val);\n    }\n\
+    \n    template <class F>\n    Idx max_right(Idx ql, const F& f) const {\n    \
+    \    assert(lo <= ql && ql <= hi);\n        assert(f(e()));\n        T acc = e();\n\
+    \        return _max_right(root, lo, hi, ql, acc, f);\n    }\n\n    template <class\
+    \ F>\n    Idx min_left(Idx qr, const F& f) const {\n        assert(lo <= qr &&\
+    \ qr <= hi);\n        assert(f(e()));\n        T acc = e();\n        return _min_left(root,\
+    \ lo, hi, qr, acc, f);\n    }\n};\n#line 4 \"verify/library_checker_ordered_set.test.cpp\"\
+    \n\n// Ordered Set using Dynamic Segment Tree (frequency array over coordinate\
+    \ space)\n// Range: [0, 2^30)  which covers all x <= 10^9\n// a[x] = 1 if x is\
+    \ in the set, 0 otherwise\n//\n// Query mapping:\n//   0 x: insert x         \
+    \    -> set(x, 1)\n//   1 x: erase  x             -> set(x, 0)\n//   2 x: x-th\
+    \ (1-indexed)     -> max_right(LO, s < x)  (-1 if |S| < x)\n//   3 x: count of\
+    \ elem <= x   -> prod(LO, x+1)\n//   4 x: max elem <= x        -> min_left(x+1,\
+    \ s==0) - 1  (-1 if none)\n//   5 x: min elem >= x        -> max_right(x, s==0)\
+    \        (-1 if none)\n\nvoid solve() {\n    int n, q;\n    cin >> n >> q;\n \
+    \   const long long LO = 0, HI = 1LL << 30;  // covers [0, 10^9]\n    dynamic_segtree<int,\
+    \ [](int a, int b){ return a + b; }, []{ return 0; }> seg(LO, HI);\n\n    rep(n)\
+    \ {\n        int x; cin >> x;\n        seg.set((long long)x, 1);\n    }\n\n  \
+    \  rep(q) {\n        int t; cin >> t;\n        if (t == 0) {\n            // insert\
+    \ x\n            int x; cin >> x;\n            seg.set((long long)x, 1);\n   \
+    \     } else if (t == 1) {\n            // erase x\n            int x; cin >>\
+    \ x;\n            seg.set((long long)x, 0);\n        } else if (t == 2) {\n  \
+    \          // x-th smallest (1-indexed); -1 if |S| < x\n            int x; cin\
+    \ >> x;\n            long long r = seg.max_right(LO, [&](int s){ return s < x;\
+    \ });\n            cout << (r < HI ? r : -1LL) << nl;\n        } else if (t ==\
+    \ 3) {\n            // count of elements <= x\n            int x; cin >> x;\n\
+    \            cout << seg.prod(LO, (long long)x + 1) << nl;\n        } else if\
+    \ (t == 4) {\n            // max element <= x  (-1 if none)\n            int x;\
+    \ cin >> x;\n            long long l = seg.min_left((long long)x + 1, [](int s){\
+    \ return s == 0; });\n            cout << (l > LO ? l - 1 : -1LL) << nl;\n   \
+    \     } else {\n            // min element >= x  (-1 if none)\n            int\
+    \ x; cin >> x;\n            long long r = seg.max_right((long long)x, [](int s){\
+    \ return s == 0; });\n            cout << (r < HI ? r : -1LL) << nl;\n       \
+    \ }\n    }\n}\n\nint main() {\n    IO();\n    int T = 1;\n    while (T--) solve();\n\
+    }\n"
   code: "#define PROBLEM \"https://judge.yosupo.jp/problem/ordered_set\"\n#include\
     \ \"template\"\n#include \"dynamic_segtree\"\n\n// Ordered Set using Dynamic Segment\
     \ Tree (frequency array over coordinate space)\n// Range: [0, 2^30)  which covers\
@@ -294,8 +280,8 @@ data:
   isVerificationFile: true
   path: verify/library_checker_ordered_set.test.cpp
   requiredBy: []
-  timestamp: '2026-03-10 09:39:32+09:00'
-  verificationStatus: TEST_WRONG_ANSWER
+  timestamp: '2026-03-10 10:48:14+09:00'
+  verificationStatus: TEST_ACCEPTED
   verifiedWith: []
 documentation_of: verify/library_checker_ordered_set.test.cpp
 layout: document
