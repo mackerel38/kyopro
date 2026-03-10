@@ -4,7 +4,7 @@ data:
   - icon: ':heavy_check_mark:'
     path: structure/majority_vote.hpp
     title: structure/majority_vote.hpp
-  - icon: ':heavy_check_mark:'
+  - icon: ':question:'
     path: utility/template.hpp
     title: utility/template.hpp
   _extendedRequiredBy: []

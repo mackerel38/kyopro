@@ -112,6 +112,9 @@ data:
     - icon: ':heavy_check_mark:'
       path: structure/BIT2d.hpp
       title: structure/BIT2d.hpp
+    - icon: ':x:'
+      path: structure/dynamic_segtree.hpp
+      title: structure/dynamic_segtree.hpp
     - icon: ':heavy_check_mark:'
       path: structure/lazysegtree.hpp
       title: structure/lazysegtree.hpp
@@ -147,7 +150,7 @@ data:
     - icon: ':heavy_check_mark:'
       path: utility/mo.hpp
       title: utility/mo.hpp
-    - icon: ':heavy_check_mark:'
+    - icon: ':question:'
       path: utility/template.hpp
       title: utility/template.hpp
   verificationCategories:
@@ -168,6 +171,9 @@ data:
     - icon: ':heavy_check_mark:'
       path: verify/library_checker_minimum_spanning_tree.test.cpp
       title: verify/library_checker_minimum_spanning_tree.test.cpp
+    - icon: ':x:'
+      path: verify/library_checker_ordered_set.test.cpp
+      title: verify/library_checker_ordered_set.test.cpp
     - icon: ':heavy_check_mark:'
       path: verify/library_checker_point_add_range_sum.test.cpp
       title: verify/library_checker_point_add_range_sum.test.cpp

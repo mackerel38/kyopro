@@ -4,7 +4,7 @@ data:
   - icon: ':heavy_check_mark:'
     path: utility/mo.hpp
     title: utility/mo.hpp
-  - icon: ':heavy_check_mark:'
+  - icon: ':question:'
     path: utility/template.hpp
     title: utility/template.hpp
   _extendedRequiredBy: []
