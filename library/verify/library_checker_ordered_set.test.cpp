@@ -19,7 +19,6 @@ void solve() {
     cin >> n >> q;
     const long long LO = 0, HI = 1LL << 30;  // covers [0, 10^9]
     dynamic_segtree<int, [](int a, int b){ return a + b; }, []{ return 0; }> seg(LO, HI);
-
     rep(n) {
         int x; cin >> x;
         seg.set((long long)x, 1);
