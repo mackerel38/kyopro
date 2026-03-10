@@ -1,17 +1,17 @@
 ---
 data:
   _extendedDependsOn:
-  - icon: ':heavy_check_mark:'
+  - icon: ':x:'
     path: structure/BIT2d.hpp
     title: structure/BIT2d.hpp
-  - icon: ':heavy_check_mark:'
+  - icon: ':question:'
     path: utility/template.hpp
     title: utility/template.hpp
   _extendedRequiredBy: []
   _extendedVerifiedWith: []
-  _isVerificationFailed: false
+  _isVerificationFailed: true
   _pathExtension: cpp
-  _verificationStatusIcon: ':heavy_check_mark:'
+  _verificationStatusIcon: ':x:'
   attributes:
     '*NOT_SPECIAL_COMMENTS*': ''
     PROBLEM: https://judge.yosupo.jp/problem/point_add_rectangle_sum
@@ -191,61 +191,45 @@ data:
     \ _fw_sum(i, y);\n        return s;\n    }\n\n    T sum(int lx, int rx, int ly,\
     \ int ry) const {\n        return sum(rx, ry) - sum(lx - 1, ry) - sum(rx, ly -\
     \ 1) + sum(lx - 1, ly - 1);\n    }\n};\n#line 4 \"verify/library_checker_point_add_rectangle_sum.test.cpp\"\
-    \n\nint main(){\n    IO();\n    int T = 1;\n    while (T--) solve();\n}\n\nvoid\
-    \ solve(){\n    int n, q; cin >> n >> q;\n    vector<int> px(n), py(n), pw(n);\n\
-    \    rep(i, n) cin >> px[i] >> py[i] >> pw[i];\n\n    // Read all queries offline\n\
-    \    vector<array<int,5>> qs(q);\n    rep(i, q){\n        cin >> qs[i][0];\n \
-    \       if (qs[i][0] == 0) cin >> qs[i][1] >> qs[i][2] >> qs[i][3];\n        else\
-    \               cin >> qs[i][1] >> qs[i][2] >> qs[i][3] >> qs[i][4];\n    }\n\n\
-    \    // Compress x-coordinates of ALL add points (initial N points + type-0 query\
-    \ points)\n    vector<int> xs(px.begin(), px.end());\n    rep(i, q) if (qs[i][0]\
-    \ == 0) xs.push_back(qs[i][1]);\n    sort(xs.begin(), xs.end()); xs.erase(unique(xs.begin(),\
-    \ xs.end()), xs.end());\n    int mx = xs.size();\n\n    // 1-indexed compressed\
-    \ x\n    auto cx1 = [&](int x) -> int {\n        return (int)(lower_bound(xs.begin(),\
-    \ xs.end(), x) - xs.begin()) + 1;\n    };\n\n    // Reserve y-coordinates for\
-    \ ALL add points before build()\n    BIT2d_compressed<ll> seg(mx);\n    rep(i,\
-    \ n) seg.reserve(cx1(px[i]), py[i]);\n    rep(i, q) if (qs[i][0] == 0) seg.reserve(cx1(qs[i][1]),\
-    \ qs[i][2]);\n    seg.build();\n\n    // Add initial weights\n    rep(i, n) seg.add(cx1(px[i]),\
-    \ py[i], pw[i]);\n\n    // Process queries\n    rep(i, q){\n        if (qs[i][0]\
-    \ == 0){\n            seg.add(cx1(qs[i][1]), qs[i][2], qs[i][3]);\n        } else\
-    \ {\n            int l = qs[i][1], d = qs[i][2], r = qs[i][3], u = qs[i][4];\n\
-    \            if (l >= r || d >= u){ cout << 0 << nl; continue; }\n           \
-    \ int lx = (int)(lower_bound(xs.begin(), xs.end(), l) - xs.begin()) + 1;\n   \
-    \         int rx = (int)(lower_bound(xs.begin(), xs.end(), r) - xs.begin());\n\
-    \            if (lx > rx){ cout << 0 << nl; continue; }\n            cout << seg.sum(lx,\
-    \ rx, d, u - 1) << nl;\n        }\n    }\n}\n"
+    \n\nint main() {\n    IO();\n    int T = 1;\n    // cin >> T;\n    while (T--)\
+    \ solve();\n}\n\nvoid solve() {\n    int n, q; cin >> n >> q;\n    struct point\
+    \ {\n        int x, y;\n        ll w;\n    };\n    vec<point> ps(n);\n    vi xv;\n\
+    \    range(i, ps) {\n        cin >> i.x >> i.y >> i.w;\n        xv.pb(i.x);\n\
+    \    }\n    vec<array<int, 5>> queries(q);\n    range(i, queries) {\n        cin\
+    \ >> i[0];\n        if (i[0] == 0) {\n            rep1(j, 3) cin >> i[j];\n  \
+    \          xv.pb(i[1]);\n        }\n        else rep1(j, 4) cin >> i[j];\n   \
+    \ }\n    uniq(xv);\n    int m = xv.size();\n    BIT2d_compressed<ll> seg(m);\n\
+    \    rep(i, n) ps[i].x = (lower_bound(all(xv), ps[i].x)-xv.begin())+1;\n    rep(i,\
+    \ q) queries[i][1] = (lower_bound(all(xv), queries[i][1]) - xv.begin()) + 1;\n\
+    \    rep(i, q) if (queries[i][0] == 1) queries[i][2] = lower_bound(all(xv), queries[i][2])-xv.begin();\n\
+    \    rep(i, n) seg.reserve(ps[i].x, ps[i].y);\n    seg.build();\n    range(i,\
+    \ ps) seg.add(i.x, i.y, i.w);\n    range(i, queries) {\n        if (i[0] == 0)\
+    \ seg.add(i[1], i[2], i[3]);\n        else cout << seg.sum(i[1], i[2], i[3], i[4]-1)\
+    \ << nl;\n    }\n}\n"
   code: "#define PROBLEM \"https://judge.yosupo.jp/problem/point_add_rectangle_sum\"\
-    \n#include \"template\"\n#include \"BIT2d\"\n\nint main(){\n    IO();\n    int\
-    \ T = 1;\n    while (T--) solve();\n}\n\nvoid solve(){\n    int n, q; cin >> n\
-    \ >> q;\n    vector<int> px(n), py(n), pw(n);\n    rep(i, n) cin >> px[i] >> py[i]\
-    \ >> pw[i];\n\n    // Read all queries offline\n    vector<array<int,5>> qs(q);\n\
-    \    rep(i, q){\n        cin >> qs[i][0];\n        if (qs[i][0] == 0) cin >> qs[i][1]\
-    \ >> qs[i][2] >> qs[i][3];\n        else               cin >> qs[i][1] >> qs[i][2]\
-    \ >> qs[i][3] >> qs[i][4];\n    }\n\n    // Compress x-coordinates of ALL add\
-    \ points (initial N points + type-0 query points)\n    vector<int> xs(px.begin(),\
-    \ px.end());\n    rep(i, q) if (qs[i][0] == 0) xs.push_back(qs[i][1]);\n    sort(xs.begin(),\
-    \ xs.end()); xs.erase(unique(xs.begin(), xs.end()), xs.end());\n    int mx = xs.size();\n\
-    \n    // 1-indexed compressed x\n    auto cx1 = [&](int x) -> int {\n        return\
-    \ (int)(lower_bound(xs.begin(), xs.end(), x) - xs.begin()) + 1;\n    };\n\n  \
-    \  // Reserve y-coordinates for ALL add points before build()\n    BIT2d_compressed<ll>\
-    \ seg(mx);\n    rep(i, n) seg.reserve(cx1(px[i]), py[i]);\n    rep(i, q) if (qs[i][0]\
-    \ == 0) seg.reserve(cx1(qs[i][1]), qs[i][2]);\n    seg.build();\n\n    // Add\
-    \ initial weights\n    rep(i, n) seg.add(cx1(px[i]), py[i], pw[i]);\n\n    //\
-    \ Process queries\n    rep(i, q){\n        if (qs[i][0] == 0){\n            seg.add(cx1(qs[i][1]),\
-    \ qs[i][2], qs[i][3]);\n        } else {\n            int l = qs[i][1], d = qs[i][2],\
-    \ r = qs[i][3], u = qs[i][4];\n            if (l >= r || d >= u){ cout << 0 <<\
-    \ nl; continue; }\n            int lx = (int)(lower_bound(xs.begin(), xs.end(),\
-    \ l) - xs.begin()) + 1;\n            int rx = (int)(lower_bound(xs.begin(), xs.end(),\
-    \ r) - xs.begin());\n            if (lx > rx){ cout << 0 << nl; continue; }\n\
-    \            cout << seg.sum(lx, rx, d, u - 1) << nl;\n        }\n    }\n}\n"
+    \n#include \"template\"\n#include \"BIT2d\"\n\nint main() {\n    IO();\n    int\
+    \ T = 1;\n    // cin >> T;\n    while (T--) solve();\n}\n\nvoid solve() {\n  \
+    \  int n, q; cin >> n >> q;\n    struct point {\n        int x, y;\n        ll\
+    \ w;\n    };\n    vec<point> ps(n);\n    vi xv;\n    range(i, ps) {\n        cin\
+    \ >> i.x >> i.y >> i.w;\n        xv.pb(i.x);\n    }\n    vec<array<int, 5>> queries(q);\n\
+    \    range(i, queries) {\n        cin >> i[0];\n        if (i[0] == 0) {\n   \
+    \         rep1(j, 3) cin >> i[j];\n            xv.pb(i[1]);\n        }\n     \
+    \   else rep1(j, 4) cin >> i[j];\n    }\n    uniq(xv);\n    int m = xv.size();\n\
+    \    BIT2d_compressed<ll> seg(m);\n    rep(i, n) ps[i].x = (lower_bound(all(xv),\
+    \ ps[i].x)-xv.begin())+1;\n    rep(i, q) queries[i][1] = (lower_bound(all(xv),\
+    \ queries[i][1]) - xv.begin()) + 1;\n    rep(i, q) if (queries[i][0] == 1) queries[i][2]\
+    \ = lower_bound(all(xv), queries[i][2])-xv.begin();\n    rep(i, n) seg.reserve(ps[i].x,\
+    \ ps[i].y);\n    seg.build();\n    range(i, ps) seg.add(i.x, i.y, i.w);\n    range(i,\
+    \ queries) {\n        if (i[0] == 0) seg.add(i[1], i[2], i[3]);\n        else\
+    \ cout << seg.sum(i[1], i[2], i[3], i[4]-1) << nl;\n    }\n}\n"
   dependsOn:
   - utility/template.hpp
   - structure/BIT2d.hpp
   isVerificationFile: true
   path: verify/library_checker_point_add_rectangle_sum.test.cpp
   requiredBy: []
-  timestamp: '2026-03-10 03:22:29+09:00'
-  verificationStatus: TEST_ACCEPTED
+  timestamp: '2026-03-10 18:36:03+09:00'
+  verificationStatus: TEST_WRONG_ANSWER
   verifiedWith: []
 documentation_of: verify/library_checker_point_add_rectangle_sum.test.cpp
 layout: document

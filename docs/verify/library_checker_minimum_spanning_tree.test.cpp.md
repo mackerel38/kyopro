@@ -1,13 +1,13 @@
 ---
 data:
   _extendedDependsOn:
-  - icon: ':heavy_check_mark:'
+  - icon: ':question:'
     path: graph/graphtemplate.hpp
     title: graph/graphtemplate.hpp
   - icon: ':heavy_check_mark:'
     path: graph/kruskal.hpp
     title: graph/kruskal.hpp
-  - icon: ':heavy_check_mark:'
+  - icon: ':question:'
     path: utility/template.hpp
     title: utility/template.hpp
   _extendedRequiredBy: []
@@ -209,18 +209,16 @@ data:
     \ used;\n    for (auto& e : sorted_edges) {\n        if (uf_merge(e.from, e.to))\
     \ {\n            total += e.cost;\n            used.push_back(e);\n        }\n\
     \    }\n    return {total, used};\n}\n#line 4 \"verify/library_checker_minimum_spanning_tree.test.cpp\"\
-    \n\nint main() {\n    IO();\n    int T = 1;\n    while (T--) solve();\n}\n\nvoid\
-    \ solve() {\n    int n, m; cin >> n >> m;\n    graph<ll, false, true> g(n);\n\
-    \    g.read(m, 0);\n    auto [total, used] = kruskal(g);\n    cout << total <<\
-    \ nl;\n    rep(i, (int)used.size()) {\n        cout << used[i].id << (i + 1 ==\
-    \ (int)used.size() ? '\\n' : ' ');\n    }\n}\n"
+    \n\nint main() {\n    IO();\n    int T = 1;\n    // cin >> T;\n    while (T--)\
+    \ solve();\n}\n\nvoid solve() {\n    int n, m; cin >> n >> m;\n    graph<ll, false,\
+    \  true> g(n); g.read(m, 0);\n    auto [s, e] = kruskal(g);\n    cout << s <<\
+    \ nl;\n    range(i, e) cout << i.id << sp;\n    cout << nl;\n}\n"
   code: "#define PROBLEM \"https://judge.yosupo.jp/problem/minimum_spanning_tree\"\
     \n#include \"template\"\n#include \"kruskal\"\n\nint main() {\n    IO();\n   \
-    \ int T = 1;\n    while (T--) solve();\n}\n\nvoid solve() {\n    int n, m; cin\
-    \ >> n >> m;\n    graph<ll, false, true> g(n);\n    g.read(m, 0);\n    auto [total,\
-    \ used] = kruskal(g);\n    cout << total << nl;\n    rep(i, (int)used.size())\
-    \ {\n        cout << used[i].id << (i + 1 == (int)used.size() ? '\\n' : ' ');\n\
-    \    }\n}\n"
+    \ int T = 1;\n    // cin >> T;\n    while (T--) solve();\n}\n\nvoid solve() {\n\
+    \    int n, m; cin >> n >> m;\n    graph<ll, false,  true> g(n); g.read(m, 0);\n\
+    \    auto [s, e] = kruskal(g);\n    cout << s << nl;\n    range(i, e) cout <<\
+    \ i.id << sp;\n    cout << nl;\n}\n"
   dependsOn:
   - utility/template.hpp
   - graph/kruskal.hpp
@@ -228,7 +226,7 @@ data:
   isVerificationFile: true
   path: verify/library_checker_minimum_spanning_tree.test.cpp
   requiredBy: []
-  timestamp: '2026-03-09 22:49:24+09:00'
+  timestamp: '2026-03-10 18:35:35+09:00'
   verificationStatus: TEST_ACCEPTED
   verifiedWith: []
 documentation_of: verify/library_checker_minimum_spanning_tree.test.cpp

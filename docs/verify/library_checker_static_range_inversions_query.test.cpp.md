@@ -1,17 +1,20 @@
 ---
 data:
   _extendedDependsOn:
-  - icon: ':heavy_check_mark:'
+  - icon: ':question:'
+    path: structure/BIT.hpp
+    title: structure/BIT.hpp
+  - icon: ':x:'
     path: utility/mo.hpp
     title: utility/mo.hpp
-  - icon: ':heavy_check_mark:'
+  - icon: ':question:'
     path: utility/template.hpp
     title: utility/template.hpp
   _extendedRequiredBy: []
   _extendedVerifiedWith: []
-  _isVerificationFailed: false
+  _isVerificationFailed: true
   _pathExtension: cpp
-  _verificationStatusIcon: ':heavy_check_mark:'
+  _verificationStatusIcon: ':x:'
   attributes:
     '*NOT_SPECIAL_COMMENTS*': ''
     PROBLEM: https://judge.yosupo.jp/problem/static_range_inversions_query
@@ -176,52 +179,57 @@ data:
     \ : ord) {\n            int ql = qs[i].first, qr = qs[i].second;\n           \
     \ while (r < qr) add_r(r++);\n            while (l > ql) add_l(--l);\n       \
     \     while (r > qr) del_r(--r);\n            while (l < ql) del_l(l++);\n   \
-    \         query(i);\n        }\n    }\n};\n#line 4 \"verify/library_checker_static_range_inversions_query.test.cpp\"\
-    \n\nint main(){\n    IO();\n    int T = 1;\n    while (T--) solve();\n}\n\nvoid\
-    \ solve(){\n    int n, q; cin >> n >> q;\n    vector<int> a(n);\n    rep(i, n)\
-    \ cin >> a[i];\n\n    // Coordinate compress\n    vector<int> b = a;\n    sort(b.begin(),\
-    \ b.end()); b.erase(unique(b.begin(), b.end()), b.end());\n    int m = (int)b.size();\n\
-    \    rep(i, n) a[i] = (int)(lower_bound(b.begin(), b.end(), a[i]) - b.begin());\n\
-    \n    // Fenwick tree (rename to fw to avoid conflict with 'bit' macro)\n    vector<ll>\
-    \ fw(m + 2, 0);\n    auto fw_add = [&](int i, ll v){ for (i += 1; i <= m; i +=\
-    \ i & -i) fw[i] += v; };\n    auto fw_sum = [&](int i) -> ll { ll s = 0; for (;\
-    \ i > 0; i -= i & -i) s += fw[i]; return s; };\n\n    mo mo_q(n);\n    rep(i,\
-    \ q){ int l, r; cin >> l >> r; mo_q.add(l, r); }\n\n    vector<ll> ans(q);\n \
-    \   ll cur = 0;\n    int wsize = 0;\n\n    auto add_r = [&](int i){\n        cur\
-    \ += wsize - fw_sum(a[i] + 1);\n        fw_add(a[i], 1); wsize++;\n    };\n  \
-    \  auto del_r = [&](int i){\n        cur -= wsize - fw_sum(a[i] + 1);\n      \
-    \  fw_add(a[i], -1); wsize--;\n    };\n    auto add_l = [&](int i){\n        cur\
-    \ += fw_sum(a[i]);\n        fw_add(a[i], 1); wsize++;\n    };\n    auto del_l\
-    \ = [&](int i){\n        fw_add(a[i], -1); wsize--;\n        cur -= fw_sum(a[i]);\n\
-    \    };\n\n    mo_q.run(add_l, del_l, add_r, del_r, [&](int qi){ ans[qi] = cur;\
-    \ });\n    rep(i, q) cout << ans[i] << nl;\n}\n"
+    \         query(i);\n        }\n    }\n};\n#line 3 \"structure/BIT.hpp\"\nusing\
+    \ namespace std;\n\ntemplate <class T>\nstruct BIT {\n    int _n;\n    vector<T>\
+    \ data;\n\n    BIT() = default;\n    BIT(int n) : _n(n), data(_n, T{}) {}\n  \
+    \  BIT(const vector<T>& v) : _n(ssize(v)), data(v) {\n        for (int i=1; i<=_n;\
+    \ ++i) {\n            int I = i + (i & -i);\n            if (I <= _n) data[I-1]\
+    \ += data[i-1];\n        }\n    }\n\n    void add(int x, T y) {\n        assert(0<=x\
+    \ && x<_n);\n        x++;\n        while (x <= _n) {\n            data[x-1] +=\
+    \ y;\n            x += x & -x;\n        }\n    }\n    void set(int x, T y) { add(x,\
+    \ y-get(x)); }\n\n    void get(int x) const { return sum(x+1) - sum(x); }\n  \
+    \  void operator[](int x) const { return get(x); }\n\n    T sum(int x) const {\n\
+    \        assert(0<=x && x<=_n);\n        T s = T{};\n        while (0 < x) {\n\
+    \            s += data[x-1];\n            x -= x & -x;\n        }\n        return\
+    \ s;\n    }\n    T sum(int x, int y) const {\n        assert(x <= y);\n      \
+    \  return sum(y) - sum(x);\n    }\n};\n#line 5 \"verify/library_checker_static_range_inversions_query.test.cpp\"\
+    \n\nint main() {\n    IO();\n    int T = 1;\n    // cin >> T;\n    while (T--)\
+    \ solve();\n}\n\nvoid solve() {\n    int n, q; cin >> n >> q;\n    vi a(n); cin\
+    \ >> a;\n    vi b = a;\n    uniq(b);\n    int m = len(b);\n    range(i, a) i =\
+    \ lower_bound(all(b), i) - b.begin();\n    vll ans(q);\n    mo Mo(q);\n    vpi\
+    \ queries(q);\n    rep(i, q) {\n        int l, r; cin >> l >> r;\n        queries[i]\
+    \ = {l, r};\n        Mo.add(l, r);\n    }\n    BIT<int> seg(m);\n    ll cnt =\
+    \ 0;\n    auto al = [&](int x) {\n        cnt += seg.sum(0, a[x]);\n        seg.add(a[x],\
+    \ 1);\n    };\n    auto ar = [&](int x) {\n        cnt += seg.sum(a[x]+1, m);\n\
+    \        seg.add(a[x], 1);\n    };\n    auto el = [&](int x) {\n        seg.add(a[x],\
+    \ -1);\n        cnt -= seg.sum(0, a[x]);\n    };\n    auto er = [&](int x) {\n\
+    \        seg.add(a[x], -1);\n        cnt -= seg.sum(a[x]+1, m);\n    };\n    auto\
+    \ out = [&](int x) { ans[x] = cnt; };\n    Mo.run(al, ar, el, er, out);\n    cout\
+    \ << ans;\n}\n"
   code: "#define PROBLEM \"https://judge.yosupo.jp/problem/static_range_inversions_query\"\
-    \n#include \"template\"\n#include \"mo\"\n\nint main(){\n    IO();\n    int T\
-    \ = 1;\n    while (T--) solve();\n}\n\nvoid solve(){\n    int n, q; cin >> n >>\
-    \ q;\n    vector<int> a(n);\n    rep(i, n) cin >> a[i];\n\n    // Coordinate compress\n\
-    \    vector<int> b = a;\n    sort(b.begin(), b.end()); b.erase(unique(b.begin(),\
-    \ b.end()), b.end());\n    int m = (int)b.size();\n    rep(i, n) a[i] = (int)(lower_bound(b.begin(),\
-    \ b.end(), a[i]) - b.begin());\n\n    // Fenwick tree (rename to fw to avoid conflict\
-    \ with 'bit' macro)\n    vector<ll> fw(m + 2, 0);\n    auto fw_add = [&](int i,\
-    \ ll v){ for (i += 1; i <= m; i += i & -i) fw[i] += v; };\n    auto fw_sum = [&](int\
-    \ i) -> ll { ll s = 0; for (; i > 0; i -= i & -i) s += fw[i]; return s; };\n\n\
-    \    mo mo_q(n);\n    rep(i, q){ int l, r; cin >> l >> r; mo_q.add(l, r); }\n\n\
-    \    vector<ll> ans(q);\n    ll cur = 0;\n    int wsize = 0;\n\n    auto add_r\
-    \ = [&](int i){\n        cur += wsize - fw_sum(a[i] + 1);\n        fw_add(a[i],\
-    \ 1); wsize++;\n    };\n    auto del_r = [&](int i){\n        cur -= wsize - fw_sum(a[i]\
-    \ + 1);\n        fw_add(a[i], -1); wsize--;\n    };\n    auto add_l = [&](int\
-    \ i){\n        cur += fw_sum(a[i]);\n        fw_add(a[i], 1); wsize++;\n    };\n\
-    \    auto del_l = [&](int i){\n        fw_add(a[i], -1); wsize--;\n        cur\
-    \ -= fw_sum(a[i]);\n    };\n\n    mo_q.run(add_l, del_l, add_r, del_r, [&](int\
-    \ qi){ ans[qi] = cur; });\n    rep(i, q) cout << ans[i] << nl;\n}\n"
+    \n#include \"template\"\n#include \"mo\"\n#include \"BIT\"\n\nint main() {\n \
+    \   IO();\n    int T = 1;\n    // cin >> T;\n    while (T--) solve();\n}\n\nvoid\
+    \ solve() {\n    int n, q; cin >> n >> q;\n    vi a(n); cin >> a;\n    vi b =\
+    \ a;\n    uniq(b);\n    int m = len(b);\n    range(i, a) i = lower_bound(all(b),\
+    \ i) - b.begin();\n    vll ans(q);\n    mo Mo(q);\n    vpi queries(q);\n    rep(i,\
+    \ q) {\n        int l, r; cin >> l >> r;\n        queries[i] = {l, r};\n     \
+    \   Mo.add(l, r);\n    }\n    BIT<int> seg(m);\n    ll cnt = 0;\n    auto al =\
+    \ [&](int x) {\n        cnt += seg.sum(0, a[x]);\n        seg.add(a[x], 1);\n\
+    \    };\n    auto ar = [&](int x) {\n        cnt += seg.sum(a[x]+1, m);\n    \
+    \    seg.add(a[x], 1);\n    };\n    auto el = [&](int x) {\n        seg.add(a[x],\
+    \ -1);\n        cnt -= seg.sum(0, a[x]);\n    };\n    auto er = [&](int x) {\n\
+    \        seg.add(a[x], -1);\n        cnt -= seg.sum(a[x]+1, m);\n    };\n    auto\
+    \ out = [&](int x) { ans[x] = cnt; };\n    Mo.run(al, ar, el, er, out);\n    cout\
+    \ << ans;\n}\n"
   dependsOn:
   - utility/template.hpp
   - utility/mo.hpp
+  - structure/BIT.hpp
   isVerificationFile: true
   path: verify/library_checker_static_range_inversions_query.test.cpp
   requiredBy: []
-  timestamp: '2026-03-10 02:22:16+09:00'
-  verificationStatus: TEST_ACCEPTED
+  timestamp: '2026-03-10 21:15:01+09:00'
+  verificationStatus: TEST_WRONG_ANSWER
   verifiedWith: []
 documentation_of: verify/library_checker_static_range_inversions_query.test.cpp
 layout: document

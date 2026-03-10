@@ -1,17 +1,17 @@
 ---
 data:
   _extendedDependsOn:
-  - icon: ':heavy_check_mark:'
+  - icon: ':x:'
     path: structure/sparse_table.hpp
     title: structure/sparse_table.hpp
-  - icon: ':heavy_check_mark:'
+  - icon: ':question:'
     path: utility/template.hpp
     title: utility/template.hpp
   _extendedRequiredBy: []
   _extendedVerifiedWith: []
-  _isVerificationFailed: false
+  _isVerificationFailed: true
   _pathExtension: cpp
-  _verificationStatusIcon: ':heavy_check_mark:'
+  _verificationStatusIcon: ':x:'
   attributes:
     '*NOT_SPECIAL_COMMENTS*': ''
     PROBLEM: https://judge.yosupo.jp/problem/staticrmq
@@ -166,27 +166,20 @@ data:
     \       d[j][i] = op(d[j-1][i], d[j-1][i + (1 << (j-1))]);\n    }\n\n    // query\
     \ [l, r)  (0-indexed, half-open)\n    S query(int l, int r) const {\n        int\
     \ k = lg[r - l];\n        return op(d[k][l], d[k][r - (1 << k)]);\n    }\n};\n\
-    #line 4 \"verify/library_checker_staticrmq.test.cpp\"\n\nconst auto rmq_op = [](int\
-    \ a, int b){ return min(a, b); };\n\nint main(){\n    IO();\n    int T = 1;\n\
-    \    while (T--) solve();\n}\n\nvoid solve(){\n    int n, q; cin >> n >> q;\n\
-    \    vector<int> a(n);\n    rep(i, n) cin >> a[i];\n    sparse_table<int, rmq_op>\
-    \ st(a);\n    rep(q){\n        int l, r; cin >> l >> r;\n        cout << st.query(l,\
-    \ r) << nl;\n    }\n}\n"
+    #line 4 \"verify/library_checker_staticrmq.test.cpp\"\n\n\nint main() {\n    IO();\n\
+    \    int T = 1;\n    // cin >> T;\n    while (T--) solve();\n}\n\nvoid solve()\
+    \ {\n}\n"
   code: "#define PROBLEM \"https://judge.yosupo.jp/problem/staticrmq\"\n#include \"\
-    template\"\n#include \"sparse_table\"\n\nconst auto rmq_op = [](int a, int b){\
-    \ return min(a, b); };\n\nint main(){\n    IO();\n    int T = 1;\n    while (T--)\
-    \ solve();\n}\n\nvoid solve(){\n    int n, q; cin >> n >> q;\n    vector<int>\
-    \ a(n);\n    rep(i, n) cin >> a[i];\n    sparse_table<int, rmq_op> st(a);\n  \
-    \  rep(q){\n        int l, r; cin >> l >> r;\n        cout << st.query(l, r) <<\
-    \ nl;\n    }\n}\n"
+    template\"\n#include \"sparse_table\"\n\n\nint main() {\n    IO();\n    int T\
+    \ = 1;\n    // cin >> T;\n    while (T--) solve();\n}\n\nvoid solve() {\n}\n"
   dependsOn:
   - utility/template.hpp
   - structure/sparse_table.hpp
   isVerificationFile: true
   path: verify/library_checker_staticrmq.test.cpp
   requiredBy: []
-  timestamp: '2026-03-09 22:49:24+09:00'
-  verificationStatus: TEST_ACCEPTED
+  timestamp: '2026-03-10 12:15:01+09:00'
+  verificationStatus: TEST_WRONG_ANSWER
   verifiedWith: []
 documentation_of: verify/library_checker_staticrmq.test.cpp
 layout: document

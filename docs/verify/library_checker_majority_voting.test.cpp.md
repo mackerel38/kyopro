@@ -1,17 +1,17 @@
 ---
 data:
   _extendedDependsOn:
-  - icon: ':heavy_check_mark:'
+  - icon: ':x:'
     path: structure/majority_vote.hpp
     title: structure/majority_vote.hpp
-  - icon: ':heavy_check_mark:'
+  - icon: ':question:'
     path: utility/template.hpp
     title: utility/template.hpp
   _extendedRequiredBy: []
   _extendedVerifiedWith: []
-  _isVerificationFailed: false
+  _isVerificationFailed: true
   _pathExtension: cpp
-  _verificationStatusIcon: ':heavy_check_mark:'
+  _verificationStatusIcon: ':x:'
   attributes:
     '*NOT_SPECIAL_COMMENTS*': ''
     PROBLEM: https://judge.yosupo.jp/problem/majority_voting
@@ -187,55 +187,19 @@ data:
     \    }\n\n    void set(int i, T x)       { set(i, x, 1, 0, n); }\n    // Returns\
     \ BM candidate for a[l..r). Verify count externally!\n    S query(int l, int r)\
     \      { return query(l, r, 1, 0, n); }\n};\n#line 4 \"verify/library_checker_majority_voting.test.cpp\"\
-    \n\n// Policy-based order-statistics tree for O(log n) rank queries\n#include\
-    \ <ext/pb_ds/assoc_container.hpp>\n#include <ext/pb_ds/tree_policy.hpp>\nusing\
-    \ namespace __gnu_pbds;\nusing pbds_set = tree<int, null_type, less<int>,\n  \
-    \                     rb_tree_tag, tree_order_statistics_node_update>;\n\nint\
-    \ main(){\n    IO();\n    int T = 1;\n    while (T--) solve();\n}\n\nvoid solve(){\n\
-    \    int n, q; cin >> n >> q;\n    vector<int> a(n);\n    rep(i, n) cin >> a[i];\n\
-    \n    // BM segtree for candidate queries\n    majority_segtree<int> ms(a);\n\n\
-    \    // positions[v] = sorted set of indices where a[i] == v\n    // Use pb_ds\
-    \ for O(log n) count in range [l, r)\n    map<int, pbds_set> pos;\n    rep(i,\
-    \ n) pos[a[i]].insert(i);\n\n    rep(q){\n        int t; cin >> t;\n        if\
-    \ (t == 0){\n            // point update: a[p] = x\n            int p, x; cin\
-    \ >> p >> x;\n            pos[a[p]].erase(p);\n            a[p] = x;\n       \
-    \     pos[x].insert(p);\n            ms.set(p, x);\n        } else {\n       \
-    \     // range majority query [l, r)\n            int l, r; cin >> l >> r;\n \
-    \           auto [cand, excess] = ms.query(l, r);\n            // count occurrences\
-    \ of cand in [l, r)\n            auto it = pos.find(cand);\n            int cnt\
-    \ = 0;\n            if (it != pos.end()){\n                auto& S = it->second;\n\
-    \                cnt = (int)S.order_of_key(r) - (int)S.order_of_key(l);\n    \
-    \        }\n            cout << (cnt * 2 > r - l ? cand : -1) << nl;\n       \
-    \ }\n    }\n}\n"
+    \n\nint main() {\n    IO();\n    int T = 1;\n    // cin >> T;\n    while (T--)\
+    \ solve();\n}\n\nvoid solve() {\n}\n"
   code: "#define PROBLEM \"https://judge.yosupo.jp/problem/majority_voting\"\n#include\
-    \ \"template\"\n#include \"majority_vote\"\n\n// Policy-based order-statistics\
-    \ tree for O(log n) rank queries\n#include <ext/pb_ds/assoc_container.hpp>\n#include\
-    \ <ext/pb_ds/tree_policy.hpp>\nusing namespace __gnu_pbds;\nusing pbds_set = tree<int,\
-    \ null_type, less<int>,\n                       rb_tree_tag, tree_order_statistics_node_update>;\n\
-    \nint main(){\n    IO();\n    int T = 1;\n    while (T--) solve();\n}\n\nvoid\
-    \ solve(){\n    int n, q; cin >> n >> q;\n    vector<int> a(n);\n    rep(i, n)\
-    \ cin >> a[i];\n\n    // BM segtree for candidate queries\n    majority_segtree<int>\
-    \ ms(a);\n\n    // positions[v] = sorted set of indices where a[i] == v\n    //\
-    \ Use pb_ds for O(log n) count in range [l, r)\n    map<int, pbds_set> pos;\n\
-    \    rep(i, n) pos[a[i]].insert(i);\n\n    rep(q){\n        int t; cin >> t;\n\
-    \        if (t == 0){\n            // point update: a[p] = x\n            int\
-    \ p, x; cin >> p >> x;\n            pos[a[p]].erase(p);\n            a[p] = x;\n\
-    \            pos[x].insert(p);\n            ms.set(p, x);\n        } else {\n\
-    \            // range majority query [l, r)\n            int l, r; cin >> l >>\
-    \ r;\n            auto [cand, excess] = ms.query(l, r);\n            // count\
-    \ occurrences of cand in [l, r)\n            auto it = pos.find(cand);\n     \
-    \       int cnt = 0;\n            if (it != pos.end()){\n                auto&\
-    \ S = it->second;\n                cnt = (int)S.order_of_key(r) - (int)S.order_of_key(l);\n\
-    \            }\n            cout << (cnt * 2 > r - l ? cand : -1) << nl;\n   \
-    \     }\n    }\n}\n"
+    \ \"template\"\n#include \"majority_vote\"\n\nint main() {\n    IO();\n    int\
+    \ T = 1;\n    // cin >> T;\n    while (T--) solve();\n}\n\nvoid solve() {\n}\n"
   dependsOn:
   - utility/template.hpp
   - structure/majority_vote.hpp
   isVerificationFile: true
   path: verify/library_checker_majority_voting.test.cpp
   requiredBy: []
-  timestamp: '2026-03-10 02:33:16+09:00'
-  verificationStatus: TEST_ACCEPTED
+  timestamp: '2026-03-10 18:35:38+09:00'
+  verificationStatus: TEST_WRONG_ANSWER
   verifiedWith: []
 documentation_of: verify/library_checker_majority_voting.test.cpp
 layout: document

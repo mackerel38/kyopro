@@ -4,7 +4,7 @@ data:
   - icon: ':heavy_check_mark:'
     path: utility/hashmap.hpp
     title: utility/hashmap.hpp
-  - icon: ':heavy_check_mark:'
+  - icon: ':question:'
     path: utility/template.hpp
     title: utility/template.hpp
   _extendedRequiredBy: []
@@ -232,26 +232,25 @@ data:
     \ h = (h + 1) & (base::cap - 1);\n        }\n    }\n    typename base::iterator\
     \ emplace(const Key& k, const Val& v) {\n        return base::insert({k, v});\n\
     \    }\n};\n#line 4 \"verify/library_checker_associative_array.test.cpp\"\n\n\
-    int main(){\n    IO();\n    int T = 1;\n    while (T--) solve();\n}\n\nvoid solve(){\n\
-    \    int q; cin >> q;\n    hashmap<ll, ll> mp;\n    rep(q){\n        int t; cin\
-    \ >> t;\n        if (t == 0){\n            ll k, v; cin >> k >> v;\n         \
-    \   mp[k] = v;\n        } else {\n            ll k; cin >> k;\n            auto\
-    \ it = mp.find(k);\n            cout << (it == mp.end() ? 0LL : it->second) <<\
-    \ nl;\n        }\n    }\n}\n"
+    int main() {\n    IO();\n    int T = 1;\n    // cin >> T;\n    while (T--) solve();\n\
+    }\n\nvoid solve() {\n    hashmap<ll, ll> hm;\n    int q; cin >> q;\n    rep(q)\
+    \ {\n        int t; cin >> t;\n        if (t == 0) {\n            ll k, v; cin\
+    \ >> k >> v;\n            hm[k] = v;\n        } else {\n            ll k; cin\
+    \ >> k;\n            cout << hm[k] << nl;\n        }\n    }\n}\n"
   code: "#define PROBLEM \"https://judge.yosupo.jp/problem/associative_array\"\n#include\
-    \ \"template\"\n#include \"hashmap\"\n\nint main(){\n    IO();\n    int T = 1;\n\
-    \    while (T--) solve();\n}\n\nvoid solve(){\n    int q; cin >> q;\n    hashmap<ll,\
-    \ ll> mp;\n    rep(q){\n        int t; cin >> t;\n        if (t == 0){\n     \
-    \       ll k, v; cin >> k >> v;\n            mp[k] = v;\n        } else {\n  \
-    \          ll k; cin >> k;\n            auto it = mp.find(k);\n            cout\
-    \ << (it == mp.end() ? 0LL : it->second) << nl;\n        }\n    }\n}\n"
+    \ \"template\"\n#include \"hashmap\"\n\nint main() {\n    IO();\n    int T = 1;\n\
+    \    // cin >> T;\n    while (T--) solve();\n}\n\nvoid solve() {\n    hashmap<ll,\
+    \ ll> hm;\n    int q; cin >> q;\n    rep(q) {\n        int t; cin >> t;\n    \
+    \    if (t == 0) {\n            ll k, v; cin >> k >> v;\n            hm[k] = v;\n\
+    \        } else {\n            ll k; cin >> k;\n            cout << hm[k] << nl;\n\
+    \        }\n    }\n}\n"
   dependsOn:
   - utility/template.hpp
   - utility/hashmap.hpp
   isVerificationFile: true
   path: verify/library_checker_associative_array.test.cpp
   requiredBy: []
-  timestamp: '2026-03-09 22:49:24+09:00'
+  timestamp: '2026-03-10 18:35:47+09:00'
   verificationStatus: TEST_ACCEPTED
   verifiedWith: []
 documentation_of: verify/library_checker_associative_array.test.cpp

@@ -4,7 +4,7 @@ data:
   - icon: ':heavy_check_mark:'
     path: structure/unionfind.hpp
     title: structure/unionfind.hpp
-  - icon: ':heavy_check_mark:'
+  - icon: ':question:'
     path: utility/template.hpp
     title: utility/template.hpp
   _extendedRequiredBy: []
@@ -187,7 +187,7 @@ data:
   isVerificationFile: true
   path: verify/library_checker_unionfind.test.cpp
   requiredBy: []
-  timestamp: '2026-03-07 14:24:46+09:00'
+  timestamp: '2026-03-10 21:18:11+09:00'
   verificationStatus: TEST_ACCEPTED
   verifiedWith: []
 documentation_of: verify/library_checker_unionfind.test.cpp

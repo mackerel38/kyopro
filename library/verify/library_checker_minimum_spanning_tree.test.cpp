@@ -5,16 +5,15 @@
 int main() {
     IO();
     int T = 1;
+    // cin >> T;
     while (T--) solve();
 }
 
 void solve() {
     int n, m; cin >> n >> m;
-    graph<ll, false, true> g(n);
-    g.read(m, 0);
-    auto [total, used] = kruskal(g);
-    cout << total << nl;
-    rep(i, (int)used.size()) {
-        cout << used[i].id << (i + 1 == (int)used.size() ? '\n' : ' ');
-    }
+    graph<ll, false,  true> g(n); g.read(m, 0);
+    auto [s, e] = kruskal(g);
+    cout << s << nl;
+    range(i, e) cout << i.id << sp;
+    cout << nl;
 }

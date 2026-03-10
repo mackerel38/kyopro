@@ -3,12 +3,12 @@ data:
   _extendedDependsOn: []
   _extendedRequiredBy: []
   _extendedVerifiedWith:
-  - icon: ':heavy_check_mark:'
+  - icon: ':x:'
     path: verify/library_checker_majority_voting.test.cpp
     title: verify/library_checker_majority_voting.test.cpp
-  _isVerificationFailed: false
+  _isVerificationFailed: true
   _pathExtension: hpp
-  _verificationStatusIcon: ':heavy_check_mark:'
+  _verificationStatusIcon: ':x:'
   attributes:
     links: []
   bundledCode: "#line 2 \"structure/majority_vote.hpp\"\n#include <bits/stdc++.h>\n\
@@ -82,7 +82,7 @@ data:
   path: structure/majority_vote.hpp
   requiredBy: []
   timestamp: '2026-03-10 02:22:16+09:00'
-  verificationStatus: LIBRARY_ALL_AC
+  verificationStatus: LIBRARY_ALL_WA
   verifiedWith:
   - verify/library_checker_majority_voting.test.cpp
 documentation_of: structure/majority_vote.hpp

@@ -2,21 +2,13 @@
 #include "template"
 #include "sparse_table"
 
-const auto rmq_op = [](int a, int b){ return min(a, b); };
 
-int main(){
+int main() {
     IO();
     int T = 1;
+    // cin >> T;
     while (T--) solve();
 }
 
-void solve(){
-    int n, q; cin >> n >> q;
-    vector<int> a(n);
-    rep(i, n) cin >> a[i];
-    sparse_table<int, rmq_op> st(a);
-    rep(q){
-        int l, r; cin >> l >> r;
-        cout << st.query(l, r) << nl;
-    }
+void solve() {
 }

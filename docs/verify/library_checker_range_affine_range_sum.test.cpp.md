@@ -7,7 +7,7 @@ data:
   - icon: ':heavy_check_mark:'
     path: structure/lazysegtree.hpp
     title: structure/lazysegtree.hpp
-  - icon: ':heavy_check_mark:'
+  - icon: ':question:'
     path: utility/template.hpp
     title: utility/template.hpp
   _extendedRequiredBy: []
@@ -178,35 +178,35 @@ data:
     \ r, f, 2*k+1, mid, hi);\n        data[k] = op(data[2*k], data[2*k+1]);\n    }\n\
     \    void apply(int l, int r, const F& f) { apply(l, r, f, 1, 0, size); }\n  \
     \  void apply(int i, const F& f) { apply(i, i+1, f); }\n\n    // Range query on\
-    \ [l, r)\n    S query(int l, int r, int k, int lo, int hi) {\n        if (r <=\
+    \ [l, r)\n    S prod(int l, int r, int k, int lo, int hi) {\n        if (r <=\
     \ lo || hi <= l) return e();\n        if (l <= lo && hi <= r) return data[k];\n\
-    \        push_down(k);\n        int mid = (lo + hi) / 2;\n        return op(query(l,\
-    \ r, 2*k, lo, mid), query(l, r, 2*k+1, mid, hi));\n    }\n    S query(int l, int\
-    \ r) { return query(l, r, 1, 0, size); }\n    S query(int i) { return query(i,\
-    \ i+1); }\n\n    void set(int i, const S& v) {\n        i += size;\n        for\
-    \ (int k = __lg(size); k >= 1; k--) push_down(i >> k);\n        data[i] = v;\n\
-    \        for (int k = 1; k <= __lg(size); k++) {\n            int p = i >> k;\n\
-    \            data[p] = op(data[2*p], data[2*p+1]);\n        }\n    }\n};\n\n//\
-    \ Example instantiation (range add, range min query):\n// auto op = [](long long\
-    \ a, long long b){ return min(a, b); };\n// auto e  = []{ return numeric_limits<long\
-    \ long>::max()/2; };\n// auto mapping = [](long long f, long long s){ return f\
-    \ + s; };\n// auto composition = [](long long f, long long g){ return f + g; };\n\
-    // auto id = []{ return 0LL; };\n// lazysegtree<long long, op, e, long long, mapping,\
-    \ composition, id> seg(n);\n#line 3 \"math/modint.hpp\"\nusing namespace std;\n\
-    \ntemplate <long long Mod>\nstruct modint {\n    long long val;\n    modint(long\
-    \ long v = 0) : val(v % Mod) { if (val < 0) val += Mod; }\n    modint operator+(const\
-    \ modint& r) const { return modint(val + r.val); }\n    modint operator-(const\
-    \ modint& r) const { return modint(val - r.val + Mod); }\n    modint operator*(const\
-    \ modint& r) const { return modint(val * r.val % Mod); }\n    modint operator/(const\
-    \ modint& r) const { return *this * r.inv(); }\n    modint& operator+=(const modint&\
-    \ r) { return *this = *this + r; }\n    modint& operator-=(const modint& r) {\
-    \ return *this = *this - r; }\n    modint& operator*=(const modint& r) { return\
-    \ *this = *this * r; }\n    modint& operator/=(const modint& r) { return *this\
-    \ = *this / r; }\n    bool operator==(const modint& r) const { return val == r.val;\
-    \ }\n    bool operator!=(const modint& r) const { return val != r.val; }\n   \
-    \ modint pow(long long n) const {\n        modint res(1), base(val);\n       \
-    \ for (; n > 0; n >>= 1) {\n            if (n & 1) res *= base;\n            base\
-    \ *= base;\n        }\n        return res;\n    }\n    modint inv() const { return\
+    \        push_down(k);\n        int mid = (lo + hi) / 2;\n        return op(prod(l,\
+    \ r, 2*k, lo, mid), prod(l, r, 2*k+1, mid, hi));\n    }\n    S prod(int l, int\
+    \ r) { return prod(l, r, 1, 0, size); }\n    S prod(int i) { return prod(i, i+1);\
+    \ }\n\n    void set(int i, const S& v) {\n        i += size;\n        for (int\
+    \ k = __lg(size); k >= 1; k--) push_down(i >> k);\n        data[i] = v;\n    \
+    \    for (int k = 1; k <= __lg(size); k++) {\n            int p = i >> k;\n  \
+    \          data[p] = op(data[2*p], data[2*p+1]);\n        }\n    }\n};\n\n// Example\
+    \ instantiation (range add, range min query):\n// auto op = [](long long a, long\
+    \ long b){ return min(a, b); };\n// auto e  = []{ return numeric_limits<long long>::max()/2;\
+    \ };\n// auto mapping = [](long long f, long long s){ return f + s; };\n// auto\
+    \ composition = [](long long f, long long g){ return f + g; };\n// auto id = []{\
+    \ return 0LL; };\n// lazysegtree<long long, op, e, long long, mapping, composition,\
+    \ id> seg(n);\n#line 3 \"math/modint.hpp\"\nusing namespace std;\n\ntemplate <long\
+    \ long Mod>\nstruct modint {\n    long long val;\n    modint(long long v = 0)\
+    \ : val(v % Mod) { if (val < 0) val += Mod; }\n    modint operator+(const modint&\
+    \ r) const { return modint(val + r.val); }\n    modint operator-(const modint&\
+    \ r) const { return modint(val - r.val + Mod); }\n    modint operator*(const modint&\
+    \ r) const { return modint(val * r.val % Mod); }\n    modint operator/(const modint&\
+    \ r) const { return *this * r.inv(); }\n    modint& operator+=(const modint& r)\
+    \ { return *this = *this + r; }\n    modint& operator-=(const modint& r) { return\
+    \ *this = *this - r; }\n    modint& operator*=(const modint& r) { return *this\
+    \ = *this * r; }\n    modint& operator/=(const modint& r) { return *this = *this\
+    \ / r; }\n    bool operator==(const modint& r) const { return val == r.val; }\n\
+    \    bool operator!=(const modint& r) const { return val != r.val; }\n    modint\
+    \ pow(long long n) const {\n        modint res(1), base(val);\n        for (;\
+    \ n > 0; n >>= 1) {\n            if (n & 1) res *= base;\n            base *=\
+    \ base;\n        }\n        return res;\n    }\n    modint inv() const { return\
     \ pow(Mod - 2); } // Mod must be prime\n    friend ostream& operator<<(ostream&\
     \ os, const modint& x) { return os << x.val; }\n    friend istream& operator>>(istream&\
     \ is, modint& x) {\n        long long v; is >> v; x = modint(v); return is;\n\
@@ -223,38 +223,32 @@ data:
     \ fact[n] * inv_fact[n-r];\n    }\n    // Multiset coefficient H(n,r) = C(n+r-1,\
     \ r)\n    mint h(int n, int r) const {\n        if (n == 0 && r == 0) return 1;\n\
     \        return c(n+r-1, r);\n    }\n};\n#line 5 \"verify/library_checker_range_affine_range_sum.test.cpp\"\
-    \n\n// S = (sum, count),  F = (b, c) meaning x -> b*x + c\nusing S = pair<mint,\
-    \ mint>;\nusing F = pair<mint, mint>;\n\nconst auto seg_op   = [](S a, S b) ->\
-    \ S { return {a.first + b.first, a.second + b.second}; };\nconst auto seg_e  \
-    \  = []()         -> S { return {mint(0), mint(0)}; };\nconst auto seg_map  =\
-    \ [](F f, S s) -> S { return {f.first * s.first + f.second * s.second, s.second};\
-    \ };\nconst auto seg_comp = [](F f, F g) -> F { return {f.first * g.first, f.first\
-    \ * g.second + f.second}; };\nconst auto seg_id   = []()         -> F { return\
-    \ {mint(1), mint(0)}; };\n\nint main() {\n    IO();\n    int T = 1;\n    while\
-    \ (T--) solve();\n}\n\nvoid solve() {\n    int n, q; cin >> n >> q;\n    vector<S>\
-    \ a(n);\n    rep(i, n) { mint v; cin >> v; a[i] = {v, mint(1)}; }\n    lazysegtree<S,\
-    \ seg_op, seg_e, F, seg_map, seg_comp, seg_id> seg(a);\n    rep(q) {\n       \
-    \ int t; cin >> t;\n        if (t == 0) {\n            int l, r; mint b, c; cin\
-    \ >> l >> r >> b >> c;\n            seg.apply(l, r, {b, c});\n        } else {\n\
-    \            int l, r; cin >> l >> r;\n            cout << seg.query(l, r).first\
-    \ << nl;\n        }\n    }\n}\n"
+    \n\nint main() {\n    IO();\n    int T = 1;\n    // cin >> T;\n    while (T--)\
+    \ solve();\n}\n\nusing S = pairs<mint>;\nauto op = [](S x, S y) -> S{ return S{x.fi+y.fi,\
+    \ x.se+y.se}; };\nauto e = []() -> S{ return S{0, 0}; };\nusing F = pairs<mint>;\n\
+    auto mapping = [](F f, S s) -> S{ return S{f.fi*s.fi+f.se*s.se, s.se}; };\nauto\
+    \ composition = [](F f, F g) -> F{ return F{f.fi*g.fi, f.fi*g.se+f.se}; };\nauto\
+    \ id = []() -> F{ return F{1, 0}; };\n\nvoid solve() {\n    int n, q; cin >> n\
+    \ >> q;\n    vector<S> a(n, S{0, 1}); range(i, a) cin >> i.fi;\n    lazysegtree<S,\
+    \ op, e, F, mapping, composition, id> seg(a);\n    rep(q) {\n        int t; cin\
+    \ >> t;\n        if (t == 0) {\n            int l, r; mint b, c; cin >> l >> r\
+    \ >> b >> c;\n            seg.apply(l, r, F{b, c});\n        } else {\n      \
+    \      int l, r; cin >> l >> r;\n            cout << seg.prod(l, r).fi << nl;\n\
+    \        }\n    }\n}\n"
   code: "#define PROBLEM \"https://judge.yosupo.jp/problem/range_affine_range_sum\"\
-    \n#include \"template\"\n#include \"lazysegtree\"\n#include \"modint\"\n\n// S\
-    \ = (sum, count),  F = (b, c) meaning x -> b*x + c\nusing S = pair<mint, mint>;\n\
-    using F = pair<mint, mint>;\n\nconst auto seg_op   = [](S a, S b) -> S { return\
-    \ {a.first + b.first, a.second + b.second}; };\nconst auto seg_e    = []()   \
-    \      -> S { return {mint(0), mint(0)}; };\nconst auto seg_map  = [](F f, S s)\
-    \ -> S { return {f.first * s.first + f.second * s.second, s.second}; };\nconst\
-    \ auto seg_comp = [](F f, F g) -> F { return {f.first * g.first, f.first * g.second\
-    \ + f.second}; };\nconst auto seg_id   = []()         -> F { return {mint(1),\
-    \ mint(0)}; };\n\nint main() {\n    IO();\n    int T = 1;\n    while (T--) solve();\n\
-    }\n\nvoid solve() {\n    int n, q; cin >> n >> q;\n    vector<S> a(n);\n    rep(i,\
-    \ n) { mint v; cin >> v; a[i] = {v, mint(1)}; }\n    lazysegtree<S, seg_op, seg_e,\
-    \ F, seg_map, seg_comp, seg_id> seg(a);\n    rep(q) {\n        int t; cin >> t;\n\
-    \        if (t == 0) {\n            int l, r; mint b, c; cin >> l >> r >> b >>\
-    \ c;\n            seg.apply(l, r, {b, c});\n        } else {\n            int\
-    \ l, r; cin >> l >> r;\n            cout << seg.query(l, r).first << nl;\n   \
-    \     }\n    }\n}\n"
+    \n#include \"template\"\n#include \"lazysegtree\"\n#include \"modint\"\n\nint\
+    \ main() {\n    IO();\n    int T = 1;\n    // cin >> T;\n    while (T--) solve();\n\
+    }\n\nusing S = pairs<mint>;\nauto op = [](S x, S y) -> S{ return S{x.fi+y.fi,\
+    \ x.se+y.se}; };\nauto e = []() -> S{ return S{0, 0}; };\nusing F = pairs<mint>;\n\
+    auto mapping = [](F f, S s) -> S{ return S{f.fi*s.fi+f.se*s.se, s.se}; };\nauto\
+    \ composition = [](F f, F g) -> F{ return F{f.fi*g.fi, f.fi*g.se+f.se}; };\nauto\
+    \ id = []() -> F{ return F{1, 0}; };\n\nvoid solve() {\n    int n, q; cin >> n\
+    \ >> q;\n    vector<S> a(n, S{0, 1}); range(i, a) cin >> i.fi;\n    lazysegtree<S,\
+    \ op, e, F, mapping, composition, id> seg(a);\n    rep(q) {\n        int t; cin\
+    \ >> t;\n        if (t == 0) {\n            int l, r; mint b, c; cin >> l >> r\
+    \ >> b >> c;\n            seg.apply(l, r, F{b, c});\n        } else {\n      \
+    \      int l, r; cin >> l >> r;\n            cout << seg.prod(l, r).fi << nl;\n\
+    \        }\n    }\n}\n"
   dependsOn:
   - utility/template.hpp
   - structure/lazysegtree.hpp
@@ -262,7 +256,7 @@ data:
   isVerificationFile: true
   path: verify/library_checker_range_affine_range_sum.test.cpp
   requiredBy: []
-  timestamp: '2026-03-09 22:49:24+09:00'
+  timestamp: '2026-03-10 20:39:42+09:00'
   verificationStatus: TEST_ACCEPTED
   verifiedWith: []
 documentation_of: verify/library_checker_range_affine_range_sum.test.cpp

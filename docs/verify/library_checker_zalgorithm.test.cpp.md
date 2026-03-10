@@ -4,7 +4,7 @@ data:
   - icon: ':heavy_check_mark:'
     path: string/z_algorithm.hpp
     title: string/z_algorithm.hpp
-  - icon: ':heavy_check_mark:'
+  - icon: ':question:'
     path: utility/template.hpp
     title: utility/template.hpp
   _extendedRequiredBy: []
@@ -166,22 +166,20 @@ data:
     \ s = pattern + \"$\" + text;\n    auto z = z_algorithm(s);\n    int m = pattern.size();\n\
     \    vector<int> res;\n    for (int i = m+1; i < (int)s.size(); i++)\n       \
     \ if (z[i] >= m) res.push_back(i - m - 1);\n    return res;\n}\n#line 4 \"verify/library_checker_zalgorithm.test.cpp\"\
-    \n\nint main() {\n    IO();\n    int T = 1;\n    while (T--) solve();\n}\n\nvoid\
-    \ solve() {\n    string s; cin >> s;\n    auto z = z_algorithm(s);\n    rep(i,\
-    \ (int)z.size()) {\n        cout << z[i] << (i + 1 == (int)z.size() ? '\\n' :\
-    \ ' ');\n    }\n}\n"
+    \n\nint main() {\n    IO();\n    int T = 1;\n    // cin >> T;\n    while (T--)\
+    \ solve();\n}\n\nvoid solve() {\n    str s; cin >> s;\n    auto v = z_algorithm(s);\n\
+    \    cout << v;\n}\n"
   code: "#define PROBLEM \"https://judge.yosupo.jp/problem/zalgorithm\"\n#include\
     \ \"template\"\n#include \"z_algorithm\"\n\nint main() {\n    IO();\n    int T\
-    \ = 1;\n    while (T--) solve();\n}\n\nvoid solve() {\n    string s; cin >> s;\n\
-    \    auto z = z_algorithm(s);\n    rep(i, (int)z.size()) {\n        cout << z[i]\
-    \ << (i + 1 == (int)z.size() ? '\\n' : ' ');\n    }\n}\n"
+    \ = 1;\n    // cin >> T;\n    while (T--) solve();\n}\n\nvoid solve() {\n    str\
+    \ s; cin >> s;\n    auto v = z_algorithm(s);\n    cout << v;\n}\n"
   dependsOn:
   - utility/template.hpp
   - string/z_algorithm.hpp
   isVerificationFile: true
   path: verify/library_checker_zalgorithm.test.cpp
   requiredBy: []
-  timestamp: '2026-03-09 22:49:24+09:00'
+  timestamp: '2026-03-10 21:18:07+09:00'
   verificationStatus: TEST_ACCEPTED
   verifiedWith: []
 documentation_of: verify/library_checker_zalgorithm.test.cpp

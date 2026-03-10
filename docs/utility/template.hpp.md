@@ -18,7 +18,7 @@ data:
   - icon: ':heavy_check_mark:'
     path: verify/library_checker_factorize.test.cpp
     title: verify/library_checker_factorize.test.cpp
-  - icon: ':heavy_check_mark:'
+  - icon: ':x:'
     path: verify/library_checker_majority_voting.test.cpp
     title: verify/library_checker_majority_voting.test.cpp
   - icon: ':heavy_check_mark:'
@@ -33,10 +33,7 @@ data:
   - icon: ':heavy_check_mark:'
     path: verify/library_checker_point_add_range_sum_1.test.cpp
     title: verify/library_checker_point_add_range_sum_1.test.cpp
-  - icon: ':heavy_check_mark:'
-    path: verify/library_checker_point_add_range_sum_bit.test.cpp
-    title: verify/library_checker_point_add_range_sum_bit.test.cpp
-  - icon: ':heavy_check_mark:'
+  - icon: ':x:'
     path: verify/library_checker_point_add_rectangle_sum.test.cpp
     title: verify/library_checker_point_add_rectangle_sum.test.cpp
   - icon: ':heavy_check_mark:'
@@ -54,13 +51,13 @@ data:
   - icon: ':heavy_check_mark:'
     path: verify/library_checker_range_kth_smallest.test.cpp
     title: verify/library_checker_range_kth_smallest.test.cpp
-  - icon: ':heavy_check_mark:'
+  - icon: ':x:'
     path: verify/library_checker_shortest_path.test.cpp
     title: verify/library_checker_shortest_path.test.cpp
-  - icon: ':heavy_check_mark:'
+  - icon: ':x:'
     path: verify/library_checker_static_range_inversions_query.test.cpp
     title: verify/library_checker_static_range_inversions_query.test.cpp
-  - icon: ':heavy_check_mark:'
+  - icon: ':x:'
     path: verify/library_checker_staticrmq.test.cpp
     title: verify/library_checker_staticrmq.test.cpp
   - icon: ':heavy_check_mark:'
@@ -69,9 +66,9 @@ data:
   - icon: ':heavy_check_mark:'
     path: verify/library_checker_zalgorithm.test.cpp
     title: verify/library_checker_zalgorithm.test.cpp
-  _isVerificationFailed: false
+  _isVerificationFailed: true
   _pathExtension: hpp
-  _verificationStatusIcon: ':heavy_check_mark:'
+  _verificationStatusIcon: ':question:'
   attributes:
     links: []
   bundledCode: "#line 2 \"utility/template.hpp\"\n#ifdef poe\n#define debug(x) cerr\
@@ -352,10 +349,9 @@ data:
   requiredBy:
   - main.cpp
   timestamp: '2026-03-02 19:15:13+09:00'
-  verificationStatus: LIBRARY_ALL_AC
+  verificationStatus: LIBRARY_SOME_WA
   verifiedWith:
   - verify/library_checker_shortest_path.test.cpp
-  - verify/library_checker_point_add_range_sum_bit.test.cpp
   - verify/library_checker_point_add_rectangle_sum.test.cpp
   - verify/library_checker_enumerate_primes.test.cpp
   - verify/library_checker_zalgorithm.test.cpp

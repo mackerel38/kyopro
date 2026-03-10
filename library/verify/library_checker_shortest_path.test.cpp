@@ -5,6 +5,7 @@
 int main() {
     IO();
     int T = 1;
+    // cin >> T;
     while (T--) solve();
 }
 
@@ -12,15 +13,12 @@ void solve() {
     int n, m, s, t; cin >> n >> m >> s >> t;
     graph<ll, true, true> g(n);
     g.read(m, 0);
-    auto [dist, prev] = dijkstra_prev(g, s);
-    const ll INF = numeric_limits<ll>::max() / 2;
-    if (dist[t] >= INF) {
+    auto [d, pre] = dijkstra_prev(g, s);
+    if (inf < d[t]) {
         cout << -1 << nl;
         return;
     }
-    auto path = restore_path(prev, t);
-    cout << dist[t] << sp << (int)path.size() - 1 << nl;
-    rep(i, (int)path.size() - 1) {
-        cout << path[i] << sp << path[i + 1] << nl;
-    }
+    auto path = restore_path(pre, t);
+    cout << d[t] << sp << len(path)-1 << nl;
+    rep(i, len(path)-1) cout << path[i] << sp << path[i+1] << nl;
 }

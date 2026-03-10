@@ -4,7 +4,7 @@ data:
   - icon: ':heavy_check_mark:'
     path: structure/splay_tree.hpp
     title: structure/splay_tree.hpp
-  - icon: ':heavy_check_mark:'
+  - icon: ':question:'
     path: utility/template.hpp
     title: utility/template.hpp
   _extendedRequiredBy: []
@@ -240,36 +240,32 @@ data:
     \    optional<Key> max_element() {\n        if (!root) return nullopt;\n     \
     \   Node* cur = root;\n        while (cur->ch[1]) cur = cur->ch[1];\n        splay(cur);\n\
     \        return cur->key;\n    }\n};\n#line 4 \"verify/library_checker_predecessor_problem.test.cpp\"\
-    \n\nint main(){\n    IO();\n    int T = 1;\n    while (T--) solve();\n}\n\nvoid\
-    \ solve(){\n    int n, q;\n    cin >> n >> q;\n    string t;\n    cin >> t;\n\n\
-    \    splay_tree<int> st;\n    rep(i, n) {\n        if (t[i] == '1') st.insert(i);\n\
-    \    }\n\n    rep(q){\n        int type, k;\n        cin >> type >> k;\n     \
-    \   if (type == 0) {\n            st.insert(k);\n        } else if (type == 1)\
-    \ {\n            st.erase(k);\n        } else if (type == 2) {\n            cout\
-    \ << (st.contains(k) ? 1 : 0) << nl;\n        } else if (type == 3) {\n      \
-    \      auto res = st.lower_bound(k);  // min >= k\n            cout << (res ?\
-    \ *res : -1) << nl;\n        } else { // type == 4\n            auto res = st.prev_le(k);\
-    \      // max <= k\n            cout << (res ? *res : -1) << nl;\n        }\n\
-    \    }\n}\n"
+    \n\nint main() {\n    IO();\n    int T = 1;\n    // cin >> T;\n    while (T--)\
+    \ solve();\n}\n\nvoid solve() {\n    int n, q; cin >> n >> q;\n    str t; cin\
+    \ >> t;\n    splay_tree<int> tree;\n    rep(i, n) if (t[i] == '1') tree.insert(i);\n\
+    \    rep(q) {\n        int t, k; cin >> t >> k;\n        if (t == 0) tree.insert(k);\n\
+    \        elif (t == 1) tree.erase(k);\n        elif (t == 2) cout << tree.contains(k)\
+    \ << nl;\n        elif (t == 3) {\n            auto x = tree.lower_bound(k);\n\
+    \            cout << (x ? *x : -1) << nl;\n        } elif (t == 4) {\n       \
+    \     auto x = tree.prev_le(k);\n            cout << (x ? *x : -1) << nl;\n  \
+    \      }\n    }\n}\n"
   code: "#define PROBLEM \"https://judge.yosupo.jp/problem/predecessor_problem\"\n\
-    #include \"template\"\n#include \"splay_tree\"\n\nint main(){\n    IO();\n   \
-    \ int T = 1;\n    while (T--) solve();\n}\n\nvoid solve(){\n    int n, q;\n  \
-    \  cin >> n >> q;\n    string t;\n    cin >> t;\n\n    splay_tree<int> st;\n \
-    \   rep(i, n) {\n        if (t[i] == '1') st.insert(i);\n    }\n\n    rep(q){\n\
-    \        int type, k;\n        cin >> type >> k;\n        if (type == 0) {\n \
-    \           st.insert(k);\n        } else if (type == 1) {\n            st.erase(k);\n\
-    \        } else if (type == 2) {\n            cout << (st.contains(k) ? 1 : 0)\
-    \ << nl;\n        } else if (type == 3) {\n            auto res = st.lower_bound(k);\
-    \  // min >= k\n            cout << (res ? *res : -1) << nl;\n        } else {\
-    \ // type == 4\n            auto res = st.prev_le(k);      // max <= k\n     \
-    \       cout << (res ? *res : -1) << nl;\n        }\n    }\n}\n"
+    #include \"template\"\n#include \"splay_tree\"\n\nint main() {\n    IO();\n  \
+    \  int T = 1;\n    // cin >> T;\n    while (T--) solve();\n}\n\nvoid solve() {\n\
+    \    int n, q; cin >> n >> q;\n    str t; cin >> t;\n    splay_tree<int> tree;\n\
+    \    rep(i, n) if (t[i] == '1') tree.insert(i);\n    rep(q) {\n        int t,\
+    \ k; cin >> t >> k;\n        if (t == 0) tree.insert(k);\n        elif (t == 1)\
+    \ tree.erase(k);\n        elif (t == 2) cout << tree.contains(k) << nl;\n    \
+    \    elif (t == 3) {\n            auto x = tree.lower_bound(k);\n            cout\
+    \ << (x ? *x : -1) << nl;\n        } elif (t == 4) {\n            auto x = tree.prev_le(k);\n\
+    \            cout << (x ? *x : -1) << nl;\n        }\n    }\n}\n"
   dependsOn:
   - utility/template.hpp
   - structure/splay_tree.hpp
   isVerificationFile: true
   path: verify/library_checker_predecessor_problem.test.cpp
   requiredBy: []
-  timestamp: '2026-03-10 08:46:59+09:00'
+  timestamp: '2026-03-10 18:36:04+09:00'
   verificationStatus: TEST_ACCEPTED
   verifiedWith: []
 documentation_of: verify/library_checker_predecessor_problem.test.cpp

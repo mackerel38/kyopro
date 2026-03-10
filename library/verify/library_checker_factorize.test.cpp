@@ -5,16 +5,15 @@
 int main() {
     IO();
     int T = 1;
+    // cin >> T;
     while (T--) solve();
 }
 
 void solve() {
     int q; cin >> q;
     rep(q) {
-        ll a; cin >> a;
-        auto f = factorize(a);
-        cout << (int)f.size();
-        for (auto x : f) cout << sp << x;
-        cout << nl;
+        ll n; cin >> n;
+        vll p = factorize(n);
+        cout << ssize(p) << sp << p;
     }
 }

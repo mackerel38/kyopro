@@ -2,29 +2,22 @@
 #include "template"
 #include "wavelet_matrix"
 
-int main(){
+int main() {
     IO();
     int T = 1;
+    // cin >> T;
     while (T--) solve();
 }
 
-void solve(){
+void solve() {
     int n, q; cin >> n >> q;
-    vector<int> a(n);
-    rep(i, n) cin >> a[i];
-
-    // Coordinate compress (values up to ~10^9)
-    vector<int> vals = a;
-    sort(vals.begin(), vals.end()); vals.erase(unique(vals.begin(), vals.end()), vals.end());
-    vector<int> ca(n);
-    rep(i, n) ca[i] = (int)(lower_bound(vals.begin(), vals.end(), a[i]) - vals.begin());
-
-    // Compressed values fit in [0, n) ⊂ [0, 2^20), so B=20 is sufficient for n<=10^6
-    wavelet_matrix<20> wm;
-    wm.build(ca);
-
-    rep(q){
+    vector<int> a(n); cin >> a;
+    auto b = a;
+    uniq(b);
+    range(i, a) i = lower_bound(all(b), i) - b.begin();
+    wavelet_matrix<20> wm; wm.build(a);
+    rep(q) {
         int l, r, k; cin >> l >> r >> k;
-        cout << vals[wm.kth(l, r, k)] << nl;
+        cout << b[wm.kth(l, r, k)] << nl;
     }
 }

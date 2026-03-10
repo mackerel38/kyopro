@@ -2,33 +2,29 @@
 #include "template"
 #include "bipq"
 
+int main() {
+    IO();
+    int T = 1;
+    // cin >> T;
+    while (T--) solve();
+}
+
 void solve() {
-    int n, q;
-    cin >> n >> q;
-
-    bipq<int> pq;
-    rep(n) {
-        int x; cin >> x;
-        pq.push(x);
-    }
-
+    int n, q; cin >> n >> q;
+    vi s(n); cin >> s;
+    bipq<int> qu;
+    range(i, s) qu.push(i);
     rep(q) {
         int t; cin >> t;
         if (t == 0) {
             int x; cin >> x;
-            pq.push(x);
-        } else if (t == 1) {
-            cout << pq.top_min() << nl;
-            pq.pop_min();
+            qu.push(x);
+        } elif (t == 1) {
+            cout << qu.top_min() << nl;
+            qu.pop_min();
         } else {
-            cout << pq.top_max() << nl;
-            pq.pop_max();
+            cout << qu.top_max() << nl;
+            qu.pop_max();
         }
     }
-}
-
-int main() {
-    IO();
-    int T = 1;
-    while (T--) solve();
 }

@@ -2,24 +2,24 @@
 #include "template"
 #include "hashmap"
 
-int main(){
+int main() {
     IO();
     int T = 1;
+    // cin >> T;
     while (T--) solve();
 }
 
-void solve(){
+void solve() {
+    hashmap<ll, ll> hm;
     int q; cin >> q;
-    hashmap<ll, ll> mp;
-    rep(q){
+    rep(q) {
         int t; cin >> t;
-        if (t == 0){
+        if (t == 0) {
             ll k, v; cin >> k >> v;
-            mp[k] = v;
+            hm[k] = v;
         } else {
             ll k; cin >> k;
-            auto it = mp.find(k);
-            cout << (it == mp.end() ? 0LL : it->second) << nl;
+            cout << hm[k] << nl;
         }
     }
 }

@@ -7,7 +7,7 @@ data:
   - icon: ':heavy_check_mark:'
     path: structure/swag.hpp
     title: structure/swag.hpp
-  - icon: ':heavy_check_mark:'
+  - icon: ':question:'
     path: utility/template.hpp
     title: utility/template.hpp
   _extendedRequiredBy: []
@@ -207,29 +207,24 @@ data:
     \ fact[n] * inv_fact[n-r];\n    }\n    // Multiset coefficient H(n,r) = C(n+r-1,\
     \ r)\n    mint h(int n, int r) const {\n        if (n == 0 && r == 0) return 1;\n\
     \        return c(n+r-1, r);\n    }\n};\n#line 5 \"verify/library_checker_queue_operate_all_composite.test.cpp\"\
-    \n\n// f(x) = a*x + b  represented as {a, b}\n// op(f, g) = apply f first, then\
-    \ g:  g(f(x)) = (a_f*a_g)*x + (a_g*b_f + b_g)\nusing S = pair<mint, mint>;\nconst\
-    \ auto swag_op = [](S f, S g) -> S {\n    return {f.first * g.first, g.first *\
-    \ f.second + g.second};\n};\nconst auto swag_e  = []() -> S { return {mint(1),\
-    \ mint(0)}; };\n\nint main(){\n    IO();\n    int T = 1;\n    while (T--) solve();\n\
-    }\n\nvoid solve(){\n    int q; cin >> q;\n    swag<S, swag_op, swag_e> sw;\n \
-    \   rep(q){\n        int t; cin >> t;\n        if (t == 0){\n            mint\
-    \ a, b; cin >> a >> b;\n            sw.push_back({a, b});\n        } else if (t\
-    \ == 1){\n            sw.pop_front();\n        } else {\n            mint x; cin\
-    \ >> x;\n            auto [a, b] = sw.fold();\n            cout << a * x + b <<\
-    \ nl;\n        }\n    }\n}\n"
-  code: "#define PROBLEM \"https://judge.yosupo.jp/problem/queue_operate_all_composite\"\
-    \n#include \"template\"\n#include \"swag\"\n#include \"modint\"\n\n// f(x) = a*x\
-    \ + b  represented as {a, b}\n// op(f, g) = apply f first, then g:  g(f(x)) =\
-    \ (a_f*a_g)*x + (a_g*b_f + b_g)\nusing S = pair<mint, mint>;\nconst auto swag_op\
-    \ = [](S f, S g) -> S {\n    return {f.first * g.first, g.first * f.second + g.second};\n\
-    };\nconst auto swag_e  = []() -> S { return {mint(1), mint(0)}; };\n\nint main(){\n\
-    \    IO();\n    int T = 1;\n    while (T--) solve();\n}\n\nvoid solve(){\n   \
-    \ int q; cin >> q;\n    swag<S, swag_op, swag_e> sw;\n    rep(q){\n        int\
-    \ t; cin >> t;\n        if (t == 0){\n            mint a, b; cin >> a >> b;\n\
-    \            sw.push_back({a, b});\n        } else if (t == 1){\n            sw.pop_front();\n\
-    \        } else {\n            mint x; cin >> x;\n            auto [a, b] = sw.fold();\n\
+    \n\nint main() {\n    IO();\n    int T = 1;\n    // cin >> T;\n    while (T--)\
+    \ solve();\n}\n\nusing S = pairs<mint>;\nauto op = [](S x, S y) -> S{ return S{x.fi*y.fi,\
+    \ y.fi*x.se+y.se}; };\nauto e = []() -> S{ return S{1, 0}; };\n\nvoid solve()\
+    \ {\n    int q; cin >> q;\n    swag<S, op, e> sw;\n    rep(q) {\n        int t;\
+    \ cin >> t;\n        if (t == 0) {\n            mint a, b; cin >> a >> b;\n  \
+    \          sw.push_back({a, b});\n        } elif (t == 1) sw.pop_front();\n  \
+    \      else {\n            mint x; cin >> x;\n            auto [a, b] = sw.fold();\n\
     \            cout << a * x + b << nl;\n        }\n    }\n}\n"
+  code: "#define PROBLEM \"https://judge.yosupo.jp/problem/queue_operate_all_composite\"\
+    \n#include \"template\"\n#include \"swag\"\n#include \"modint\"\n\nint main()\
+    \ {\n    IO();\n    int T = 1;\n    // cin >> T;\n    while (T--) solve();\n}\n\
+    \nusing S = pairs<mint>;\nauto op = [](S x, S y) -> S{ return S{x.fi*y.fi, y.fi*x.se+y.se};\
+    \ };\nauto e = []() -> S{ return S{1, 0}; };\n\nvoid solve() {\n    int q; cin\
+    \ >> q;\n    swag<S, op, e> sw;\n    rep(q) {\n        int t; cin >> t;\n    \
+    \    if (t == 0) {\n            mint a, b; cin >> a >> b;\n            sw.push_back({a,\
+    \ b});\n        } elif (t == 1) sw.pop_front();\n        else {\n            mint\
+    \ x; cin >> x;\n            auto [a, b] = sw.fold();\n            cout << a *\
+    \ x + b << nl;\n        }\n    }\n}\n"
   dependsOn:
   - utility/template.hpp
   - structure/swag.hpp
@@ -237,7 +232,7 @@ data:
   isVerificationFile: true
   path: verify/library_checker_queue_operate_all_composite.test.cpp
   requiredBy: []
-  timestamp: '2026-03-09 22:49:24+09:00'
+  timestamp: '2026-03-10 18:41:09+09:00'
   verificationStatus: TEST_ACCEPTED
   verifiedWith: []
 documentation_of: verify/library_checker_queue_operate_all_composite.test.cpp

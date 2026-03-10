@@ -4,7 +4,7 @@ data:
   - icon: ':heavy_check_mark:'
     path: math/prime.hpp
     title: math/prime.hpp
-  - icon: ':heavy_check_mark:'
+  - icon: ':question:'
     path: utility/template.hpp
     title: utility/template.hpp
   _extendedRequiredBy: []
@@ -222,29 +222,22 @@ data:
     \ a = factorize((long long)d);\n    auto b = factorize(n / (long long)d);\n  \
     \  for (auto x : b) a.push_back(x);\n    sort(a.begin(), a.end());\n    return\
     \ a;\n}\n#line 4 \"verify/library_checker_enumerate_primes.test.cpp\"\n\nint main()\
-    \ {\n    IO();\n    int T = 1;\n    while (T--) solve();\n}\n\n// Input : N A\
-    \ B\n// Output: pi(N) X  (X = #{i>=0 | p_{A*i+B} <= N})\n//         p_B p_{A+B}\
-    \ ... p_{A*(X-1)+B}\nvoid solve() {\n    int n, a, b; cin >> n >> a >> b;\n  \
-    \  auto primes = enumprimes(n);\n    int pi = (int)primes.size();\n    vector<int>\
-    \ res;\n    for (int i = b; i < pi; i += a) res.push_back(primes[i]);\n    cout\
-    \ << pi << sp << (int)res.size() << nl;\n    rep(i, (int)res.size()) {\n     \
-    \   cout << res[i] << (i + 1 == (int)res.size() ? '\\n' : ' ');\n    }\n}\n"
+    \ {\n    IO();\n    int T = 1;\n    // cin >> T;\n    while (T--) solve();\n}\n\
+    \nvoid solve() {\n    int n, a, b; cin >> n >> a >> b;\n    vi p = enumprimes(n);\n\
+    \    vi q;\n    rep(i, b, p.size(), a) q.pb(p[i]);\n    cout << len(p) << sp <<\
+    \ len(q) << nl << q;\n}\n"
   code: "#define PROBLEM \"https://judge.yosupo.jp/problem/enumerate_primes\"\n#include\
     \ \"template\"\n#include \"prime\"\n\nint main() {\n    IO();\n    int T = 1;\n\
-    \    while (T--) solve();\n}\n\n// Input : N A B\n// Output: pi(N) X  (X = #{i>=0\
-    \ | p_{A*i+B} <= N})\n//         p_B p_{A+B} ... p_{A*(X-1)+B}\nvoid solve() {\n\
-    \    int n, a, b; cin >> n >> a >> b;\n    auto primes = enumprimes(n);\n    int\
-    \ pi = (int)primes.size();\n    vector<int> res;\n    for (int i = b; i < pi;\
-    \ i += a) res.push_back(primes[i]);\n    cout << pi << sp << (int)res.size() <<\
-    \ nl;\n    rep(i, (int)res.size()) {\n        cout << res[i] << (i + 1 == (int)res.size()\
-    \ ? '\\n' : ' ');\n    }\n}\n"
+    \    // cin >> T;\n    while (T--) solve();\n}\n\nvoid solve() {\n    int n, a,\
+    \ b; cin >> n >> a >> b;\n    vi p = enumprimes(n);\n    vi q;\n    rep(i, b,\
+    \ p.size(), a) q.pb(p[i]);\n    cout << len(p) << sp << len(q) << nl << q;\n}\n"
   dependsOn:
   - utility/template.hpp
   - math/prime.hpp
   isVerificationFile: true
   path: verify/library_checker_enumerate_primes.test.cpp
   requiredBy: []
-  timestamp: '2026-03-09 22:49:24+09:00'
+  timestamp: '2026-03-10 21:23:43+09:00'
   verificationStatus: TEST_ACCEPTED
   verifiedWith: []
 documentation_of: verify/library_checker_enumerate_primes.test.cpp

@@ -5,13 +5,12 @@
 int main() {
     IO();
     int T = 1;
+    // cin >> T;
     while (T--) solve();
 }
 
 void solve() {
-    string s; cin >> s;
-    auto z = z_algorithm(s);
-    rep(i, (int)z.size()) {
-        cout << z[i] << (i + 1 == (int)z.size() ? '\n' : ' ');
-    }
+    str s; cin >> s;
+    auto v = z_algorithm(s);
+    cout << v;
 }

@@ -4,7 +4,7 @@ data:
   - icon: ':heavy_check_mark:'
     path: structure/segtree.hpp
     title: structure/segtree.hpp
-  - icon: ':heavy_check_mark:'
+  - icon: ':question:'
     path: utility/template.hpp
     title: utility/template.hpp
   _extendedRequiredBy: []
@@ -193,18 +193,18 @@ data:
     \ r);\n        } while ((x & -x) != x);\n        return 0;\n    }\n};\n#line 4\
     \ \"verify/library_checker_point_add_range_sum.test.cpp\"\n\nint main() {\n  \
     \  IO();\n    int T = 1;\n    // cin >> T;\n    while (T--) solve();\n}\n\nvoid\
-    \ solve() {\n    int n, q; cin >> n >> q;\n    vll a(n); cin >> a;\n    segtree<ll,\
-    \ [](ll x,ll y){return x+y;}, [](){return 0LL;}> seg(a);\n    rep(q) {\n     \
-    \   int t; cin >> t;\n        if (t == 0) {\n            int p, x; cin >> p >>\
-    \ x;\n            seg.add(p, x);\n        } else {\n            int l, r; cin\
-    \ >> l >> r;\n            cout << seg.prod(l, r) << nl;\n        }\n    }\n}\n"
+    \ solve() {\n    int n, q; cin >> n >> q;\n    vll a(n); cin >> a;\n    segtree<ll,[](ll\
+    \ x,ll y){return x+y;},[](){return 0LL;}> seg(a);\n    rep(q) {\n        int t;\
+    \ cin >> t;\n        if (t == 0) {\n            int p; ll x; cin >> p >> x;\n\
+    \            seg.add(p, x);\n        } else {\n            int l, r; cin >> l\
+    \ >> r;\n            cout << seg.prod(l, r) << nl;\n        }\n    }\n}\n"
   code: "#define PROBLEM \"https://judge.yosupo.jp/problem/point_add_range_sum\"\n\
     #include \"template\"\n#include \"segtree\"\n\nint main() {\n    IO();\n    int\
     \ T = 1;\n    // cin >> T;\n    while (T--) solve();\n}\n\nvoid solve() {\n  \
-    \  int n, q; cin >> n >> q;\n    vll a(n); cin >> a;\n    segtree<ll, [](ll x,ll\
-    \ y){return x+y;}, [](){return 0LL;}> seg(a);\n    rep(q) {\n        int t; cin\
-    \ >> t;\n        if (t == 0) {\n            int p, x; cin >> p >> x;\n       \
-    \     seg.add(p, x);\n        } else {\n            int l, r; cin >> l >> r;\n\
+    \  int n, q; cin >> n >> q;\n    vll a(n); cin >> a;\n    segtree<ll,[](ll x,ll\
+    \ y){return x+y;},[](){return 0LL;}> seg(a);\n    rep(q) {\n        int t; cin\
+    \ >> t;\n        if (t == 0) {\n            int p; ll x; cin >> p >> x;\n    \
+    \        seg.add(p, x);\n        } else {\n            int l, r; cin >> l >> r;\n\
     \            cout << seg.prod(l, r) << nl;\n        }\n    }\n}\n"
   dependsOn:
   - utility/template.hpp
@@ -212,7 +212,7 @@ data:
   isVerificationFile: true
   path: verify/library_checker_point_add_range_sum.test.cpp
   requiredBy: []
-  timestamp: '2026-03-10 02:33:16+09:00'
+  timestamp: '2026-03-10 18:35:57+09:00'
   verificationStatus: TEST_ACCEPTED
   verifiedWith: []
 documentation_of: verify/library_checker_point_add_range_sum.test.cpp

@@ -47,15 +47,15 @@ struct lazysegtree {
     void apply(int i, const F& f) { apply(i, i+1, f); }
 
     // Range query on [l, r)
-    S query(int l, int r, int k, int lo, int hi) {
+    S prod(int l, int r, int k, int lo, int hi) {
         if (r <= lo || hi <= l) return e();
         if (l <= lo && hi <= r) return data[k];
         push_down(k);
         int mid = (lo + hi) / 2;
-        return op(query(l, r, 2*k, lo, mid), query(l, r, 2*k+1, mid, hi));
+        return op(prod(l, r, 2*k, lo, mid), prod(l, r, 2*k+1, mid, hi));
     }
-    S query(int l, int r) { return query(l, r, 1, 0, size); }
-    S query(int i) { return query(i, i+1); }
+    S prod(int l, int r) { return prod(l, r, 1, 0, size); }
+    S prod(int i) { return prod(i, i+1); }
 
     void set(int i, const S& v) {
         i += size;

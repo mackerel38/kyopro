@@ -5,13 +5,14 @@
 int main() {
     IO();
     int T = 1;
+    // cin >> T;
     while (T--) solve();
 }
 
 void solve() {
     int q; cin >> q;
     rep(q) {
-        ull n; cin >> n;
-        cout << (is_prime(n) ? "Yes" : "No") << nl;
+        ull x; cin >> x;
+        YN(is_prime(x));
     }
 }

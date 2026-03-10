@@ -4,7 +4,7 @@ data:
   - icon: ':heavy_check_mark:'
     path: structure/bipq.hpp
     title: structure/bipq.hpp
-  - icon: ':heavy_check_mark:'
+  - icon: ':question:'
     path: utility/template.hpp
     title: utility/template.hpp
   _extendedRequiredBy: []
@@ -220,30 +220,29 @@ data:
     \ {\n            x = h[last].second;\n        }\n        _sz--;\n\n        h[0].second\
     \ = x;\n        if (cmp(h[0].second, h[0].first)) swap(h[0].first, h[0].second);\n\
     \        sift_down_max(0);\n    }\n};\n#line 4 \"verify/library_checker_double_ended_priority_queue.test.cpp\"\
-    \n\nvoid solve() {\n    int n, q;\n    cin >> n >> q;\n\n    bipq<int> pq;\n \
-    \   rep(n) {\n        int x; cin >> x;\n        pq.push(x);\n    }\n\n    rep(q)\
-    \ {\n        int t; cin >> t;\n        if (t == 0) {\n            int x; cin >>\
-    \ x;\n            pq.push(x);\n        } else if (t == 1) {\n            cout\
-    \ << pq.top_min() << nl;\n            pq.pop_min();\n        } else {\n      \
-    \      cout << pq.top_max() << nl;\n            pq.pop_max();\n        }\n   \
-    \ }\n}\n\nint main() {\n    IO();\n    int T = 1;\n    while (T--) solve();\n\
-    }\n"
+    \n\nint main() {\n    IO();\n    int T = 1;\n    // cin >> T;\n    while (T--)\
+    \ solve();\n}\n\nvoid solve() {\n    int n, q; cin >> n >> q;\n    vi s(n); cin\
+    \ >> s;\n    bipq<int> qu;\n    range(i, s) qu.push(i);\n    rep(q) {\n      \
+    \  int t; cin >> t;\n        if (t == 0) {\n            int x; cin >> x;\n   \
+    \         qu.push(x);\n        } elif (t == 1) {\n            cout << qu.top_min()\
+    \ << nl;\n            qu.pop_min();\n        } else {\n            cout << qu.top_max()\
+    \ << nl;\n            qu.pop_max();\n        }\n    }\n}\n"
   code: "#define PROBLEM \"https://judge.yosupo.jp/problem/double_ended_priority_queue\"\
-    \n#include \"template\"\n#include \"bipq\"\n\nvoid solve() {\n    int n, q;\n\
-    \    cin >> n >> q;\n\n    bipq<int> pq;\n    rep(n) {\n        int x; cin >>\
-    \ x;\n        pq.push(x);\n    }\n\n    rep(q) {\n        int t; cin >> t;\n \
-    \       if (t == 0) {\n            int x; cin >> x;\n            pq.push(x);\n\
-    \        } else if (t == 1) {\n            cout << pq.top_min() << nl;\n     \
-    \       pq.pop_min();\n        } else {\n            cout << pq.top_max() << nl;\n\
-    \            pq.pop_max();\n        }\n    }\n}\n\nint main() {\n    IO();\n \
-    \   int T = 1;\n    while (T--) solve();\n}\n"
+    \n#include \"template\"\n#include \"bipq\"\n\nint main() {\n    IO();\n    int\
+    \ T = 1;\n    // cin >> T;\n    while (T--) solve();\n}\n\nvoid solve() {\n  \
+    \  int n, q; cin >> n >> q;\n    vi s(n); cin >> s;\n    bipq<int> qu;\n    range(i,\
+    \ s) qu.push(i);\n    rep(q) {\n        int t; cin >> t;\n        if (t == 0)\
+    \ {\n            int x; cin >> x;\n            qu.push(x);\n        } elif (t\
+    \ == 1) {\n            cout << qu.top_min() << nl;\n            qu.pop_min();\n\
+    \        } else {\n            cout << qu.top_max() << nl;\n            qu.pop_max();\n\
+    \        }\n    }\n}\n"
   dependsOn:
   - utility/template.hpp
   - structure/bipq.hpp
   isVerificationFile: true
   path: verify/library_checker_double_ended_priority_queue.test.cpp
   requiredBy: []
-  timestamp: '2026-03-10 11:48:32+09:00'
+  timestamp: '2026-03-10 18:35:44+09:00'
   verificationStatus: TEST_ACCEPTED
   verifiedWith: []
 documentation_of: verify/library_checker_double_ended_priority_queue.test.cpp

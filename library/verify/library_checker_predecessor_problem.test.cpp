@@ -2,38 +2,29 @@
 #include "template"
 #include "splay_tree"
 
-int main(){
+int main() {
     IO();
     int T = 1;
+    // cin >> T;
     while (T--) solve();
 }
 
-void solve(){
-    int n, q;
-    cin >> n >> q;
-    string t;
-    cin >> t;
-
-    splay_tree<int> st;
-    rep(i, n) {
-        if (t[i] == '1') st.insert(i);
-    }
-
-    rep(q){
-        int type, k;
-        cin >> type >> k;
-        if (type == 0) {
-            st.insert(k);
-        } else if (type == 1) {
-            st.erase(k);
-        } else if (type == 2) {
-            cout << (st.contains(k) ? 1 : 0) << nl;
-        } else if (type == 3) {
-            auto res = st.lower_bound(k);  // min >= k
-            cout << (res ? *res : -1) << nl;
-        } else { // type == 4
-            auto res = st.prev_le(k);      // max <= k
-            cout << (res ? *res : -1) << nl;
+void solve() {
+    int n, q; cin >> n >> q;
+    str t; cin >> t;
+    splay_tree<int> tree;
+    rep(i, n) if (t[i] == '1') tree.insert(i);
+    rep(q) {
+        int t, k; cin >> t >> k;
+        if (t == 0) tree.insert(k);
+        elif (t == 1) tree.erase(k);
+        elif (t == 2) cout << tree.contains(k) << nl;
+        elif (t == 3) {
+            auto x = tree.lower_bound(k);
+            cout << (x ? *x : -1) << nl;
+        } elif (t == 4) {
+            auto x = tree.prev_le(k);
+            cout << (x ? *x : -1) << nl;
         }
     }
 }

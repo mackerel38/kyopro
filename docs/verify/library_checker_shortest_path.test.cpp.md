@@ -1,20 +1,20 @@
 ---
 data:
   _extendedDependsOn:
-  - icon: ':heavy_check_mark:'
+  - icon: ':x:'
     path: graph/dijkstra.hpp
     title: graph/dijkstra.hpp
-  - icon: ':heavy_check_mark:'
+  - icon: ':question:'
     path: graph/graphtemplate.hpp
     title: graph/graphtemplate.hpp
-  - icon: ':heavy_check_mark:'
+  - icon: ':question:'
     path: utility/template.hpp
     title: utility/template.hpp
   _extendedRequiredBy: []
   _extendedVerifiedWith: []
-  _isVerificationFailed: false
+  _isVerificationFailed: true
   _pathExtension: cpp
-  _verificationStatusIcon: ':heavy_check_mark:'
+  _verificationStatusIcon: ':x:'
   attributes:
     '*NOT_SPECIAL_COMMENTS*': ''
     PROBLEM: https://judge.yosupo.jp/problem/shortest_path
@@ -219,22 +219,21 @@ data:
     \ vector<int>& prev, int dst) {\n    vector<int> path;\n    for (int v = dst;\
     \ v != -1; v = prev[v]) path.push_back(v);\n    reverse(path.begin(), path.end());\n\
     \    return path;\n}\n#line 4 \"verify/library_checker_shortest_path.test.cpp\"\
-    \n\nint main() {\n    IO();\n    int T = 1;\n    while (T--) solve();\n}\n\nvoid\
-    \ solve() {\n    int n, m, s, t; cin >> n >> m >> s >> t;\n    graph<ll, true,\
-    \ true> g(n);\n    g.read(m, 0);\n    auto [dist, prev] = dijkstra_prev(g, s);\n\
-    \    const ll INF = numeric_limits<ll>::max() / 2;\n    if (dist[t] >= INF) {\n\
-    \        cout << -1 << nl;\n        return;\n    }\n    auto path = restore_path(prev,\
-    \ t);\n    cout << dist[t] << sp << (int)path.size() - 1 << nl;\n    rep(i, (int)path.size()\
-    \ - 1) {\n        cout << path[i] << sp << path[i + 1] << nl;\n    }\n}\n"
+    \n\nint main() {\n    IO();\n    int T = 1;\n    // cin >> T;\n    while (T--)\
+    \ solve();\n}\n\nvoid solve() {\n    int n, m, s, t; cin >> n >> m >> s >> t;\n\
+    \    graph<ll, true, true> g(n);\n    g.read(m, 0);\n    auto [d, pre] = dijkstra_prev(g,\
+    \ s);\n    if (inf < d[t]) {\n        cout << -1 << nl;\n        return;\n   \
+    \ }\n    auto path = restore_path(pre, t);\n    cout << d[t] << sp << len(path)-1\
+    \ << nl;\n    rep(i, len(path)-1) cout << path[i] << sp << path[i+1] << nl;\n\
+    }\n"
   code: "#define PROBLEM \"https://judge.yosupo.jp/problem/shortest_path\"\n#include\
     \ \"template\"\n#include \"dijkstra\"\n\nint main() {\n    IO();\n    int T =\
-    \ 1;\n    while (T--) solve();\n}\n\nvoid solve() {\n    int n, m, s, t; cin >>\
-    \ n >> m >> s >> t;\n    graph<ll, true, true> g(n);\n    g.read(m, 0);\n    auto\
-    \ [dist, prev] = dijkstra_prev(g, s);\n    const ll INF = numeric_limits<ll>::max()\
-    \ / 2;\n    if (dist[t] >= INF) {\n        cout << -1 << nl;\n        return;\n\
-    \    }\n    auto path = restore_path(prev, t);\n    cout << dist[t] << sp << (int)path.size()\
-    \ - 1 << nl;\n    rep(i, (int)path.size() - 1) {\n        cout << path[i] << sp\
-    \ << path[i + 1] << nl;\n    }\n}\n"
+    \ 1;\n    // cin >> T;\n    while (T--) solve();\n}\n\nvoid solve() {\n    int\
+    \ n, m, s, t; cin >> n >> m >> s >> t;\n    graph<ll, true, true> g(n);\n    g.read(m,\
+    \ 0);\n    auto [d, pre] = dijkstra_prev(g, s);\n    if (inf < d[t]) {\n     \
+    \   cout << -1 << nl;\n        return;\n    }\n    auto path = restore_path(pre,\
+    \ t);\n    cout << d[t] << sp << len(path)-1 << nl;\n    rep(i, len(path)-1) cout\
+    \ << path[i] << sp << path[i+1] << nl;\n}\n"
   dependsOn:
   - utility/template.hpp
   - graph/dijkstra.hpp
@@ -242,8 +241,8 @@ data:
   isVerificationFile: true
   path: verify/library_checker_shortest_path.test.cpp
   requiredBy: []
-  timestamp: '2026-03-09 22:49:24+09:00'
-  verificationStatus: TEST_ACCEPTED
+  timestamp: '2026-03-10 21:01:55+09:00'
+  verificationStatus: TEST_WRONG_ANSWER
   verifiedWith: []
 documentation_of: verify/library_checker_shortest_path.test.cpp
 layout: document

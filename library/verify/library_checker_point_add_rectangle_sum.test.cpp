@@ -2,56 +2,45 @@
 #include "template"
 #include "BIT2d"
 
-int main(){
+int main() {
     IO();
     int T = 1;
+    // cin >> T;
     while (T--) solve();
 }
 
-void solve(){
+void solve() {
     int n, q; cin >> n >> q;
-    vector<int> px(n), py(n), pw(n);
-    rep(i, n) cin >> px[i] >> py[i] >> pw[i];
-
-    // Read all queries offline
-    vector<array<int,5>> qs(q);
-    rep(i, q){
-        cin >> qs[i][0];
-        if (qs[i][0] == 0) cin >> qs[i][1] >> qs[i][2] >> qs[i][3];
-        else               cin >> qs[i][1] >> qs[i][2] >> qs[i][3] >> qs[i][4];
-    }
-
-    // Compress x-coordinates of ALL add points (initial N points + type-0 query points)
-    vector<int> xs(px.begin(), px.end());
-    rep(i, q) if (qs[i][0] == 0) xs.push_back(qs[i][1]);
-    sort(xs.begin(), xs.end()); xs.erase(unique(xs.begin(), xs.end()), xs.end());
-    int mx = xs.size();
-
-    // 1-indexed compressed x
-    auto cx1 = [&](int x) -> int {
-        return (int)(lower_bound(xs.begin(), xs.end(), x) - xs.begin()) + 1;
+    struct point {
+        int x, y;
+        ll w;
     };
-
-    // Reserve y-coordinates for ALL add points before build()
-    BIT2d_compressed<ll> seg(mx);
-    rep(i, n) seg.reserve(cx1(px[i]), py[i]);
-    rep(i, q) if (qs[i][0] == 0) seg.reserve(cx1(qs[i][1]), qs[i][2]);
-    seg.build();
-
-    // Add initial weights
-    rep(i, n) seg.add(cx1(px[i]), py[i], pw[i]);
-
-    // Process queries
-    rep(i, q){
-        if (qs[i][0] == 0){
-            seg.add(cx1(qs[i][1]), qs[i][2], qs[i][3]);
-        } else {
-            int l = qs[i][1], d = qs[i][2], r = qs[i][3], u = qs[i][4];
-            if (l >= r || d >= u){ cout << 0 << nl; continue; }
-            int lx = (int)(lower_bound(xs.begin(), xs.end(), l) - xs.begin()) + 1;
-            int rx = (int)(lower_bound(xs.begin(), xs.end(), r) - xs.begin());
-            if (lx > rx){ cout << 0 << nl; continue; }
-            cout << seg.sum(lx, rx, d, u - 1) << nl;
+    vec<point> ps(n);
+    vi xv;
+    range(i, ps) {
+        cin >> i.x >> i.y >> i.w;
+        xv.pb(i.x);
+    }
+    vec<array<int, 5>> queries(q);
+    range(i, queries) {
+        cin >> i[0];
+        if (i[0] == 0) {
+            rep1(j, 3) cin >> i[j];
+            xv.pb(i[1]);
         }
+        else rep1(j, 4) cin >> i[j];
+    }
+    uniq(xv);
+    int m = xv.size();
+    BIT2d_compressed<ll> seg(m);
+    rep(i, n) ps[i].x = (lower_bound(all(xv), ps[i].x)-xv.begin())+1;
+    rep(i, q) queries[i][1] = (lower_bound(all(xv), queries[i][1]) - xv.begin()) + 1;
+    rep(i, q) if (queries[i][0] == 1) queries[i][2] = lower_bound(all(xv), queries[i][2])-xv.begin();
+    rep(i, n) seg.reserve(ps[i].x, ps[i].y);
+    seg.build();
+    range(i, ps) seg.add(i.x, i.y, i.w);
+    range(i, queries) {
+        if (i[0] == 0) seg.add(i[1], i[2], i[3]);
+        else cout << seg.sum(i[1], i[2], i[3], i[4]-1) << nl;
     }
 }

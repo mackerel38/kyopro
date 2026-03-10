@@ -62,10 +62,10 @@ data:
     - icon: ':warning:'
       path: graph/bfs.hpp
       title: graph/bfs.hpp
-    - icon: ':heavy_check_mark:'
+    - icon: ':x:'
       path: graph/dijkstra.hpp
       title: graph/dijkstra.hpp
-    - icon: ':heavy_check_mark:'
+    - icon: ':question:'
       path: graph/graphtemplate.hpp
       title: graph/graphtemplate.hpp
     - icon: ':heavy_check_mark:'
@@ -106,10 +106,10 @@ data:
       title: string/z_algorithm.hpp
   - name: structure
     pages:
-    - icon: ':heavy_check_mark:'
+    - icon: ':question:'
       path: structure/BIT.hpp
       title: structure/BIT.hpp
-    - icon: ':heavy_check_mark:'
+    - icon: ':x:'
       path: structure/BIT2d.hpp
       title: structure/BIT2d.hpp
     - icon: ':heavy_check_mark:'
@@ -121,7 +121,7 @@ data:
     - icon: ':heavy_check_mark:'
       path: structure/lazysegtree.hpp
       title: structure/lazysegtree.hpp
-    - icon: ':heavy_check_mark:'
+    - icon: ':x:'
       path: structure/majority_vote.hpp
       title: structure/majority_vote.hpp
     - icon: ':heavy_check_mark:'
@@ -130,7 +130,7 @@ data:
     - icon: ':warning:'
       path: structure/segtree_beats.hpp
       title: structure/segtree_beats.hpp
-    - icon: ':heavy_check_mark:'
+    - icon: ':x:'
       path: structure/sparse_table.hpp
       title: structure/sparse_table.hpp
     - icon: ':heavy_check_mark:'
@@ -150,10 +150,10 @@ data:
     - icon: ':heavy_check_mark:'
       path: utility/hashmap.hpp
       title: utility/hashmap.hpp
-    - icon: ':heavy_check_mark:'
+    - icon: ':x:'
       path: utility/mo.hpp
       title: utility/mo.hpp
-    - icon: ':heavy_check_mark:'
+    - icon: ':question:'
       path: utility/template.hpp
       title: utility/template.hpp
   verificationCategories:
@@ -171,7 +171,7 @@ data:
     - icon: ':heavy_check_mark:'
       path: verify/library_checker_factorize.test.cpp
       title: verify/library_checker_factorize.test.cpp
-    - icon: ':heavy_check_mark:'
+    - icon: ':x:'
       path: verify/library_checker_majority_voting.test.cpp
       title: verify/library_checker_majority_voting.test.cpp
     - icon: ':heavy_check_mark:'
@@ -186,10 +186,7 @@ data:
     - icon: ':heavy_check_mark:'
       path: verify/library_checker_point_add_range_sum_1.test.cpp
       title: verify/library_checker_point_add_range_sum_1.test.cpp
-    - icon: ':heavy_check_mark:'
-      path: verify/library_checker_point_add_range_sum_bit.test.cpp
-      title: verify/library_checker_point_add_range_sum_bit.test.cpp
-    - icon: ':heavy_check_mark:'
+    - icon: ':x:'
       path: verify/library_checker_point_add_rectangle_sum.test.cpp
       title: verify/library_checker_point_add_rectangle_sum.test.cpp
     - icon: ':heavy_check_mark:'
@@ -207,13 +204,13 @@ data:
     - icon: ':heavy_check_mark:'
       path: verify/library_checker_range_kth_smallest.test.cpp
       title: verify/library_checker_range_kth_smallest.test.cpp
-    - icon: ':heavy_check_mark:'
+    - icon: ':x:'
       path: verify/library_checker_shortest_path.test.cpp
       title: verify/library_checker_shortest_path.test.cpp
-    - icon: ':heavy_check_mark:'
+    - icon: ':x:'
       path: verify/library_checker_static_range_inversions_query.test.cpp
       title: verify/library_checker_static_range_inversions_query.test.cpp
-    - icon: ':heavy_check_mark:'
+    - icon: ':x:'
       path: verify/library_checker_staticrmq.test.cpp
       title: verify/library_checker_staticrmq.test.cpp
     - icon: ':heavy_check_mark:'

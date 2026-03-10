@@ -4,7 +4,7 @@ data:
   - icon: ':heavy_check_mark:'
     path: structure/dynamic_segtree.hpp
     title: structure/dynamic_segtree.hpp
-  - icon: ':heavy_check_mark:'
+  - icon: ':question:'
     path: utility/template.hpp
     title: utility/template.hpp
   _extendedRequiredBy: []
@@ -217,70 +217,38 @@ data:
     \ F>\n    Idx min_left(Idx qr, const F& f) const {\n        assert(lo <= qr &&\
     \ qr <= hi);\n        assert(f(e()));\n        T acc = e();\n        return _min_left(root,\
     \ lo, hi, qr, acc, f);\n    }\n};\n#line 4 \"verify/library_checker_ordered_set.test.cpp\"\
-    \n\n// Ordered Set using Dynamic Segment Tree (frequency array over coordinate\
-    \ space)\n// Range: [0, 2^30)  which covers all x <= 10^9\n// a[x] = 1 if x is\
-    \ in the set, 0 otherwise\n//\n// Query mapping:\n//   0 x: insert x         \
-    \    -> set(x, 1)\n//   1 x: erase  x             -> set(x, 0)\n//   2 x: x-th\
-    \ (1-indexed)     -> max_right(LO, s < x)  (-1 if |S| < x)\n//   3 x: count of\
-    \ elem <= x   -> prod(LO, x+1)\n//   4 x: max elem <= x        -> min_left(x+1,\
-    \ s==0) - 1  (-1 if none)\n//   5 x: min elem >= x        -> max_right(x, s==0)\
-    \        (-1 if none)\n\nvoid solve() {\n    int n, q;\n    cin >> n >> q;\n \
-    \   const long long LO = 0, HI = 1LL << 30;  // covers [0, 10^9]\n    dynamic_segtree<int,\
-    \ [](int a, int b){ return a + b; }, []{ return 0; }> seg(LO, HI);\n    rep(n)\
-    \ {\n        int x; cin >> x;\n        seg.set((long long)x, 1);\n    }\n\n  \
-    \  rep(q) {\n        int t; cin >> t;\n        if (t == 0) {\n            // insert\
-    \ x\n            int x; cin >> x;\n            seg.set((long long)x, 1);\n   \
-    \     } else if (t == 1) {\n            // erase x\n            int x; cin >>\
-    \ x;\n            seg.set((long long)x, 0);\n        } else if (t == 2) {\n  \
-    \          // x-th smallest (1-indexed); -1 if |S| < x\n            int x; cin\
-    \ >> x;\n            long long r = seg.max_right(LO, [&](int s){ return s < x;\
-    \ });\n            cout << (r < HI ? r : -1LL) << nl;\n        } else if (t ==\
-    \ 3) {\n            // count of elements <= x\n            int x; cin >> x;\n\
-    \            cout << seg.prod(LO, (long long)x + 1) << nl;\n        } else if\
-    \ (t == 4) {\n            // max element <= x  (-1 if none)\n            int x;\
-    \ cin >> x;\n            long long l = seg.min_left((long long)x + 1, [](int s){\
-    \ return s == 0; });\n            cout << (l > LO ? l - 1 : -1LL) << nl;\n   \
-    \     } else {\n            // min element >= x  (-1 if none)\n            int\
-    \ x; cin >> x;\n            long long r = seg.max_right((long long)x, [](int s){\
-    \ return s == 0; });\n            cout << (r < HI ? r : -1LL) << nl;\n       \
-    \ }\n    }\n}\n\nint main() {\n    IO();\n    int T = 1;\n    while (T--) solve();\n\
-    }\n"
+    \n\nint main() {\n    IO();\n    int T = 1;\n    // cin >> T;\n    while (T--)\
+    \ solve();\n}\n\nvoid solve() {\n    int n, q; cin >> n >> q;\n    vi a(n); cin\
+    \ >> a;\n    dynamic_segtree<int,[](int x,int y){return x+y;},[](){return 0;}>\
+    \ seg(0, INF);\n    range(i, a) seg.set(i, 1);\n    rep(q) {\n        int t, x;\
+    \ cin >> t >> x;\n        if (t == 0) seg.set(x, 1);\n        elif (t == 1) seg.set(x,\
+    \ 0);\n        elif (t == 2) {\n            int y = seg.max_right(0, [&](int z){return\
+    \ z<x;});\n            cout << (y<INF ? y : -1) << nl;\n        } elif (t == 3)\
+    \ cout << seg.prod(0, x+1) << nl;\n        elif (t == 4) {\n            int y\
+    \ = seg.min_left(x+1, [](int z){return z==0;});\n            cout << (0<y ? y-1\
+    \ : -1) << nl;\n        } else {\n            int y = seg.max_right(x, [](int\
+    \ z){return z==0;});\n            cout << (y<INF ? y : -1) << nl;\n        }\n\
+    \    }\n}\n"
   code: "#define PROBLEM \"https://judge.yosupo.jp/problem/ordered_set\"\n#include\
-    \ \"template\"\n#include \"dynamic_segtree\"\n\n// Ordered Set using Dynamic Segment\
-    \ Tree (frequency array over coordinate space)\n// Range: [0, 2^30)  which covers\
-    \ all x <= 10^9\n// a[x] = 1 if x is in the set, 0 otherwise\n//\n// Query mapping:\n\
-    //   0 x: insert x             -> set(x, 1)\n//   1 x: erase  x             ->\
-    \ set(x, 0)\n//   2 x: x-th (1-indexed)     -> max_right(LO, s < x)  (-1 if |S|\
-    \ < x)\n//   3 x: count of elem <= x   -> prod(LO, x+1)\n//   4 x: max elem <=\
-    \ x        -> min_left(x+1, s==0) - 1  (-1 if none)\n//   5 x: min elem >= x \
-    \       -> max_right(x, s==0)        (-1 if none)\n\nvoid solve() {\n    int n,\
-    \ q;\n    cin >> n >> q;\n    const long long LO = 0, HI = 1LL << 30;  // covers\
-    \ [0, 10^9]\n    dynamic_segtree<int, [](int a, int b){ return a + b; }, []{ return\
-    \ 0; }> seg(LO, HI);\n    rep(n) {\n        int x; cin >> x;\n        seg.set((long\
-    \ long)x, 1);\n    }\n\n    rep(q) {\n        int t; cin >> t;\n        if (t\
-    \ == 0) {\n            // insert x\n            int x; cin >> x;\n           \
-    \ seg.set((long long)x, 1);\n        } else if (t == 1) {\n            // erase\
-    \ x\n            int x; cin >> x;\n            seg.set((long long)x, 0);\n   \
-    \     } else if (t == 2) {\n            // x-th smallest (1-indexed); -1 if |S|\
-    \ < x\n            int x; cin >> x;\n            long long r = seg.max_right(LO,\
-    \ [&](int s){ return s < x; });\n            cout << (r < HI ? r : -1LL) << nl;\n\
-    \        } else if (t == 3) {\n            // count of elements <= x\n       \
-    \     int x; cin >> x;\n            cout << seg.prod(LO, (long long)x + 1) <<\
-    \ nl;\n        } else if (t == 4) {\n            // max element <= x  (-1 if none)\n\
-    \            int x; cin >> x;\n            long long l = seg.min_left((long long)x\
-    \ + 1, [](int s){ return s == 0; });\n            cout << (l > LO ? l - 1 : -1LL)\
-    \ << nl;\n        } else {\n            // min element >= x  (-1 if none)\n  \
-    \          int x; cin >> x;\n            long long r = seg.max_right((long long)x,\
-    \ [](int s){ return s == 0; });\n            cout << (r < HI ? r : -1LL) << nl;\n\
-    \        }\n    }\n}\n\nint main() {\n    IO();\n    int T = 1;\n    while (T--)\
-    \ solve();\n}\n"
+    \ \"template\"\n#include \"dynamic_segtree\"\n\nint main() {\n    IO();\n    int\
+    \ T = 1;\n    // cin >> T;\n    while (T--) solve();\n}\n\nvoid solve() {\n  \
+    \  int n, q; cin >> n >> q;\n    vi a(n); cin >> a;\n    dynamic_segtree<int,[](int\
+    \ x,int y){return x+y;},[](){return 0;}> seg(0, INF);\n    range(i, a) seg.set(i,\
+    \ 1);\n    rep(q) {\n        int t, x; cin >> t >> x;\n        if (t == 0) seg.set(x,\
+    \ 1);\n        elif (t == 1) seg.set(x, 0);\n        elif (t == 2) {\n       \
+    \     int y = seg.max_right(0, [&](int z){return z<x;});\n            cout <<\
+    \ (y<INF ? y : -1) << nl;\n        } elif (t == 3) cout << seg.prod(0, x+1) <<\
+    \ nl;\n        elif (t == 4) {\n            int y = seg.min_left(x+1, [](int z){return\
+    \ z==0;});\n            cout << (0<y ? y-1 : -1) << nl;\n        } else {\n  \
+    \          int y = seg.max_right(x, [](int z){return z==0;});\n            cout\
+    \ << (y<INF ? y : -1) << nl;\n        }\n    }\n}\n"
   dependsOn:
   - utility/template.hpp
   - structure/dynamic_segtree.hpp
   isVerificationFile: true
   path: verify/library_checker_ordered_set.test.cpp
   requiredBy: []
-  timestamp: '2026-03-10 11:03:19+09:00'
+  timestamp: '2026-03-10 18:35:55+09:00'
   verificationStatus: TEST_ACCEPTED
   verifiedWith: []
 documentation_of: verify/library_checker_ordered_set.test.cpp

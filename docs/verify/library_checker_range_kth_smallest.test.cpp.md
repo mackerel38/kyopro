@@ -4,7 +4,7 @@ data:
   - icon: ':heavy_check_mark:'
     path: structure/wavelet_matrix.hpp
     title: structure/wavelet_matrix.hpp
-  - icon: ':heavy_check_mark:'
+  - icon: ':question:'
     path: utility/template.hpp
     title: utility/template.hpp
   _extendedRequiredBy: []
@@ -218,34 +218,26 @@ data:
     \        }\n        }\n        return s;\n    }\n\n    // sum of elements in [lo,\
     \ hi) in a[l..r)\n    long long range_sum(int l, int r, int lo, int hi) const\
     \ {\n        return sum_lt(l, r, hi) - sum_lt(l, r, lo);\n    }\n};\n#line 4 \"\
-    verify/library_checker_range_kth_smallest.test.cpp\"\n\nint main(){\n    IO();\n\
-    \    int T = 1;\n    while (T--) solve();\n}\n\nvoid solve(){\n    int n, q; cin\
-    \ >> n >> q;\n    vector<int> a(n);\n    rep(i, n) cin >> a[i];\n\n    // Coordinate\
-    \ compress (values up to ~10^9)\n    vector<int> vals = a;\n    sort(vals.begin(),\
-    \ vals.end()); vals.erase(unique(vals.begin(), vals.end()), vals.end());\n   \
-    \ vector<int> ca(n);\n    rep(i, n) ca[i] = (int)(lower_bound(vals.begin(), vals.end(),\
-    \ a[i]) - vals.begin());\n\n    // Compressed values fit in [0, n) \u2282 [0,\
-    \ 2^20), so B=20 is sufficient for n<=10^6\n    wavelet_matrix<20> wm;\n    wm.build(ca);\n\
-    \n    rep(q){\n        int l, r, k; cin >> l >> r >> k;\n        cout << vals[wm.kth(l,\
-    \ r, k)] << nl;\n    }\n}\n"
+    verify/library_checker_range_kth_smallest.test.cpp\"\n\nint main() {\n    IO();\n\
+    \    int T = 1;\n    // cin >> T;\n    while (T--) solve();\n}\n\nvoid solve()\
+    \ {\n    int n, q; cin >> n >> q;\n    vector<int> a(n); cin >> a;\n    auto b\
+    \ = a;\n    uniq(b);\n    range(i, a) i = lower_bound(all(b), i) - b.begin();\n\
+    \    wavelet_matrix<20> wm; wm.build(a);\n    rep(q) {\n        int l, r, k; cin\
+    \ >> l >> r >> k;\n        cout << b[wm.kth(l, r, k)] << nl;\n    }\n}\n"
   code: "#define PROBLEM \"https://judge.yosupo.jp/problem/range_kth_smallest\"\n\
-    #include \"template\"\n#include \"wavelet_matrix\"\n\nint main(){\n    IO();\n\
-    \    int T = 1;\n    while (T--) solve();\n}\n\nvoid solve(){\n    int n, q; cin\
-    \ >> n >> q;\n    vector<int> a(n);\n    rep(i, n) cin >> a[i];\n\n    // Coordinate\
-    \ compress (values up to ~10^9)\n    vector<int> vals = a;\n    sort(vals.begin(),\
-    \ vals.end()); vals.erase(unique(vals.begin(), vals.end()), vals.end());\n   \
-    \ vector<int> ca(n);\n    rep(i, n) ca[i] = (int)(lower_bound(vals.begin(), vals.end(),\
-    \ a[i]) - vals.begin());\n\n    // Compressed values fit in [0, n) \u2282 [0,\
-    \ 2^20), so B=20 is sufficient for n<=10^6\n    wavelet_matrix<20> wm;\n    wm.build(ca);\n\
-    \n    rep(q){\n        int l, r, k; cin >> l >> r >> k;\n        cout << vals[wm.kth(l,\
-    \ r, k)] << nl;\n    }\n}\n"
+    #include \"template\"\n#include \"wavelet_matrix\"\n\nint main() {\n    IO();\n\
+    \    int T = 1;\n    // cin >> T;\n    while (T--) solve();\n}\n\nvoid solve()\
+    \ {\n    int n, q; cin >> n >> q;\n    vector<int> a(n); cin >> a;\n    auto b\
+    \ = a;\n    uniq(b);\n    range(i, a) i = lower_bound(all(b), i) - b.begin();\n\
+    \    wavelet_matrix<20> wm; wm.build(a);\n    rep(q) {\n        int l, r, k; cin\
+    \ >> l >> r >> k;\n        cout << b[wm.kth(l, r, k)] << nl;\n    }\n}\n"
   dependsOn:
   - utility/template.hpp
   - structure/wavelet_matrix.hpp
   isVerificationFile: true
   path: verify/library_checker_range_kth_smallest.test.cpp
   requiredBy: []
-  timestamp: '2026-03-09 22:49:24+09:00'
+  timestamp: '2026-03-10 20:39:46+09:00'
   verificationStatus: TEST_ACCEPTED
   verifiedWith: []
 documentation_of: verify/library_checker_range_kth_smallest.test.cpp

@@ -4,7 +4,7 @@ data:
   - icon: ':heavy_check_mark:'
     path: math/prime.hpp
     title: math/prime.hpp
-  - icon: ':heavy_check_mark:'
+  - icon: ':question:'
     path: utility/template.hpp
     title: utility/template.hpp
   _extendedRequiredBy: []
@@ -222,21 +222,21 @@ data:
     \ a = factorize((long long)d);\n    auto b = factorize(n / (long long)d);\n  \
     \  for (auto x : b) a.push_back(x);\n    sort(a.begin(), a.end());\n    return\
     \ a;\n}\n#line 4 \"verify/library_checker_primality_test.test.cpp\"\n\nint main()\
-    \ {\n    IO();\n    int T = 1;\n    while (T--) solve();\n}\n\nvoid solve() {\n\
-    \    int q; cin >> q;\n    rep(q) {\n        ull n; cin >> n;\n        cout <<\
-    \ (is_prime(n) ? \"Yes\" : \"No\") << nl;\n    }\n}\n"
+    \ {\n    IO();\n    int T = 1;\n    // cin >> T;\n    while (T--) solve();\n}\n\
+    \nvoid solve() {\n    int q; cin >> q;\n    rep(q) {\n        ull x; cin >> x;\n\
+    \        YN(is_prime(x));\n    }\n}\n"
   code: "#define PROBLEM \"https://judge.yosupo.jp/problem/primality_test\"\n#include\
     \ \"template\"\n#include \"prime\"\n\nint main() {\n    IO();\n    int T = 1;\n\
-    \    while (T--) solve();\n}\n\nvoid solve() {\n    int q; cin >> q;\n    rep(q)\
-    \ {\n        ull n; cin >> n;\n        cout << (is_prime(n) ? \"Yes\" : \"No\"\
-    ) << nl;\n    }\n}\n"
+    \    // cin >> T;\n    while (T--) solve();\n}\n\nvoid solve() {\n    int q; cin\
+    \ >> q;\n    rep(q) {\n        ull x; cin >> x;\n        YN(is_prime(x));\n  \
+    \  }\n}\n"
   dependsOn:
   - utility/template.hpp
   - math/prime.hpp
   isVerificationFile: true
   path: verify/library_checker_primality_test.test.cpp
   requiredBy: []
-  timestamp: '2026-03-09 22:49:24+09:00'
+  timestamp: '2026-03-10 18:36:43+09:00'
   verificationStatus: TEST_ACCEPTED
   verifiedWith: []
 documentation_of: verify/library_checker_primality_test.test.cpp

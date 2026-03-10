@@ -4,7 +4,7 @@ data:
   - icon: ':heavy_check_mark:'
     path: math/prime.hpp
     title: math/prime.hpp
-  - icon: ':heavy_check_mark:'
+  - icon: ':question:'
     path: utility/template.hpp
     title: utility/template.hpp
   _extendedRequiredBy: []
@@ -222,23 +222,22 @@ data:
     \ a = factorize((long long)d);\n    auto b = factorize(n / (long long)d);\n  \
     \  for (auto x : b) a.push_back(x);\n    sort(a.begin(), a.end());\n    return\
     \ a;\n}\n#line 4 \"verify/library_checker_factorize.test.cpp\"\n\nint main() {\n\
-    \    IO();\n    int T = 1;\n    while (T--) solve();\n}\n\nvoid solve() {\n  \
-    \  int q; cin >> q;\n    rep(q) {\n        ll a; cin >> a;\n        auto f = factorize(a);\n\
-    \        cout << (int)f.size();\n        for (auto x : f) cout << sp << x;\n \
-    \       cout << nl;\n    }\n}\n"
+    \    IO();\n    int T = 1;\n    // cin >> T;\n    while (T--) solve();\n}\n\n\
+    void solve() {\n    int q; cin >> q;\n    rep(q) {\n        ll n; cin >> n;\n\
+    \        vll p = factorize(n);\n        cout << ssize(p) << sp << p;\n    }\n\
+    }\n"
   code: "#define PROBLEM \"https://judge.yosupo.jp/problem/factorize\"\n#include \"\
     template\"\n#include \"prime\"\n\nint main() {\n    IO();\n    int T = 1;\n  \
-    \  while (T--) solve();\n}\n\nvoid solve() {\n    int q; cin >> q;\n    rep(q)\
-    \ {\n        ll a; cin >> a;\n        auto f = factorize(a);\n        cout <<\
-    \ (int)f.size();\n        for (auto x : f) cout << sp << x;\n        cout << nl;\n\
-    \    }\n}\n"
+    \  // cin >> T;\n    while (T--) solve();\n}\n\nvoid solve() {\n    int q; cin\
+    \ >> q;\n    rep(q) {\n        ll n; cin >> n;\n        vll p = factorize(n);\n\
+    \        cout << ssize(p) << sp << p;\n    }\n}\n"
   dependsOn:
   - utility/template.hpp
   - math/prime.hpp
   isVerificationFile: true
   path: verify/library_checker_factorize.test.cpp
   requiredBy: []
-  timestamp: '2026-03-10 02:33:16+09:00'
+  timestamp: '2026-03-10 18:35:41+09:00'
   verificationStatus: TEST_ACCEPTED
   verifiedWith: []
 documentation_of: verify/library_checker_factorize.test.cpp
